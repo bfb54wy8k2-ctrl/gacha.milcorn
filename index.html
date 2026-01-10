@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ミルポケ Premium Gacha</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="images/icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="images/icon.png">
     <style>
         :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
         body { background: var(--bg); color: white; font-family: var(--font); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
@@ -12,25 +14,26 @@
         .title { margin-top: 20px; font-size: 1.2rem; color: var(--gold); text-align: center; font-weight: 700; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
         .title span { display: block; font-size: 0.8rem; letter-spacing: 3px; opacity: 0.8; margin-top: 5px; }
 
+        /* 回数・タイマー表示エリア */
+        #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.9rem; background: rgba(255,182,193,0.1); padding: 10px 20px; border-radius: 15px; border: 1px solid rgba(255,182,193,0.3); }
+        #timer { color: #fff; font-weight: bold; font-family: monospace; display: block; margin-top: 5px; }
+        #coin-message { color: #ffa0a0; font-size: 0.8rem; margin-top: 5px; display: none; }
+
         /* ガチャ本体のエリア */
-        #gacha-container { position: relative; width: 320px; height: 480px; margin-top: 20px; }
+        #gacha-container { position: relative; width: 320px; height: 420px; margin-top: 10px; }
         #gacha-machine { width: 100%; height: 100%; object-fit: contain; z-index: 10; position: relative; }
 
         /* 飛び出すカプセル（初期位置：右下） */
         #capsule {
-            position: absolute; 
-            bottom: 60px; 
-            right: 40px; 
-            width: 60px; height: 60px;
+            position: absolute; bottom: 60px; right: 40px; width: 60px; height: 60px;
             border-radius: 50%; box-shadow: 0 0 20px white;
             transform: scale(0); z-index: 5; display: none;
         }
 
-        /* アニメーション：右下から中央へ */
         .pop-out { animation: capsule-pop 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
         @keyframes capsule-pop {
             0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; z-index: 5; }
-            30% { z-index: 20; } /* マシンの手前に出る */
+            30% { z-index: 20; }
             50% { transform: translate(-80px, -180px) scale(2) rotate(180deg); }
             100% { transform: translate(-100px, -120px) scale(3) rotate(360deg); opacity: 1; z-index: 20; }
         }
@@ -52,9 +55,8 @@
             100% { transform: scale(1) rotateY(0deg); opacity: 1; }
         }
 
-        #detail { width: 85%; max-width: 350px; background: #fefcf0; color: #333; padding: 25px; border-radius: 20px; margin-top: 25px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #detail { width: 85%; max-width: 350px; background: #fefcf0; color: #333; padding: 25px; border-radius: 20px; margin-top: 25px; text-align: center; }
         #card-name { color: #d44d7c; font-size: 1.2rem; margin-bottom: 10px; border-bottom: 1px dashed #ffb6c1; padding-bottom: 5px; }
-        #card-desc { font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; }
         
         .btn { 
             margin-top: 20px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4);
@@ -62,21 +64,24 @@
             cursor: pointer; box-shadow: 0 6px 0 #db7093; transition: 0.1s;
         }
         .btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #db7093; }
-        .btn:disabled { background: #bbb; box-shadow: 0 6px 0 #888; transform: none; }
+        .btn:disabled { background: #666; box-shadow: 0 6px 0 #444; color: #ccc; cursor: not-allowed; }
 
-        /* ガチャの揺れ */
         @keyframes shake {
             0% { transform: translate(1px, 1px) rotate(0deg); }
-            25% { transform: translate(-2px, -1px) rotate(-1deg); }
-            50% { transform: translate(-1px, 2px) rotate(1deg); }
-            75% { transform: translate(2px, -1px) rotate(-1deg); }
+            50% { transform: translate(-2px, -1px) rotate(-1deg); }
             100% { transform: translate(1px, 1px) rotate(0deg); }
         }
     </style>
 </head>
 <body>
 
-    <div class="title">ミルコーンの冒険タロットガチャ<span>Gacha Premium Edition</span></div>
+    <div class="title">ミルコーンの冒険タロットガチャ<span>Gacha Edition</span></div>
+
+    <div id="limit-info">
+        <span id="limit-text">このガチャは1日3回まで引けるよ🦄✨</span>
+        <span id="timer"></span>
+        <span id="coin-message">早く引きたい場合はミルコインが必要だよ😢</span>
+    </div>
 
     <div id="gacha-container">
         <img src="images/gacha.png" id="gacha-machine" alt="ガチャガチャ">
@@ -89,20 +94,13 @@
         <div class="card-reveal" id="card-box"></div>
         <div id="detail">
             <h2 id="card-name"></h2>
-            <p id="card-desc"></p>
+            <p id="card-desc" style="white-space:pre-wrap;"></p>
             <p style="font-size:0.7rem; color:#aaa; margin-top:15px;">タップして閉じる</p>
         </div>
     </div>
 
     <script>
-        const ballColors = [
-            'radial-gradient(circle at 30% 30%, #ff9999, #cc0000)', // 赤
-            'radial-gradient(circle at 30% 30%, #99ccff, #0033cc)', // 青
-            'radial-gradient(circle at 30% 30%, #ffff99, #ffcc00)', // 黄
-            'radial-gradient(circle at 30% 30%, #cc99ff, #6600cc)', // 紫
-            'radial-gradient(circle at 30% 30%, #99ff99, #009900)'  // 緑
-        ];
-
+        // カードデータ
         const tarotData = [
             { name: "0. THE FOOL", desc: "💫 新しい冒険のはじまり\nワクワクする方を選んで大正解。\n今は深く考えすぎなくてOKだよ。", img: "images/0.png" },
             { name: "1. THE MAGICIAN", desc: "✨ 願いが動き出すタイミング\nあなたの言葉や行動が、現実を変えていくよ。", img: "images/1.png" },
@@ -179,36 +177,98 @@
             { name: "NINE OF PENTACLES", desc: "🌱 PENTACLES\n💎 自立と満足。自分を褒めて。", img: "images/72.png" },
             { name: "TEN OF PENTACLES", desc: "🌱 PENTACLES\n🏰 安定と豊かさ。長く続く幸せ。", img: "images/73.png" },
             { name: "PAGE OF PENTACLES", desc: "🌱 PENTACLES\n🌱 新しい学びや挑戦。", img: "images/74.png" },
-            { name: "KNIGHT OF PENTACLES", desc: "🌱 PENTACLES\n亀 ゆっくりでも確実に進む。", img: "images/75.png" },
+            { name: "KNIGHT OF PENTACLES", desc: "🌱 PENTACLES\n🐢 ゆっくりでも確実に進む。", img: "images/75.png" },
             { name: "QUEEN OF PENTACLES", desc: "🌱 PENTACLES\n🌸 優しさと安心感。", img: "images/76.png" },
             { name: "KING OF PENTACLES", desc: "🌱 PENTACLES\n👑 しっかりした基盤。信頼できる未来。", img: "images/77.png" },
             { name: "🦄 ULTIMATE", desc: "嬉しすぎる究極のかたちへ進むよ。", img: "images/78.png" }
         ];
 
+        // 制限ロジック
+        let playCount = 0;
+        const MAX_PLAYS = 3;
+
+        function updateLimitUI() {
+            const now = new Date();
+            const lastDate = localStorage.getItem('lastPlayDate');
+            const todayStr = now.toLocaleDateString();
+
+            // 日付が変わっていたらリセット
+            if (lastDate !== todayStr) {
+                playCount = 0;
+                localStorage.setItem('playCount', 0);
+                localStorage.setItem('lastPlayDate', todayStr);
+            } else {
+                playCount = parseInt(localStorage.getItem('playCount') || 0);
+            }
+
+            const btn = document.getElementById('play-btn');
+            const timerElement = document.getElementById('timer');
+            const coinMsg = document.getElementById('coin-message');
+            const limitText = document.getElementById('limit-text');
+
+            if (playCount >= MAX_PLAYS) {
+                btn.disabled = true;
+                limitText.innerText = "本日の占いは終了したよ🌙";
+                coinMsg.style.display = "block";
+                startTimer();
+            } else {
+                btn.disabled = false;
+                limitText.innerText = `このガチャは1日3回まで引けるよ🦄✨ (あと${MAX_PLAYS - playCount}回)`;
+                timerElement.innerText = "";
+                coinMsg.style.display = "none";
+            }
+        }
+
+        function startTimer() {
+            function updateTimer() {
+                const now = new Date();
+                const nextReset = new Date();
+                nextReset.setHours(24, 0, 0, 0); // 今日の24:00 (明日0:00)
+
+                const diff = nextReset - now;
+                if (diff <= 0) {
+                    updateLimitUI();
+                    return;
+                }
+
+                const h = Math.floor(diff / 1000 / 60 / 60);
+                const m = Math.floor(diff / 1000 / 60) % 60;
+                const s = Math.floor(diff / 1000) % 60;
+
+                document.getElementById('timer').innerText = 
+                    `次回まで：${h}時間${m}分${s}秒`;
+            }
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
         function playGacha() {
+            if (playCount >= MAX_PLAYS) return;
+
             const btn = document.getElementById('play-btn');
             const capsule = document.getElementById('capsule');
             const machine = document.getElementById('gacha-machine');
             
             btn.disabled = true;
 
-            // ランダムカラーの設定
-            const randomColor = ballColors[Math.floor(Math.random() * ballColors.length)];
-            capsule.style.background = randomColor;
-            
-            // ガチャの揺れ演出
-            machine.style.animation = "shake 0.1s infinite";
-            setTimeout(() => { machine.style.animation = "none"; }, 800);
+            // 回数を記録
+            playCount++;
+            localStorage.setItem('playCount', playCount);
 
-            // カプセル射出
+            // アニメーション演出
+            const ballColors = ['#ff9999', '#99ccff', '#ffff99', '#cc99ff', '#99ff99'];
+            capsule.style.background = `radial-gradient(circle at 30% 30%, #fff, ${ballColors[Math.floor(Math.random()*5)]})`;
+            machine.style.animation = "shake 0.1s infinite";
+            
+            setTimeout(() => { machine.style.animation = "none"; }, 800);
             setTimeout(() => {
                 capsule.style.display = "block";
                 capsule.classList.add('pop-out');
             }, 600);
 
-            // 結果表示
             setTimeout(() => {
                 showResult();
+                updateLimitUI();
             }, 2100);
         }
 
@@ -216,11 +276,9 @@
             const result = tarotData[Math.floor(Math.random() * tarotData.length)];
             const overlay = document.getElementById('result-overlay');
             const cardBox = document.getElementById('card-box');
-            
             cardBox.innerHTML = `<img src="${result.img}" style="width:100%; height:100%; object-fit:cover;">`;
             document.getElementById('card-name').innerText = result.name;
             document.getElementById('card-desc').innerText = result.desc;
-            
             overlay.style.display = "flex";
         }
 
@@ -229,8 +287,11 @@
             const capsule = document.getElementById('capsule');
             capsule.style.display = "none";
             capsule.classList.remove('pop-out');
-            document.getElementById('play-btn').disabled = false;
+            updateLimitUI();
         }
+
+        // 起動時に状態を確認
+        window.onload = updateLimitUI;
     </script>
 </body>
 </html>
