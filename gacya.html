@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ミルポケ Premium Gacha</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
+        body { background: var(--bg); color: white; font-family: var(--font); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+
+        .title { margin-top: 20px; font-size: 1.2rem; color: var(--gold); text-align: center; font-weight: 700; }
+        .title span { display: block; font-size: 0.8rem; letter-spacing: 3px; opacity: 0.8; }
+
+        /* ガチャ本体のエリア */
+        #gacha-container { position: relative; width: 320px; height: 480px; margin-top: 20px; }
+        #gacha-machine { width: 100%; height: 100%; object-fit: contain; }
+
+        /* 飛び出すカプセル（初期位置をマシーンの右下に設定） */
+        #capsule {
+            position: absolute; 
+            bottom: 80px;  /* 右下の出口付近 */
+            right: 40px; 
+            width: 60px; height: 60px;
+            border-radius: 50%; box-shadow: 0 0 20px white;
+            transform: scale(0); z-index: 100; display: none;
+        }
+
+        /* カプセルが右下から中央へ飛び出すアニメーション */
+        .pop-out { animation: capsule-pop 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        @keyframes capsule-pop {
+            0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
+            40% { transform: translate(-80px, -150px) scale(1.8) rotate(180deg); }
+            100% { transform: translate(-100px, -100px) scale(2.5) rotate(360deg); opacity: 1; }
+        }
+
+        /* 結果表示オーバーレイ */
+        #result-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 200;
+        }
+
+        .card-reveal {
+            width: 200px; height: 340px; border: 3px solid var(--gold); border-radius: 15px;
+            overflow: hidden; box-shadow: 0 0 30px var(--gold);
+            animation: card-up 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes card-up {
+            0% { transform: scale(0) rotateY(90deg); }
+            100% { transform: scale(1) rotateY(0deg); }
+        }
+
+        #detail { width: 85%; max-width: 350px; background: #fefcf0; color: #333; padding: 20px; border-radius: 20px; margin-top: 20px; text-align: center; }
+        .btn { margin-top: 20px; padding: 15px 50px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; cursor: pointer; box-shadow: 0 5px 0 #db7093; }
+        .btn:disabled { background: gray; box-shadow: none; }
+    </style>
+</head>
+<body>
+
+    <div class="title">ミルコーンの冒険タロット<span>Pocket Premium</span></div>
+
+    <div id="gacha-container">
+        <img src="images/gacha.png" id="gacha-machine" alt="ガチャガチャ">
+        <div id="capsule"></div>
+    </div>
+
+    <button class="btn" id="play-btn" onclick="playGacha()">ガチャを回して占う</button>
+
+    <div id="result-overlay" onclick="closeResult()">
+        <div class="card-reveal" id="card-box"></div>
+        <div id="detail">
+            <h2 id="card-name" style="margin:0; font-size:1.1rem;"></h2>
+            <p id="card-desc" style="white-space:pre-wrap; margin-top:10px;"></p>
+        </div>
+    </div>
+
+    <script>
+        // ボールの色の設定
+        const ballColors = [
+            { name: 'red', grad: 'radial-gradient(circle at 30% 30%, #ff9999, #cc0000)' },
+            { name: 'blue', grad: 'radial-gradient(circle at 30% 30%, #99ccff, #0033cc)' },
+            { name: 'yellow', grad: 'radial-gradient(circle at 30% 30%, #ffff99, #ffcc00)' },
+            { name: 'purple', grad: 'radial-gradient(circle at 30% 30%, #cc99ff, #6600cc)' },
+            { name: 'green', grad: 'radial-gradient(circle at 30% 30%, #99ff99, #009900)' }
+        ];
+
+        // カードデータ（ここに78枚分を追加）
+        const tarotData = [
+            { name: "0. THE FOOL", desc: "💫 新しい流れが始まるよ。\n💕 ワクワクする恋の予感。", img: "images/0.png" },
+            { name: "1. THE MAGICIAN", desc: "✨ あなたの才能が開花する時。\n🏹 自分から動くのが吉！", img: "images/1.png" }
+            // 続きのデータをここに追加...
+        ];
+
+        function playGacha() {
+            const btn = document.getElementById('play-btn');
+            const capsule = document.getElementById('capsule');
+            const machine = document.getElementById('gacha-machine');
+            
+            btn.disabled = true;
+
+            // 1. ボールの色をランダムに決定
+            const color = ballColors[Math.floor(Math.random() * ballColors.length)];
+            capsule.style.background = color.grad;
+            
+            // 2. ガチャの揺れ演出
+            machine.style.animation = "shake 0.1s infinite";
+            setTimeout(() => machine.style.animation = "none", 800);
+
+            // 3. 右下からカプセルが飛び出す
+            setTimeout(() => {
+                capsule.style.display = "block";
+                capsule.classList.add('pop-out');
+            }, 500);
+
+            // 4. ボールがパカッと開くタイミングで結果を表示
+            setTimeout(() => {
+                showResult();
+            }, 2000);
+        }
+
+        function showResult() {
+            const result = tarotData[Math.floor(Math.random() * tarotData.length)];
+            const overlay = document.getElementById('result-overlay');
+            const cardBox = document.getElementById('card-box');
+            
+            cardBox.innerHTML = `<img src="${result.img}" style="width:100%; height:100%; object-fit:cover;">`;
+            document.getElementById('card-name').innerText = result.name;
+            document.getElementById('card-desc').innerText = result.desc;
+            
+            overlay.style.display = "flex";
+        }
+
+        function closeResult() {
+            document.getElementById('result-overlay').style.display = "none";
+            const capsule = document.getElementById('capsule');
+            capsule.style.display = "none";
+            capsule.classList.remove('pop-out');
+            document.getElementById('play-btn').disabled = false;
+        }
+    </script>
+
+    <style>
+        @keyframes shake {
+            0% { transform: translate(2px, 2px) rotate(0deg); }
+            50% { transform: translate(-2px, -1px) rotate(-1deg); }
+            100% { transform: translate(2px, 2px) rotate(0deg); }
+        }
+    </style>
+</body>
+</html>
