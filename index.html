@@ -17,10 +17,13 @@
         .title img { width: 30px; vertical-align: middle; margin-right: 8px; border-radius: 50%; border: 1px solid var(--gold); }
         .title span { display: block; font-size: 0.8rem; letter-spacing: 3px; opacity: 0.8; margin-top: 5px; }
 
-        /* 回数制限エリア */
-        #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.9rem; background: rgba(255,182,193,0.1); padding: 10px 20px; border-radius: 15px; border: 1px solid rgba(255,182,193,0.3); width: 85%; max-width: 300px; }
-        #timer { color: #fff; font-weight: bold; font-family: monospace; display: block; margin-top: 5px; }
-        #coin-message { color: #ffa0a0; font-size: 0.8rem; margin-top: 5px; display: none; }
+        /* コイン表示エリア */
+        #coin-display { margin-top: 15px; background: rgba(212, 175, 55, 0.1); padding: 8px 25px; border-radius: 30px; border: 2px solid var(--gold); color: var(--gold); font-weight: bold; font-size: 1.1rem; box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); }
+
+        /* 回数制限・コードエリア */
+        #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.9rem; background: rgba(255,182,193,0.1); padding: 12px; border-radius: 15px; border: 1px solid rgba(255,182,193,0.3); width: 85%; max-width: 320px; }
+        .code-btn { margin-top: 10px; background: none; border: 1px dashed var(--pink); color: var(--pink); padding: 6px 15px; border-radius: 10px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
+        .code-btn:active { background: rgba(255,182,193,0.2); }
 
         /* ガチャ本体 */
         #gacha-container { position: relative; width: 320px; height: 380px; margin-top: 10px; }
@@ -33,10 +36,10 @@
             100% { transform: translate(-100px, -120px) scale(3) rotate(360deg); opacity: 1; z-index: 20; }
         }
 
-        .btn { margin-top: 20px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 6px 0 #db7093; cursor: pointer; }
+        .btn { margin-top: 10px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 6px 0 #db7093; cursor: pointer; }
         .btn:disabled { background: #666; box-shadow: 0 6px 0 #444; color: #ccc; cursor: not-allowed; }
 
-        /* フローティング図鑑ボタン */
+        /* 図鑑ボタン */
         #collection-btn { position: fixed; right: 20px; bottom: 30px; width: 70px; height: 70px; background: var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 100; cursor: pointer; border: 2px solid white; animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         #collection-btn span { font-size: 0.7rem; font-weight: bold; color: #1a1a1a; }
@@ -45,46 +48,15 @@
         #collection-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; z-index: 300; display: none; flex-direction: column; }
         .col-header { padding: 20px; text-align: center; background: #2a2a2a; border-bottom: 2px solid var(--gold); }
         .col-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
-        
-        /* カードスロット */
-        .card-slot { 
-            aspect-ratio: 2/3.5; background: radial-gradient(circle, #333, #222); 
-            border-radius: 8px; overflow: hidden; position: relative; border: 1px solid #444;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; color: #555; font-weight: bold;
-        }
+        .card-slot { aspect-ratio: 2/3.5; background: radial-gradient(circle, #333, #222); border-radius: 8px; overflow: hidden; position: relative; border: 1px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #555; font-weight: bold; }
         .card-slot.unlocked { border: 2px solid var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
         .card-slot img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- 3D拡大表示 --- */
-        #zoom-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.95); z-index: 500; display: none; 
-            flex-direction: column; align-items: center; justify-content: center;
-            perspective: 1200px; touch-action: none;
-        }
-        
-        /* 3Dカード本体のコンテナ */
-        .card-3d-wrapper {
-            width: 280px; height: 480px;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
-            cursor: grab;
-        }
-
-        /* 表・裏の共通スタイル */
-        .card-face {
-            position: absolute; width: 100%; height: 100%;
-            border-radius: 15px; border: 3px solid var(--gold);
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            box-shadow: 0 0 40px rgba(212, 175, 55, 0.4);
-            overflow: hidden;
-        }
-        
+        /* 3D拡大ビューアー */
+        #zoom-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 500; display: none; flex-direction: column; align-items: center; justify-content: center; perspective: 1200px; touch-action: none; }
+        .card-3d-wrapper { width: 280px; height: 480px; position: relative; transform-style: preserve-3d; transition: transform 0.1s ease-out; }
+        .card-face { position: absolute; width: 100%; height: 100%; border-radius: 15px; border: 3px solid var(--gold); backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: 0 0 40px rgba(212,175,55,0.4); overflow: hidden; }
         .card-face img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-        
         .card-front { transform: rotateY(0deg); z-index: 2; }
         .card-back { transform: rotateY(180deg); }
 
@@ -101,13 +73,14 @@
 
     <div class="title">
         <img src="images/icon2.png" alt="icon">
-        ミルコーンの冒険タロットガチャ<span>Pocket Premium Edition</span>
+        ミルコーンの冒険タロットガチャ<span>i love Gacha</span>
     </div>
 
+    <div id="coin-display">ミルコイン: <span id="coin-count">0</span> 枚</div>
+
     <div id="limit-info">
-        <span id="limit-text"></span>
-        <span id="timer"></span>
-        <span id="coin-message">早く引きたい場合はミルコインが必要だよ🦄</span>
+        <span id="limit-text"></span><br>
+        <button class="code-btn" onclick="enterCode()">ミルコインを追加する秘密のコード</button>
     </div>
 
     <div id="gacha-container">
@@ -126,7 +99,7 @@
         <div class="col-header">
             <h2 style="margin:0; color:var(--gold);">カード図鑑</h2>
             <p id="stats" style="margin:5px 0; font-size:0.9rem;"></p>
-            <button onclick="closeCollection()" style="background:var(--pink); border:none; padding:5px 15px; border-radius:20px; font-weight:bold;">戻る</button>
+            <button onclick="closeCollection()" style="background:var(--pink); border:none; padding:8px 25px; border-radius:20px; font-weight:bold;">戻る</button>
         </div>
         <div class="col-grid" id="col-grid"></div>
     </div>
@@ -136,7 +109,7 @@
             <div class="card-face card-front"><img id="zoom-img-front" src=""></div>
             <div class="card-face card-back"><img src="images/back.png"></div>
         </div>
-        <p style="color:white; margin-top:30px; font-size:0.8rem; opacity:0.8; letter-spacing: 1px;">左右に回せるよ 🦄 下にフリックで戻る</p>
+        <p style="color:white; margin-top:30px; font-size:0.8rem; opacity:0.8;">左右スワイプで回転 / 下フリックで閉じる</p>
     </div>
 
     <div id="result-overlay" onclick="closeResult()">
@@ -148,8 +121,7 @@
     </div>
 
     <script>
-        const MAX_PLAYS = 2; 
-        
+        // --- データ定義 ---
         const tarotData = [
             { name: "0. THE FOOL", desc: "💫 新しい冒険のはじまり\nワクワクする方を選んで大正解。", img: "images/0.png" },
             { name: "1. THE MAGICIAN", desc: "✨ 願いが動き出すタイミング\nあなたの言葉や行動が、現実を変えていくよ。", img: "images/1.png" },
@@ -232,65 +204,57 @@
             { name: "🦄 ULTIMATE", desc: "究極のかたちへ。おめでとう！", img: "images/78.png" }
         ];
 
-        let playCount = 0;
+        // --- ゲームステート ---
+        let coins = parseInt(localStorage.getItem('miruCoins') || '3'); // 初期コイン3枚
         let myCollection = JSON.parse(localStorage.getItem('myCollection') || '[]');
 
-        function updateLimitUI() {
-            const now = new Date();
-            const lastDate = localStorage.getItem('lastPlayDate');
-            const todayStr = now.toLocaleDateString();
-
-            if (lastDate !== todayStr) {
-                playCount = 0;
-                localStorage.setItem('playCount', 0);
-                localStorage.setItem('lastPlayDate', todayStr);
-            } else {
-                playCount = parseInt(localStorage.getItem('playCount') || 0);
-            }
-
+        function updateUI() {
+            document.getElementById('coin-count').innerText = coins;
             const btn = document.getElementById('play-btn');
-            const timerElement = document.getElementById('timer');
-            const coinMsg = document.getElementById('coin-message');
             const limitText = document.getElementById('limit-text');
 
-            if (playCount >= MAX_PLAYS) {
+            if (coins <= 0) {
                 btn.disabled = true;
-                limitText.innerText = "本日の占いは終了したよ🌙";
-                coinMsg.style.display = "block";
-                startTimer();
+                limitText.innerText = "コインがなくなったよ🌙 コードを入力してね！";
             } else {
                 btn.disabled = false;
-                limitText.innerText = `1日${MAX_PLAYS}回まで引けるよ🦄✨ (あと${MAX_PLAYS - playCount}回)`;
-                timerElement.innerText = "";
-                coinMsg.style.display = "none";
+                limitText.innerText = `あと ${coins} 回占えるよ🦄✨`;
+            }
+            localStorage.setItem('miruCoins', coins);
+        }
+
+        // --- シリアルコード機能 ---
+        function enterCode() {
+            const code = prompt("ミルコインを追加する秘密のコードを入力してね🦄");
+            if (!code) return;
+
+            // 🌟 コードリスト（ここを書き換えて自由に増やせます）
+            const rewards = {
+                "MIRUCORN777": 3,
+                "LUCKY2026": 5,
+                "OPEN": 1,
+                "SECRET": 10
+            };
+
+            if (rewards[code]) {
+                coins += rewards[code];
+                alert(`魔法が成功したよ！ミルコインを ${rewards[code]} 枚追加しました✨`);
+                updateUI();
+            } else {
+                alert("そのコードは使えないみたい😢");
             }
         }
 
-        function startTimer() {
-            function updateTimer() {
-                const now = new Date();
-                const nextReset = new Date();
-                nextReset.setHours(24, 0, 0, 0);
-                const diff = nextReset - now;
-                if (diff <= 0) { updateLimitUI(); return; }
-                const h = Math.floor(diff / 1000 / 60 / 60);
-                const m = Math.floor(diff / 1000 / 60) % 60;
-                const s = Math.floor(diff / 1000) % 60;
-                document.getElementById('timer').innerText = `次回まで：${h}時間${m}分${s}秒`;
-            }
-            updateTimer();
-            setInterval(updateTimer, 1000);
-        }
-
+        // --- ガチャロジック ---
         function playGacha() {
-            if (playCount >= MAX_PLAYS) return;
+            if (coins <= 0) return;
             const btn = document.getElementById('play-btn');
             const capsule = document.getElementById('capsule');
             const machine = document.getElementById('gacha-machine');
             
             btn.disabled = true;
-            playCount++;
-            localStorage.setItem('playCount', playCount);
+            coins--;
+            updateUI();
 
             const ballColors = ['#ff9999', '#99ccff', '#ffff99', '#cc99ff', '#99ff99'];
             capsule.style.background = ballColors[Math.floor(Math.random() * ballColors.length)];
@@ -298,7 +262,7 @@
             
             setTimeout(() => { machine.style.animation = "none"; }, 800);
             setTimeout(() => { capsule.style.display = "block"; capsule.classList.add('pop-out'); }, 600);
-            setTimeout(() => { showResult(); updateLimitUI(); }, 2100);
+            setTimeout(() => { showResult(); }, 2100);
         }
 
         function showResult() {
@@ -323,8 +287,10 @@
             const capsule = document.getElementById('capsule');
             capsule.style.display = "none";
             capsule.classList.remove('pop-out');
+            updateUI();
         }
 
+        // --- 図鑑システム ---
         function openCollection() {
             const grid = document.getElementById('col-grid');
             grid.innerHTML = "";
@@ -340,7 +306,6 @@
                 } else {
                     slot.innerText = "?";
                 }
-                
                 grid.appendChild(slot);
             });
 
@@ -352,7 +317,7 @@
             document.getElementById('collection-screen').style.display = "none";
         }
 
-        // --- 3D回転・スワイプ制御ロジック ---
+        // --- 3Dビューアー制御 ---
         let isDragging = false, startX = 0, startY = 0, currentRotY = 0;
         const card3d = document.getElementById('card-3d');
         const zoomOverlay = document.getElementById('zoom-overlay');
@@ -364,11 +329,6 @@
             zoomOverlay.style.display = "flex";
         }
 
-        function closeZoom() {
-            zoomOverlay.style.display = "none";
-        }
-
-        // スワイプイベント登録
         zoomOverlay.addEventListener('touchstart', (e) => {
             isDragging = true;
             startX = e.touches[0].pageX;
@@ -377,32 +337,23 @@
 
         zoomOverlay.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            
             const moveX = e.touches[0].pageX - startX;
             const moveY = e.touches[0].pageY - startY;
 
-            // 左右に回す
-            currentRotY += moveX * 0.6; 
+            currentRotY += moveX * 0.6;
             card3d.style.transform = `rotateY(${currentRotY}deg)`;
             startX = e.touches[0].pageX;
 
-            // 下に一定以上フリックしたら閉じる
-            if (moveY > 80) {
+            if (moveY > 80) { // 下フリックで閉じる
                 isDragging = false;
-                closeZoom();
+                zoomOverlay.style.display = "none";
             }
         });
 
-        zoomOverlay.addEventListener('touchend', () => {
-            isDragging = false;
-        });
+        zoomOverlay.addEventListener('touchend', () => { isDragging = false; });
 
-        // PCでの動作（クリック）対応
-        zoomOverlay.addEventListener('click', (e) => {
-            if(e.target === zoomOverlay) closeZoom();
-        });
-
-        window.onload = updateLimitUI;
+        // 初期化
+        window.onload = updateUI;
     </script>
 </body>
 </html>
