@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ミルコーンガチャ占い</title>
+    <title>ミルコーンガチャ占い Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
@@ -33,10 +33,24 @@
         /* 図鑑画面 */
         #collection-screen { position: fixed; inset: 0; background: #1a1a1a; z-index: 300; display: none; flex-direction: column; }
         .col-header { padding: 15px; text-align: center; border-bottom: 1px solid #333; }
-        .col-count-text { color: var(--gold); font-weight: bold; margin-top: 10px; display: block; }
+        .col-count-text { color: var(--gold); font-weight: bold; margin-top: 10px; display: block; line-height: 1.4; }
         .col-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
         .card-slot { aspect-ratio: 2/3.5; background: #2a2a2a; border-radius: 8px; border: 1px solid #444; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #555; }
         .card-slot img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 秘密の扉のバナー設定 */
+        .secret-door-banner {
+            grid-column: 1 / span 3;
+            margin-bottom: 10px;
+            padding: 15px;
+            background: linear-gradient(45deg, #FFD700, #FF69B4, #00BFFF);
+            background-size: 200% 200%;
+            animation: grad-flow 3s ease infinite;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid white;
+        }
+        @keyframes grad-flow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 
         /* カード表示・余白修正 */
         #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 400; }
@@ -63,7 +77,7 @@
     <div id="limit-info">
         <span id="limit-text"></span>
         <div id="timer-container" style="display:none; margin-top:10px;">
-            <span style="font-size:0.7rem; opacity:0.8;">ミルコイン回復(2枚)まであと</span>
+            <span style="font-size:0.7rem; opacity:0.8;">全回復(2枚)まであと</span>
             <span id="countdown">--:--:--</span>
         </div>
         <button class="code-btn" onclick="enterCode()">ミルコインを追加する秘密のコード</button>
@@ -79,8 +93,8 @@
 
     <div id="collection-screen">
         <div class="col-header">
-            <button onclick="closeCollection()" style="background:var(--pink); border:none; padding:10px 30px; border-radius:20px; font-weight:bold;">戻る</button>
-            <span class="col-count-text" id="col-count-display">0 / 79枚 コンプリート</span>
+            <button onclick="closeCollection()" style="background:var(--pink); border:none; padding:10px 30px; border-radius:20px; font-weight:bold; color:white;">戻る</button>
+            <span class="col-count-text" id="col-count-display"></span>
         </div>
         <div class="col-grid" id="col-grid"></div>
     </div>
@@ -263,8 +277,24 @@
 
         function openCollection() {
             const grid = document.getElementById('col-grid'); grid.innerHTML = "";
-            document.getElementById('col-count-display').innerText = `${myCollection.length} / ${tarotData.length}枚 コンプリート`;
             
+            // 図鑑の枚数表示 + 注意書き
+            document.getElementById('col-count-display').innerHTML = `
+                ${myCollection.length} / ${tarotData.length}枚 コンプリート<br>
+                <span style="font-size:0.6rem; font-weight:normal; opacity:0.7;">※履歴を消すとデータが消えるので注意してね</span>
+            `;
+            
+            // 🏆 秘密の扉（79枚コンプ時のみ出現）
+            if (myCollection.length >= tarotData.length) {
+                const door = document.createElement('div');
+                door.className = "secret-door-banner";
+                door.innerHTML = `
+                    <p style="margin:0; font-weight:bold; color:white; text-shadow:1px 1px 2px black;">🌟 伝説のコンプリート 🌟</p>
+                    <a href="ここにURLを貼る" target="_blank" style="display:inline-block; margin-top:10px; background:white; color:#ff69b4; padding:8px 20px; border-radius:10px; text-decoration:none; font-weight:bold; font-size:0.9rem;">秘密の扉を開く🦄</a>
+                `;
+                grid.appendChild(door);
+            }
+
             tarotData.forEach((c, i) => {
                 const slot = document.createElement('div');
                 slot.className = 'card-slot';
