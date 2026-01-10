@@ -12,14 +12,17 @@
         :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
         body { background: var(--bg); color: white; font-family: var(--font); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
 
-        .title { margin-top: 20px; font-size: 1.2rem; color: var(--gold); text-align: center; font-weight: 700; }
+        /* ヘッダー */
+        .title { margin-top: 20px; font-size: 1.2rem; color: var(--gold); text-align: center; font-weight: 700; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
         .title img { width: 30px; vertical-align: middle; margin-right: 8px; border-radius: 50%; border: 1px solid var(--gold); }
         .title span { display: block; font-size: 0.8rem; letter-spacing: 3px; opacity: 0.8; margin-top: 5px; }
 
+        /* 回数制限エリア */
         #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.9rem; background: rgba(255,182,193,0.1); padding: 10px 20px; border-radius: 15px; border: 1px solid rgba(255,182,193,0.3); width: 85%; max-width: 300px; }
         #timer { color: #fff; font-weight: bold; font-family: monospace; display: block; margin-top: 5px; }
         #coin-message { color: #ffa0a0; font-size: 0.8rem; margin-top: 5px; display: none; }
 
+        /* ガチャ本体 */
         #gacha-container { position: relative; width: 320px; height: 380px; margin-top: 10px; }
         #gacha-machine { width: 100%; height: 100%; object-fit: contain; z-index: 10; position: relative; }
         #capsule { position: absolute; bottom: 60px; right: 40px; width: 60px; height: 60px; border-radius: 50%; transform: scale(0); z-index: 5; display: none; }
@@ -31,24 +34,33 @@
         }
 
         .btn { margin-top: 20px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 6px 0 #db7093; cursor: pointer; }
-        .btn:disabled { background: #666; box-shadow: 0 6px 0 #444; color: #ccc; }
+        .btn:disabled { background: #666; box-shadow: 0 6px 0 #444; color: #ccc; cursor: not-allowed; }
 
+        /* フローティング図鑑ボタン */
         #collection-btn { position: fixed; right: 20px; bottom: 30px; width: 70px; height: 70px; background: var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 100; cursor: pointer; border: 2px solid white; animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         #collection-btn span { font-size: 0.7rem; font-weight: bold; color: #1a1a1a; }
 
+        /* 図鑑画面 */
         #collection-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; z-index: 300; display: none; flex-direction: column; }
         .col-header { padding: 20px; text-align: center; background: #2a2a2a; border-bottom: 2px solid var(--gold); }
         .col-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
-        .card-slot { aspect-ratio: 2/3.5; background: #333; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid #444; cursor: pointer; }
-        .card-slot img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) brightness(0.3); transition: 0.3s; }
-        .card-slot.unlocked img { filter: none; }
-        .card-slot.unlocked::after { content: ''; position: absolute; inset: 0; border: 2px solid var(--gold); border-radius: 8px; pointer-events: none; }
+        
+        /* カードスロット（軽量化：画像がない時は？を表示） */
+        .card-slot { 
+            aspect-ratio: 2/3.5; background: radial-gradient(circle, #333, #222); 
+            border-radius: 8px; overflow: hidden; position: relative; border: 1px solid #444;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: #555; font-weight: bold;
+        }
+        .card-slot.unlocked { border: 2px solid var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+        .card-slot img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 図鑑内拡大表示用 */
+        /* 拡大表示 */
         #zoom-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 500; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .zoom-card { width: 85%; max-width: 300px; border-radius: 15px; border: 3px solid var(--gold); box-shadow: 0 0 30px var(--gold); }
 
+        /* ガチャ結果 */
         #result-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 400; }
         .card-reveal { width: 220px; height: 370px; border: 3px solid var(--gold); border-radius: 15px; overflow: hidden; animation: card-up 0.8s forwards; }
         @keyframes card-up { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -61,11 +73,11 @@
 
     <div class="title">
         <img src="images/icon2.png" alt="icon">
-        ミルコーンの冒険タロットガチャ<span>Gacha Edition</span>
+        ミルコーンの冒険タロットガチャ<span>Pocket Premium Edition</span>
     </div>
 
     <div id="limit-info">
-        <span id="limit-text">このガチャは1日3回まで引けるよ🦄✨</span>
+        <span id="limit-text"></span>
         <span id="timer"></span>
         <span id="coin-message">早く引きたい場合はミルコインが必要だよ🦄</span>
     </div>
@@ -86,7 +98,7 @@
         <div class="col-header">
             <h2 style="margin:0; color:var(--gold);">カード図鑑</h2>
             <p id="stats" style="margin:5px 0; font-size:0.9rem;"></p>
-            <button onclick="closeCollection()" style="background:var(--pink); border:none; padding:5px 15px; border-radius:20px; font-weight:bold;">ガチャに戻る</button>
+            <button onclick="closeCollection()" style="background:var(--pink); border:none; padding:5px 15px; border-radius:20px; font-weight:bold;">戻る</button>
         </div>
         <div class="col-grid" id="col-grid"></div>
     </div>
@@ -105,7 +117,9 @@
     </div>
 
     <script>
-        // カードデータ（全79種）
+        // --- 設定エリア ---
+        const MAX_PLAYS = 4; // 1日の最大回数
+        
         const tarotData = [
             { name: "0. THE FOOL", desc: "💫 新しい冒険のはじまり\nワクワクする方を選んで大正解。", img: "images/0.png" },
             { name: "1. THE MAGICIAN", desc: "✨ 願いが動き出すタイミング\nあなたの言葉や行動が、現実を変えていくよ。", img: "images/1.png" },
@@ -209,14 +223,14 @@
             const coinMsg = document.getElementById('coin-message');
             const limitText = document.getElementById('limit-text');
 
-            if (playCount >= 3) {
+            if (playCount >= MAX_PLAYS) {
                 btn.disabled = true;
                 limitText.innerText = "本日の占いは終了したよ🌙";
                 coinMsg.style.display = "block";
                 startTimer();
             } else {
                 btn.disabled = false;
-                limitText.innerText = `このガチャは1日3回まで引けるよ🦄✨ (あと${3 - playCount}回)`;
+                limitText.innerText = `1日${MAX_PLAYS}回まで引けるよ🦄✨ (あと${MAX_PLAYS - playCount}回)`;
                 timerElement.innerText = "";
                 coinMsg.style.display = "none";
             }
@@ -239,7 +253,7 @@
         }
 
         function playGacha() {
-            if (playCount >= 3) return;
+            if (playCount >= MAX_PLAYS) return;
             const btn = document.getElementById('play-btn');
             const capsule = document.getElementById('capsule');
             const machine = document.getElementById('gacha-machine');
@@ -281,6 +295,7 @@
             capsule.classList.remove('pop-out');
         }
 
+        // --- 図鑑（軽量版ロジック） ---
         function openCollection() {
             const grid = document.getElementById('col-grid');
             grid.innerHTML = "";
@@ -289,11 +304,14 @@
                 const slot = document.createElement('div');
                 const isUnlocked = myCollection.includes(index);
                 slot.className = `card-slot ${isUnlocked ? 'unlocked' : ''}`;
-                slot.innerHTML = `<img src="${card.img}">`;
                 
-                // 解放済みならクリックで拡大
                 if (isUnlocked) {
+                    // 解放済み：画像あり
+                    slot.innerHTML = `<img src="${card.img}">`;
                     slot.onclick = () => zoomCard(card.img);
+                } else {
+                    // 未解放：？のみ（画像は読み込まない）
+                    slot.innerText = "?";
                 }
                 
                 grid.appendChild(slot);
