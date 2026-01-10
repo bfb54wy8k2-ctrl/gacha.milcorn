@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ミルポケ Premium Gacha</title>
+    <title>ミルコーンガチャ占い</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="images/icon.png" type="image/png">
-    <link rel="apple-touch-icon" href="images/icon.png">
+    
+    <link rel="icon" href="images/icon2.png" type="image/png">
+    <link rel="apple-touch-icon" href="images/icon2.png">
+
     <style>
         :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
         body { background: var(--bg); color: white; font-family: var(--font); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
 
         .title { margin-top: 20px; font-size: 1.2rem; color: var(--gold); text-align: center; font-weight: 700; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+        .title img { width: 30px; vertical-align: middle; margin-right: 8px; border-radius: 50%; border: 1px solid var(--gold); }
         .title span { display: block; font-size: 0.8rem; letter-spacing: 3px; opacity: 0.8; margin-top: 5px; }
 
         /* 回数・タイマー表示エリア */
-        #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.9rem; background: rgba(255,182,193,0.1); padding: 10px 20px; border-radius: 15px; border: 1px solid rgba(255,182,193,0.3); }
+        #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.9rem; background: rgba(255,182,193,0.1); padding: 10px 20px; border-radius: 15px; border: 1px solid rgba(255,182,193,0.3); width: 85%; max-width: 300px; }
         #timer { color: #fff; font-weight: bold; font-family: monospace; display: block; margin-top: 5px; }
-        #coin-message { color: #ffa0a0; font-size: 0.8rem; margin-top: 5px; display: none; }
+        #coin-message { color: #ffa0a0; font-size: 0.8rem; margin-top: 5px; display: none; line-height: 1.4; }
 
         /* ガチャ本体のエリア */
         #gacha-container { position: relative; width: 320px; height: 420px; margin-top: 10px; }
@@ -75,7 +78,11 @@
 </head>
 <body>
 
-    <div class="title">ミルコーンの冒険タロットガチャ<span>Gacha Edition</span></div>
+    <div class="title">
+        <img src="images/icon2.png" alt="icon">
+        ミルコーンの冒険タロットガチャ
+        <span>Gacha Edition</span>
+    </div>
 
     <div id="limit-info">
         <span id="limit-text">このガチャは1日3回まで引けるよ🦄✨</span>
@@ -126,10 +133,10 @@
             { name: "21. THE WORLD", desc: "🌈 願いがひとつ完成する\nここまで本当によく頑張ったね。", img: "images/21.png" },
             { name: "ACE OF WANDS", desc: "🔥 WANDS\n✨ 新しいやる気が芽生えるよ。今がスタート！", img: "images/22.png" },
             { name: "TWO OF WANDS", desc: "🔥 WANDS\n🌈 未来の選択肢が広がってる。どっちも素敵。", img: "images/23.png" },
-            { name: "THREE OF WANDS", desc: "🔥 WANDS\n🚢 期待して待ってて。ちゃんと進展があるよ。", img: "images/24.png" },
+            { name: "THREE OF WANDS", desc: "🔥 WANDS\n🚢 期待して待ってて. ちゃんと進展があるよ。", img: "images/24.png" },
             { name: "FOUR OF WANDS", desc: "🔥 WANDS\n🏡 安心できる場所で、嬉しい出来事がありそう。", img: "images/25.png" },
             { name: "FIVE OF WANDS", desc: "🔥 WANDS\n💥 ちょっとしたぶつかり合い。深刻じゃないよ。", img: "images/26.png" },
-            { name: "SIX OF WANDS", desc: "🔥 WANDS\n🏆 頑張りが認められる時。自信持って！", img: "images/27.png" },
+            { name: "SIX OF WANDS", desc: "🔥 WANDS\n🏆 頑張りが認められる時. 自信持って！", img: "images/27.png" },
             { name: "SEVEN OF WANDS", desc: "🔥 WANDS\n🛡 自分を守ってOK。あなたは間違ってない。", img: "images/28.png" },
             { name: "EIGHT OF WANDS", desc: "🔥 WANDS\n💌 急展開の予感！連絡や進展が早いよ。", img: "images/29.png" },
             { name: "NINE OF WANDS", desc: "🔥 WANDS\n💪 もう少しでゴール。踏ん張りどき。", img: "images/30.png" },
@@ -192,7 +199,6 @@
             const lastDate = localStorage.getItem('lastPlayDate');
             const todayStr = now.toLocaleDateString();
 
-            // 日付が変わっていたらリセット
             if (lastDate !== todayStr) {
                 playCount = 0;
                 localStorage.setItem('playCount', 0);
@@ -223,20 +229,13 @@
             function updateTimer() {
                 const now = new Date();
                 const nextReset = new Date();
-                nextReset.setHours(24, 0, 0, 0); // 今日の24:00 (明日0:00)
-
+                nextReset.setHours(24, 0, 0, 0); 
                 const diff = nextReset - now;
-                if (diff <= 0) {
-                    updateLimitUI();
-                    return;
-                }
-
+                if (diff <= 0) { updateLimitUI(); return; }
                 const h = Math.floor(diff / 1000 / 60 / 60);
                 const m = Math.floor(diff / 1000 / 60) % 60;
                 const s = Math.floor(diff / 1000) % 60;
-
-                document.getElementById('timer').innerText = 
-                    `次回まで：${h}時間${m}分${s}秒`;
+                document.getElementById('timer').innerText = `次回まで：${h}時間${m}分${s}秒`;
             }
             updateTimer();
             setInterval(updateTimer, 1000);
@@ -244,20 +243,21 @@
 
         function playGacha() {
             if (playCount >= MAX_PLAYS) return;
-
             const btn = document.getElementById('play-btn');
             const capsule = document.getElementById('capsule');
             const machine = document.getElementById('gacha-machine');
-            
             btn.disabled = true;
-
-            // 回数を記録
             playCount++;
             localStorage.setItem('playCount', playCount);
 
-            // アニメーション演出
-            const ballColors = ['#ff9999', '#99ccff', '#ffff99', '#cc99ff', '#99ff99'];
-            capsule.style.background = `radial-gradient(circle at 30% 30%, #fff, ${ballColors[Math.floor(Math.random()*5)]})`;
+            const ballColors = [
+                'radial-gradient(circle at 30% 30%, #ff9999, #cc0000)',
+                'radial-gradient(circle at 30% 30%, #99ccff, #0033cc)',
+                'radial-gradient(circle at 30% 30%, #ffff99, #ffcc00)',
+                'radial-gradient(circle at 30% 30%, #cc99ff, #6600cc)',
+                'radial-gradient(circle at 30% 30%, #99ff99, #009900)'
+            ];
+            capsule.style.background = ballColors[Math.floor(Math.random() * ballColors.length)];
             machine.style.animation = "shake 0.1s infinite";
             
             setTimeout(() => { machine.style.animation = "none"; }, 800);
@@ -265,11 +265,7 @@
                 capsule.style.display = "block";
                 capsule.classList.add('pop-out');
             }, 600);
-
-            setTimeout(() => {
-                showResult();
-                updateLimitUI();
-            }, 2100);
+            setTimeout(() => { showResult(); updateLimitUI(); }, 2100);
         }
 
         function showResult() {
@@ -290,7 +286,6 @@
             updateLimitUI();
         }
 
-        // 起動時に状態を確認
         window.onload = updateLimitUI;
     </script>
 </body>
