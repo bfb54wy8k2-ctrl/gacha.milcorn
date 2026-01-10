@@ -239,7 +239,7 @@
         function enterCode() {
             const code = prompt("秘密のコードを入力してね🦄");
             if (!code) return;
-            const rewards = { "MIRUCORN777": 3, "LUCKY2026": 5, "OPEN": 1 };
+            const rewards = { "MIRUCORN777": 3, "LUCKY2026": 9999, "OPEN": 1 };
             if (usedCodes.includes(code)) {
                 alert("そのコードはもう使ったよ！");
             } else if (rewards[code]) {
@@ -281,7 +281,7 @@
             // 図鑑の枚数表示 + 注意書き
             document.getElementById('col-count-display').innerHTML = `
                 ${myCollection.length} / ${tarotData.length}枚 コンプリート<br>
-                <span style="font-size:0.6rem; font-weight:normal; opacity:0.7;">※履歴を消すとデータが消えるので注意してね</span>
+                <span style="font-size:0.6rem; font-weight:normal; opacity:0.7;">※キャッシュ履歴を消すとデータが消えるので注意してね</span>
             `;
             
             // 🏆 秘密の扉（79枚コンプ時のみ出現）
