@@ -46,7 +46,7 @@
         .col-header { padding: 20px; text-align: center; background: #2a2a2a; border-bottom: 2px solid var(--gold); }
         .col-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
         
-        /* カードスロット（軽量化：画像がない時は？を表示） */
+        /* カードスロット */
         .card-slot { 
             aspect-ratio: 2/3.5; background: radial-gradient(circle, #333, #222); 
             border-radius: 8px; overflow: hidden; position: relative; border: 1px solid #444;
@@ -56,9 +56,37 @@
         .card-slot.unlocked { border: 2px solid var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
         .card-slot img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 拡大表示 */
-        #zoom-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 500; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .zoom-card { width: 85%; max-width: 300px; border-radius: 15px; border: 3px solid var(--gold); box-shadow: 0 0 30px var(--gold); }
+        /* --- 3D拡大表示 --- */
+        #zoom-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); z-index: 500; display: none; 
+            flex-direction: column; align-items: center; justify-content: center;
+            perspective: 1200px; touch-action: none;
+        }
+        
+        /* 3Dカード本体のコンテナ */
+        .card-3d-wrapper {
+            width: 280px; height: 480px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            cursor: grab;
+        }
+
+        /* 表・裏の共通スタイル */
+        .card-face {
+            position: absolute; width: 100%; height: 100%;
+            border-radius: 15px; border: 3px solid var(--gold);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.4);
+            overflow: hidden;
+        }
+        
+        .card-face img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        
+        .card-front { transform: rotateY(0deg); z-index: 2; }
+        .card-back { transform: rotateY(180deg); }
 
         /* ガチャ結果 */
         #result-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 400; }
@@ -103,9 +131,12 @@
         <div class="col-grid" id="col-grid"></div>
     </div>
 
-    <div id="zoom-overlay" onclick="closeZoom()">
-        <img id="zoom-img" class="zoom-card" src="">
-        <p style="color:white; margin-top:20px; font-size:0.8rem;">タップして戻る</p>
+    <div id="zoom-overlay">
+        <div class="card-3d-wrapper" id="card-3d">
+            <div class="card-face card-front"><img id="zoom-img-front" src=""></div>
+            <div class="card-face card-back"><img src="images/back.png"></div>
+        </div>
+        <p style="color:white; margin-top:30px; font-size:0.8rem; opacity:0.8; letter-spacing: 1px;">左右に回せるよ 🦄 下にフリックで戻る</p>
     </div>
 
     <div id="result-overlay" onclick="closeResult()">
@@ -117,8 +148,7 @@
     </div>
 
     <script>
-        // --- 設定エリア ---
-        const MAX_PLAYS = 2; // 1日の最大回数
+        const MAX_PLAYS = 2; 
         
         const tarotData = [
             { name: "0. THE FOOL", desc: "💫 新しい冒険のはじまり\nワクワクする方を選んで大正解。", img: "images/0.png" },
@@ -263,7 +293,7 @@
             localStorage.setItem('playCount', playCount);
 
             const ballColors = ['#ff9999', '#99ccff', '#ffff99', '#cc99ff', '#99ff99'];
-            capsule.style.background = ballColors[Math.floor(Math.random() * 5)];
+            capsule.style.background = ballColors[Math.floor(Math.random() * ballColors.length)];
             machine.style.animation = "shake 0.1s infinite";
             
             setTimeout(() => { machine.style.animation = "none"; }, 800);
@@ -295,7 +325,6 @@
             capsule.classList.remove('pop-out');
         }
 
-        // --- 図鑑（軽量版ロジック） ---
         function openCollection() {
             const grid = document.getElementById('col-grid');
             grid.innerHTML = "";
@@ -306,11 +335,9 @@
                 slot.className = `card-slot ${isUnlocked ? 'unlocked' : ''}`;
                 
                 if (isUnlocked) {
-                    // 解放済み：画像あり
                     slot.innerHTML = `<img src="${card.img}">`;
-                    slot.onclick = () => zoomCard(card.img);
+                    slot.onclick = () => openZoom(card.img);
                 } else {
-                    // 未解放：？のみ（画像は読み込まない）
                     slot.innerText = "?";
                 }
                 
@@ -321,20 +348,59 @@
             document.getElementById('collection-screen').style.display = "flex";
         }
 
-        function zoomCard(imgSrc) {
-            const zoomOverlay = document.getElementById('zoom-overlay');
-            const zoomImg = document.getElementById('zoom-img');
-            zoomImg.src = imgSrc;
+        function closeCollection() {
+            document.getElementById('collection-screen').style.display = "none";
+        }
+
+        // --- 3D回転・スワイプ制御ロジック ---
+        let isDragging = false, startX = 0, startY = 0, currentRotY = 0;
+        const card3d = document.getElementById('card-3d');
+        const zoomOverlay = document.getElementById('zoom-overlay');
+
+        function openZoom(imgSrc) {
+            document.getElementById('zoom-img-front').src = imgSrc;
+            currentRotY = 0;
+            card3d.style.transform = `rotateY(0deg)`;
             zoomOverlay.style.display = "flex";
         }
 
         function closeZoom() {
-            document.getElementById('zoom-overlay').style.display = "none";
+            zoomOverlay.style.display = "none";
         }
 
-        function closeCollection() {
-            document.getElementById('collection-screen').style.display = "none";
-        }
+        // スワイプイベント登録
+        zoomOverlay.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].pageX;
+            startY = e.touches[0].pageY;
+        });
+
+        zoomOverlay.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            
+            const moveX = e.touches[0].pageX - startX;
+            const moveY = e.touches[0].pageY - startY;
+
+            // 左右に回す
+            currentRotY += moveX * 0.6; 
+            card3d.style.transform = `rotateY(${currentRotY}deg)`;
+            startX = e.touches[0].pageX;
+
+            // 下に一定以上フリックしたら閉じる
+            if (moveY > 80) {
+                isDragging = false;
+                closeZoom();
+            }
+        });
+
+        zoomOverlay.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // PCでの動作（クリック）対応
+        zoomOverlay.addEventListener('click', (e) => {
+            if(e.target === zoomOverlay) closeZoom();
+        });
 
         window.onload = updateLimitUI;
     </script>
