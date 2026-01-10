@@ -30,26 +30,34 @@
 
         #collection-btn { position: fixed; right: 20px; bottom: 30px; width: 65px; height: 65px; background: var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
+        /* 図鑑画面 */
         #collection-screen { position: fixed; inset: 0; background: #1a1a1a; z-index: 300; display: none; flex-direction: column; }
+        .col-header { padding: 15px; text-align: center; border-bottom: 1px solid #333; }
+        .col-count-text { color: var(--gold); font-weight: bold; margin-top: 10px; display: block; }
         .col-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
         .card-slot { aspect-ratio: 2/3.5; background: #2a2a2a; border-radius: 8px; border: 1px solid #444; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #555; }
         .card-slot img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* カード表示・余白修正 */
+        #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 400; }
+        .card-reveal { width: 70%; max-width: 250px; aspect-ratio: 2/3.5; border: 3px solid var(--gold); border-radius: 15px; overflow: hidden; background: black; display: flex; align-items: center; justify-content: center; animation: card-up 0.8s forwards; }
+        .card-reveal img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        @keyframes card-up { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        #detail { width: 85%; max-width: 320px; background: #fefcf0; color: #333; padding: 15px; border-radius: 20px; margin-top: 15px; text-align: center; box-sizing: border-box; }
+
+        /* 3Dズーム */
         #zoom-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 500; display: none; flex-direction: column; align-items: center; justify-content: center; perspective: 1000px; touch-action: none; }
         .card-3d-wrapper { width: 280px; height: 460px; position: relative; transform-style: preserve-3d; transition: transform 0.1s; }
-        .card-face { position: absolute; inset: 0; border-radius: 15px; border: 3px solid var(--gold); backface-visibility: hidden; }
+        .card-face { position: absolute; inset: 0; border-radius: 15px; border: 3px solid var(--gold); backface-visibility: hidden; background: black; }
         .card-back { transform: rotateY(180deg); }
-        .card-face img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-        #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 400; }
-        .card-reveal { width: 220px; height: 370px; border: 3px solid var(--gold); border-radius: 15px; overflow: hidden; animation: card-up 0.8s forwards; }
-        #detail { width: 85%; background: #fefcf0; color: #333; padding: 15px; border-radius: 20px; margin-top: 15px; text-align: center; }
+        .card-face img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; display: block; }
 
-        @keyframes card-up { 0% { transform: scale(0); } 100% { transform: scale(1); } }
         @keyframes shake { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-2deg); } }
     </style>
 </head>
 <body>
 
-    <div class="title"><img src="images/icon2.png">ミルコーンの冒険タロットガチャ</div>
+    <div class="title"><img src="images/icon2.png">ミルコーンの冒険タロット</div>
     <div id="coin-display">ミルコイン: <span id="coin-count">0</span> 枚</div>
 
     <div id="limit-info">
@@ -70,9 +78,13 @@
     <div id="collection-btn" onclick="openCollection()">📖<br><span style="font-size:0.6rem;">図鑑</span></div>
 
     <div id="collection-screen">
-        <div style="padding:15px; text-align:center;"><button onclick="closeCollection()" style="background:var(--pink); border:none; padding:10px 30px; border-radius:20px; font-weight:bold;">戻る</button></div>
+        <div class="col-header">
+            <button onclick="closeCollection()" style="background:var(--pink); border:none; padding:10px 30px; border-radius:20px; font-weight:bold;">戻る</button>
+            <span class="col-count-text" id="col-count-display">0 / 79枚 コンプリート</span>
+        </div>
         <div class="col-grid" id="col-grid"></div>
     </div>
+
     <div id="zoom-overlay">
         <div class="card-3d-wrapper" id="card-3d">
             <div class="card-face card-front"><img id="zoom-img-front" src=""></div>
@@ -80,6 +92,7 @@
         </div>
         <p style="color:white; margin-top:20px; font-size:0.8rem;">左右回転 / 下スワイプで閉じる</p>
     </div>
+
     <div id="result-overlay" onclick="closeResult()">
         <div class="card-reveal" id="card-box"></div>
         <div id="detail"><h2 id="card-name" style="margin:0; font-size:1rem; color:#d44d7c;"></h2><p id="card-desc" style="font-size:0.8rem; margin-top:8px;"></p></div>
@@ -109,7 +122,6 @@
             { name: "19. THE SUN", desc: "☀️ 全てが輝き出す！", img: "images/19.png" },
             { name: "20. JUDGEMENT", desc: "🎺 過去が報われる。", img: "images/20.png" },
             { name: "21. THE WORLD", desc: "🌈 最高のハッピーエンド！", img: "images/21.png" },
-            // 小アルカナ（ワンド）
             { name: "WANDS ACE", desc: "🔥 情熱的なスタート！", img: "images/22.png" },
             { name: "WANDS 2", desc: "🌍 未来の計画を練ろう。", img: "images/23.png" },
             { name: "WANDS 3", desc: "🚢 可能性が広がってる。", img: "images/24.png" },
@@ -124,7 +136,6 @@
             { name: "WANDS KNIGHT", desc: "💨 迷わず進め！", img: "images/33.png" },
             { name: "WANDS QUEEN", desc: "🌻 自信に溢れる魅力。", img: "images/34.png" },
             { name: "WANDS KING", desc: "🦁 リーダーシップを発揮。", img: "images/35.png" },
-            // カップ
             { name: "CUPS ACE", desc: "💖 愛が溢れ出す。", img: "images/36.png" },
             { name: "CUPS 2", desc: "💕 心が通じ合う。", img: "images/37.png" },
             { name: "CUPS 3", desc: "🎉 喜びを共有しよう。", img: "images/38.png" },
@@ -139,7 +150,6 @@
             { name: "CUPS KNIGHT", desc: "🌹 ロマンチックな展開。", img: "images/47.png" },
             { name: "CUPS QUEEN", desc: "🫶 深い愛で包んで。", img: "images/48.png" },
             { name: "CUPS KING", desc: "🌊 寛大さが人を救う。", img: "images/49.png" },
-            // ソード
             { name: "SWORDS ACE", desc: "💡 鋭い決断ができる。", img: "images/50.png" },
             { name: "SWORDS 2", desc: "🙈 均衡を保つ時。", img: "images/51.png" },
             { name: "SWORDS 3", desc: "💔 心の痛みを受け入れて。", img: "images/52.png" },
@@ -154,7 +164,6 @@
             { name: "SWORDS KNIGHT", desc: "💨 思考の速さが武器。", img: "images/61.png" },
             { name: "SWORDS QUEEN", desc: "❄️ 冷静な判断が正解。", img: "images/62.png" },
             { name: "SWORDS KING", desc: "🧠 公平なリーダー。", img: "images/63.png" },
-            // ペンタクル
             { name: "PENTACLES ACE", desc: "💰 幸運の種を手にする。", img: "images/64.png" },
             { name: "PENTACLES 2", desc: "🔄 変化を楽しもう。", img: "images/65.png" },
             { name: "PENTACLES 3", desc: "🤝 協力して作り上げる。", img: "images/66.png" },
@@ -239,7 +248,7 @@
                 const id = Math.floor(Math.random() * tarotData.length);
                 if(!myCollection.includes(id)) myCollection.push(id);
                 localStorage.setItem('myCollection', JSON.stringify(myCollection));
-                document.getElementById('card-box').innerHTML = `<img src="${tarotData[id].img}" style="width:100%">`;
+                document.getElementById('card-box').innerHTML = `<img src="${tarotData[id].img}">`;
                 document.getElementById('card-name').innerText = tarotData[id].name;
                 document.getElementById('card-desc').innerText = tarotData[id].desc;
                 document.getElementById('result-overlay').style.display = "flex";
@@ -254,6 +263,8 @@
 
         function openCollection() {
             const grid = document.getElementById('col-grid'); grid.innerHTML = "";
+            document.getElementById('col-count-display').innerText = `${myCollection.length} / ${tarotData.length}枚 コンプリート`;
+            
             tarotData.forEach((c, i) => {
                 const slot = document.createElement('div');
                 slot.className = 'card-slot';
