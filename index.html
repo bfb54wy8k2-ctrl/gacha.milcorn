@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ミルコーンガチャ占い Premium</title>
+    <title>ミルコーンの冒険タロットガチャ Premium 3D</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
@@ -61,15 +61,19 @@
         .col-header { padding: 15px; text-align: center; border-bottom: 1px solid #333; }
         .col-count-text { color: var(--gold); font-weight: bold; margin-top: 10px; display: block; line-height: 1.4; }
         .col-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 15px; }
-        .card-slot { aspect-ratio: 2/3.5; background: #2a2a2a; border-radius: 8px; border: 1px solid #444; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #555; }
+        .card-slot { aspect-ratio: 2/3.5; background: #2a2a2a; border-radius: 8px; border: 1px solid #444; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #555; cursor: pointer; }
         .card-slot img { width: 100%; height: 100%; object-fit: cover; }
 
-        .secret-door-banner {
-            grid-column: 1 / span 2; margin-bottom: 10px; padding: 15px;
-            background: linear-gradient(45deg, #FFD700, #FF69B4, #00BFFF); background-size: 200% 200%; animation: grad-flow 3s ease infinite;
-            border-radius: 12px; text-align: center; border: 2px solid white;
-        }
-        @keyframes grad-flow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        /* 3D拡大ビューア */
+        #viewer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 500; display: none; flex-direction: column; align-items: center; justify-content: center; touch-action: none; }
+        .viewer-scene { width: 280px; height: 480px; perspective: 1200px; }
+        .card-3d { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.1s ease-out; }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 18px; border: 4px solid var(--gold); overflow: hidden; }
+        .face-front { background: black; }
+        .face-front img { width: 100%; height: 100%; object-fit: cover; }
+        .face-back { background: #2a2a2a; transform: rotateY(180deg); }
+        .face-back img { width: 100%; height: 100%; object-fit: cover; }
+        .viewer-hint { margin-top: 25px; color: var(--gold); font-size: 0.8rem; animation: pulse 1.5s infinite; }
 
         #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 400; }
         .card-reveal { width: 70%; max-width: 250px; aspect-ratio: 2/3.5; border: 3px solid var(--gold); border-radius: 15px; overflow: hidden; background: black; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -78,6 +82,7 @@
         #detail { width: 85%; max-width: 320px; background: #fefcf0; color: #333; padding: 15px; border-radius: 20px; margin-top: 15px; text-align: center; opacity: 0; }
         #detail.active { opacity: 1; transition: opacity 0.5s; }
 
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
         @keyframes shake { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-3deg); } }
     </style>
 </head>
@@ -108,6 +113,17 @@
             <span class="col-count-text" id="col-count-display"></span>
         </div>
         <div class="col-grid" id="col-grid"></div>
+    </div>
+
+    <div id="viewer-overlay">
+        <div class="viewer-scene">
+            <div class="card-3d" id="card-3d-target">
+                <div class="card-face face-front"><img id="viewer-img-front" src=""></div>
+                <div class="card-face face-back"><img src="images/back.png"></div>
+            </div>
+        </div>
+        <div class="viewer-hint">左右になぞって回転 ✨</div>
+        <button onclick="closeViewer()" style="margin-top:30px; background:white; color:black; border:none; padding:12px 40px; border-radius:25px; font-weight:bold;">閉じる</button>
     </div>
 
     <div id="result-overlay" onclick="closeResult()">
@@ -170,7 +186,7 @@
             { id: 50, name: "ACE OF SWORDS", desc: "💡 答えが出る時", img: "images/50.png" },
             { id: 51, name: "TWO OF SWORDS", desc: "🙈 心の準備中", img: "images/51.png" },
             { id: 52, name: "THREE OF SWORDS", desc: "💔 癒やしが必要", img: "images/52.png" },
-            { id: 53, name: "FOUR OF SWORDS", desc: "😴 ゆっくり休もう", img: "images/53.png" },
+            { id: 53, name: "FOUR OF SWORDS", desc: "😴 ゆっくり休おう", img: "images/53.png" },
             { id: 54, name: "FIVE OF SWORDS", desc: "⚠ 冷静になろう", img: "images/54.png" },
             { id: 55, name: "SIX OF SWORDS", desc: "🚤 少しずつ前へ", img: "images/55.png" },
             { id: 56, name: "SEVEN OF SWORDS", desc: "🦊 慎重に動こう", img: "images/56.png" },
@@ -198,9 +214,7 @@
             { id: 78, name: "🦄 ULTIMATE", desc: "究極の奇跡が起きる（レア）", img: "images/78.png" }
         ];
 
-        // 指定されたレアカードの画像リスト
         const rareImgList = ["images/6.png", "images/17.png", "images/37.png", "images/44.png", "images/78.png"];
-
         let coins = parseInt(localStorage.getItem('miruCoins') || '2');
         let lastAccess = localStorage.getItem('lastAccessDate');
         let myCollection = JSON.parse(localStorage.getItem('myCollection') || '[]');
@@ -217,6 +231,7 @@
             const btn = document.getElementById('play-btn');
             const limitText = document.getElementById('limit-text');
             const timerCon = document.getElementById('timer-container');
+
             if (coins <= 0) {
                 btn.disabled = true;
                 limitText.innerText = "今日の分は終了🌙また明日来てね🦄";
@@ -242,86 +257,99 @@
         function playGacha() {
             if (coins <= 0) return;
             coins--; updateUI();
-
             const machine = document.getElementById('gacha-machine');
             const cap = document.getElementById('capsule');
             cap.style.setProperty('--cap-color', ['#3498db', '#2ecc71', '#f1c40f', '#9b59b6'][Math.floor(Math.random() * 4)]);
             cap.classList.remove('pop-out', 'capsule-split');
             machine.style.animation = "shake 0.1s infinite";
-
-            setTimeout(() => {
-                machine.style.animation = "none";
-                cap.classList.add('pop-out');
-            }, 600);
-
+            setTimeout(() => { machine.style.animation = "none"; cap.classList.add('pop-out'); }, 600);
             setTimeout(() => {
                 cap.classList.add('capsule-split');
-                
-                // 79枚すべて均等な確率で抽選
                 const card = tarotData[Math.floor(Math.random() * tarotData.length)];
-
-                // 抽選されたカードがレアリストに含まれていれば図鑑に登録
-                if (rareImgList.includes(card.img)) {
-                    if(!myCollection.includes(card.img)) {
-                        myCollection.push(card.img);
-                        localStorage.setItem('myCollection', JSON.stringify(myCollection));
-                    }
+                if (rareImgList.includes(card.img) && !myCollection.includes(card.img)) {
+                    myCollection.push(card.img);
+                    localStorage.setItem('myCollection', JSON.stringify(myCollection));
                 }
-                
                 document.getElementById('card-box').innerHTML = `<img src="${card.img}">`;
                 document.getElementById('card-name').innerText = card.name;
                 document.getElementById('card-desc').innerText = card.desc;
                 document.getElementById('result-overlay').style.display = "flex";
-                setTimeout(() => {
-                    document.getElementById('card-box').classList.add('active');
-                    document.getElementById('detail').classList.add('active');
-                }, 100);
+                setTimeout(() => { document.getElementById('card-box').classList.add('active'); document.getElementById('detail').classList.add('active'); }, 100);
             }, 1800);
         }
 
         function openCollection() {
             const grid = document.getElementById('col-grid');
             grid.innerHTML = "";
-            document.getElementById('col-count-display').innerHTML = `レア発見：${myCollection.length} / 5 枚<br><span style="font-size:0.6rem; font-weight:normal; opacity:0.7;">特別な5枚を集めてね🦄</span>`;
-            
-            // 5枚コンプリートでバナー表示
-            if (myCollection.length >= 5) {
-                const door = document.createElement('div');
-                door.className = "secret-door-banner";
-                door.innerHTML = `<p style="margin:0; font-weight:bold; color:white;">🌟 伝説のコンプリート 🌟</p><a href="#" style="display:inline-block; margin-top:10px; background:white; color:#ff69b4; padding:8px 20px; border-radius:10px; text-decoration:none; font-weight:bold;">秘密の扉を開く🦄</a>`;
-                grid.appendChild(door);
-            }
-
+            document.getElementById('col-count-display').innerText = `レア発見：${myCollection.length} / 5 枚`;
             rareImgList.forEach(imgSrc => {
                 const has = myCollection.includes(imgSrc);
                 const slot = document.createElement('div');
                 slot.className = 'card-slot';
-                slot.innerHTML = has ? `<img src="${imgSrc}" loading="lazy">` : "?";
+                if(has) {
+                    slot.innerHTML = `<img src="${imgSrc}">`;
+                    slot.onclick = () => openViewer(imgSrc);
+                } else {
+                    slot.innerHTML = "?";
+                }
                 grid.appendChild(slot);
             });
             document.getElementById('collection-screen').style.display = "flex";
         }
 
-        function closeCollection() { 
-            document.getElementById('collection-screen').style.display = "none";
-            document.getElementById('col-grid').innerHTML = ""; 
+        let isDragging = false;
+        let startX, startY, rotY = 0, rotX = 0;
+        const card3d = document.getElementById('card-3d-target');
+
+        function openViewer(imgSrc) {
+            document.getElementById('viewer-img-front').src = imgSrc;
+            document.getElementById('viewer-overlay').style.display = "flex";
+            rotY = 0; rotX = 0;
+            card3d.style.transform = `rotateY(0deg) rotateX(0deg)`;
         }
 
-        function closeResult() {
-            document.getElementById('result-overlay').style.display = "none";
-            document.getElementById('card-box').classList.remove('active');
-            document.getElementById('detail').classList.remove('active');
+        function closeViewer() { document.getElementById('viewer-overlay').style.display = "none"; }
+
+        const viewer = document.getElementById('viewer-overlay');
+        viewer.addEventListener('mousedown', dragStart);
+        viewer.addEventListener('touchstart', dragStart, {passive: false});
+        window.addEventListener('mousemove', dragMove);
+        window.addEventListener('touchmove', dragMove, {passive: false});
+        window.addEventListener('mouseup', dragEnd);
+        window.addEventListener('touchend', dragEnd);
+
+        function dragStart(e) {
+            isDragging = true;
+            startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+            startY = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
+            card3d.style.transition = "none";
         }
 
+        function dragMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+            const y = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
+            rotY += (x - startX) * 0.5;
+            rotX -= (y - startY) * 0.2;
+            rotX = Math.max(-30, Math.min(30, rotX));
+            startX = x; startY = y;
+            card3d.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+        }
+
+        function dragEnd() { isDragging = false; card3d.style.transition = "transform 0.6s ease-out"; }
+
+        function closeCollection() { document.getElementById('collection-screen').style.display = "none"; }
+        function closeResult() { document.getElementById('result-overlay').style.display = "none"; document.getElementById('card-box').classList.remove('active'); document.getElementById('detail').classList.remove('active'); }
+        
         function enterCode() {
             const code = prompt("秘密のコードを入力してね🦄");
             if (code === "MIRUCORN777" && !usedCodes.includes(code)) {
-                coins += 9999; usedCodes.push(code);
+                coins += 5; usedCodes.push(code);
                 localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
                 updateUI(); alert("5枚追加！");
-            } else if (code) { alert("無効なコード、または使用済みだよ😢"); }
+            }
         }
-
         window.onload = updateUI;
     </script>
 </body>
