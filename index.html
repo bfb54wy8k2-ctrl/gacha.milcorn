@@ -220,7 +220,7 @@
                 document.getElementById('card-box1').innerHTML = `<img src="${card1.img}">`;
                 document.getElementById('card-box2').innerHTML = `<img src="${card2.img}">`;
                 document.getElementById('miruko-msg').innerHTML = "";
-                document.getElementById('miruko-status').innerText = "ミルコが占い中…🦄✨";
+                document.getElementById('miruko-status').innerText = "ミルコが一生懸命占い中…🦄✨";
                 document.getElementById('close-res-btn').style.display = "none";
                 document.getElementById('result-overlay').style.display = "flex";
 
@@ -247,7 +247,7 @@
                 const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n【恋愛アドバイス】\n${adviceSnippet}`;
 
                 await new Promise(r => setTimeout(r, 1500)); 
-                document.getElementById('miruko-status').innerText = "ミルコの占断結果🦄💎";
+                document.getElementById('miruko-status').innerText = "ミルコの占い結果🦄💎";
                 await typeWriter(finalMsg, 'miruko-msg', 35);
                 document.getElementById('close-res-btn').style.display = "block";
 
