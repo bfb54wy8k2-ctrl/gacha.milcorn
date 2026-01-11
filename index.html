@@ -178,7 +178,7 @@
         <div id="detail"><h2 id="card-name" style="margin:0; font-size:1rem; color:#d44d7c;"></h2><p id="card-desc" style="font-size:0.8rem; margin-top:8px;"></p></div>
     </div>
 
- <script>
+<script>
         const tarotData = [
             { name: "0. THE FOOL", desc: "💫 新しい冒険のはじまり\nワクワクする方を選んで大正解。\n今は深く考えすぎなくてOKだよ。", img: "images/0.png" },
             { name: "1. THE MAGICIAN", desc: "✨ 願いが動き出すタイミング\nあなたの言葉や行動が、現実を変えていくよ。", img: "images/1.png" },
@@ -204,7 +204,7 @@
             { name: "21. THE WORLD", desc: "🌈 願いがひとつ完成する\nここまで本当によく頑張ったね。", img: "images/21.png" },
             { name: "ACE OF WANDS", desc: "🔥 WANDS\n✨ 新しいやる気が芽生えるよ。今がスタート！", img: "images/22.png" },
             { name: "TWO OF WANDS", desc: "🔥 WANDS\n🌈 未来の選択肢が広がってる。どっちも素敵。", img: "images/23.png" },
-            { name: "THREE OF WANDS", desc: "🔥 WANDS\n🚢 期待して待ってて。ちゃんと進展があるよ。", img: "images/24.png" },
+            { name: "THREE OF WANDS", desc: "🔥 WANDS\n🚢 期待して待ってて. ちゃんと進展があるよ。", img: "images/24.png" },
             { name: "FOUR OF WANDS", desc: "🔥 WANDS\n🏡 安心できる場所で、嬉しい出来事がありそう。", img: "images/25.png" },
             { name: "FIVE OF WANDS", desc: "🔥 WANDS\n💥 ちょっとしたぶつかり合い。深刻じゃないよ。", img: "images/26.png" },
             { name: "SIX OF WANDS", desc: "🔥 WANDS\n🏆 頑張りが認められる時。自信持って！", img: "images/27.png" },
@@ -227,7 +227,7 @@
             { name: "NINE OF CUPS", desc: "💧 CUPS\n🍰 願いが叶いやすい！満足感たっぷり。", img: "images/44.png" },
             { name: "TEN OF CUPS", desc: "💧 CUPS\n🌈 心からの幸せ。愛に満たされるよ。", img: "images/45.png" },
             { name: "PAGE OF CUPS", desc: "💧 CUPS\n💌 可愛いメッセージ。ときめきの予感。", img: "images/46.png" },
-            { name: "KNIGHT OF CUPS", desc: "💧 CUPS\n🌹 ロマンチックな展開. 優しいアプローチ。", img: "images/47.png" },
+            { name: "KNIGHT OF CUPS", desc: "💧 CUPS\n🌹 ロマンチックな展開。優しいアプローチ。", img: "images/47.png" },
             { name: "QUEEN OF CUPS", desc: "💧 CUPS\n🫶 愛情深くなれる時。思いやりが鍵。", img: "images/48.png" },
             { name: "KING OF CUPS", desc: "💧 CUPS\n🌊 感情を上手にコントロールできるよ。", img: "images/49.png" },
             { name: "ACE OF SWORDS", desc: "🌬 SWORDS\n💡 はっきりした答えが出るよ。", img: "images/50.png" },
@@ -260,7 +260,6 @@
             { name: "KING OF PENTACLES", desc: "🌱 PENTACLES\n👑 しっかりした基盤。信頼できる未来。", img: "images/77.png" },
             { name: "🦄 ULTIMATE", desc: "嬉しすぎる究極のかたちへ進むよ。", img: "images/78.png" }
         ];
-
 
         let coins = parseInt(localStorage.getItem('miruCoins') || '2');
         let lastAccess = localStorage.getItem('lastAccessDate');
@@ -324,7 +323,7 @@
             const machine = document.getElementById('gacha-machine');
             const cap = document.getElementById('capsule');
             
-            const colors = ['#3498db', '#2ecc71', '#f1c40f', '#9b59b6']; // 青, 緑, 黄, 紫
+            const colors = ['#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
             cap.style.setProperty('--cap-color', colors[Math.floor(Math.random() * colors.length)]);
 
             cap.classList.remove('pop-out', 'capsule-split');
@@ -361,8 +360,11 @@
             document.getElementById('capsule').classList.remove('pop-out', 'capsule-split');
         }
 
+        // --- 図鑑部分を最軽量化 ---
         function openCollection() {
-            const grid = document.getElementById('col-grid'); grid.innerHTML = "";
+            const grid = document.getElementById('col-grid'); 
+            grid.innerHTML = ""; // 前回の残骸を完全に消去（メモリ解放）
+            
             document.getElementById('col-count-display').innerHTML = `${myCollection.length} / ${tarotData.length}枚 コンプリート<br><span style="font-size:0.6rem; font-weight:normal; opacity:0.7;">※履歴を消すとデータが消えるので注意してね</span>`;
             
             if (myCollection.length >= tarotData.length) {
@@ -372,17 +374,27 @@
                 grid.appendChild(door);
             }
 
+            // JavaScriptでの画像生成をやめ、ブラウザ標準のLazy Loadにすべて任せる
+            let contentHtml = "";
             tarotData.forEach((c, i) => {
-                const slot = document.createElement('div');
-                slot.className = 'card-slot';
                 const has = myCollection.includes(i);
-                slot.innerHTML = has ? `<img src="${c.img}">` : "?";
-                if(has) slot.onclick = () => openZoom(c.img);
-                grid.appendChild(slot);
+                if(has) {
+                    // loading="lazy" を追加。ブラウザが必要な時だけ読み込む。
+                    contentHtml += `<div class="card-slot" onclick="openZoom('${c.img}')"><img src="${c.img}" loading="lazy" alt="card"></div>`;
+                } else {
+                    contentHtml += `<div class="card-slot">?</div>`;
+                }
             });
+            grid.innerHTML = contentHtml;
+
             document.getElementById('collection-screen').style.display = "flex";
         }
-        function closeCollection() { document.getElementById('collection-screen').style.display = "none"; }
+
+        function closeCollection() { 
+            document.getElementById('collection-screen').style.display = "none"; 
+            // 閉じるときに中身を空にして、画像がメモリに残らないようにする
+            document.getElementById('col-grid').innerHTML = ""; 
+        }
 
         let isD = false, sX = 0, sY = 0, rY = 0;
         function openZoom(s) { 
