@@ -85,7 +85,7 @@
             <div class="card-reveal" id="card-box2"></div>
         </div>
         <div id="detail">
-            <span class="miruko-status" id="miruko-status">ミルコが占い中…🦄✨</span>
+            <span class="miruko-status" id="miruko-status">ミルコが一生懸命占い中…🦄✨</span>
             <div id="miruko-msg"></div>
             <button id="close-res-btn" onclick="closeResult()" style="display:none; width:100%; margin-top:20px; background:#ff69b4; color:white; border:none; padding:12px; border-radius:15px; font-weight:bold; cursor:pointer;">ありがとう！</button>
         </div>
@@ -308,7 +308,7 @@
                 const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n【恋愛アドバイス】\n${adviceSnippet}`;
 
                 await new Promise(r => setTimeout(r, 1500)); 
-                document.getElementById('miruko-status').innerText = "ミルコの占断結果🦄💎";
+                document.getElementById('miruko-status').innerText = "ミルコの占い結果🦄💎";
                 await typeWriter(finalMsg, 'miruko-msg', 35);
                 document.getElementById('close-res-btn').style.display = "block";
 
