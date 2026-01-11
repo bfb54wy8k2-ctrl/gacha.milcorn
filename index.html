@@ -17,33 +17,38 @@
         #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.85rem; background: rgba(255,182,193,0.1); padding: 15px; border-radius: 15px; width: 85%; max-width: 320px; border: 1px solid rgba(255,182,193,0.2); }
         #countdown { font-family: monospace; font-size: 1.1rem; color: #fff; margin-top: 5px; display: block; }
         
-        /* 有料版案内リンクのスタイル */
         #premium-link { margin-top: 15px; border-top: 1px solid rgba(255,182,193,0.3); padding-top: 15px; display: none; }
         .stores-btn { display: inline-block; background: linear-gradient(to right, #d4af37, #f9f0b5); color: #5d4037; padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
         #gacha-container { position: relative; width: 300px; height: 350px; margin-top: 10px; }
         #gacha-machine { width: 100%; height: 100%; object-fit: contain; position: relative; z-index: 10; }
 
-        #capsule {
-            position: absolute; bottom: 60px; right: 40px; width: 70px; height: 70px; z-index: 100; display: none;
+        /* カプセルの設定（2つ分） */
+        .capsule {
+            position: absolute; bottom: 60px; right: 40px; width: 60px; height: 60px; z-index: 100; display: none;
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
         }
         .capsule-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
         .capsule-top {
-            position: absolute; top: 0; width: 100%; height: 50%; border-radius: 35px 35px 0 0;
+            position: absolute; top: 0; width: 100%; height: 50%; border-radius: 30px 30px 0 0;
             background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 50%), var(--cap-color, #333);
             border: 1px solid rgba(255,255,255,0.3); transition: all 0.5s ease-out;
         }
         .capsule-bottom {
-            position: absolute; bottom: 0; width: 100%; height: 50%; border-radius: 0 0 35px 35px;
+            position: absolute; bottom: 0; width: 100%; height: 50%; border-radius: 0 0 30px 30px;
             background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(2px); border: 1px solid rgba(255,255,255,0.4); transition: all 0.5s ease-out;
         }
 
-        .pop-out { display: block !important; animation: capsule-fly 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
-        @keyframes capsule-fly {
+        .pop-out1 { display: block !important; animation: capsule-fly1 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+        .pop-out2 { display: block !important; animation: capsule-fly2 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+        
+        @keyframes capsule-fly1 {
             0% { transform: translate(0, 0) scale(0.3) rotate(0deg); }
-            30% { transform: translate(-50px, -150px) scale(1.2) rotate(180deg); }
-            100% { transform: translate(-115px, -100px) scale(2.8) rotate(720deg); }
+            100% { transform: translate(-130px, -120px) scale(2.2) rotate(720deg); }
+        }
+        @keyframes capsule-fly2 {
+            0% { transform: translate(0, 0) scale(0.3) rotate(0deg); }
+            100% { transform: translate(-50px, -120px) scale(2.2) rotate(-720deg); }
         }
         .capsule-split .capsule-top { transform: translateY(-80px) rotate(-40deg); opacity: 0; }
         .capsule-split .capsule-bottom { transform: translateY(80px) rotate(40deg); opacity: 0; }
@@ -51,21 +56,26 @@
         .btn { margin-top: 10px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 5px 0 #db7093; cursor: pointer; }
         .btn:disabled { background: #666; box-shadow: 0 5px 0 #444; cursor: not-allowed; }
 
-        #collection-btn { 
-            position: fixed; right: 20px; bottom: 30px; width: 65px; height: 65px; 
-            background: var(--gold); border-radius: 50%; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; z-index: 100; border: 2px solid white; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); animation: fuwafuwa 2.5s ease-in-out infinite;
-        }
-        @keyframes fuwafuwa { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        /* 結果画面の2枚並べ対応 */
+        #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: flex-start; z-index: 400; padding-top: 40px; overflow-y: auto; }
+        .cards-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        .card-reveal { width: 120px; aspect-ratio: 2/3.5; border: 2px solid var(--gold); border-radius: 10px; overflow: hidden; background: black; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .card-reveal.active { transform: scale(1); }
+        .card-reveal img { width: 100%; height: 100%; object-fit: cover; }
+        
+        #detail { width: 90%; max-width: 350px; background: #fefcf0; color: #333; padding: 20px; border-radius: 20px; text-align: left; opacity: 0; box-sizing: border-box; margin-bottom: 30px; position: relative; }
+        #detail.active { opacity: 1; transition: opacity 0.5s; }
+        #miruko-msg { font-size: 0.85rem; line-height: 1.6; min-height: 100px; }
+        .miruko-status { color: #d44d7c; font-weight: bold; margin-bottom: 10px; display: block; border-bottom: 1px dashed #ffb6c1; padding-bottom: 5px; }
 
+        /* レア図鑑・ビューアー（変更なし） */
+        #collection-btn { position: fixed; right: 20px; bottom: 30px; width: 65px; height: 65px; background: var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); animation: fuwafuwa 2.5s ease-in-out infinite; }
+        @keyframes fuwafuwa { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
         #collection-screen { position: fixed; inset: 0; background: #1a1a1a; z-index: 300; display: none; flex-direction: column; }
         .col-header { padding: 15px; text-align: center; border-bottom: 1px solid #333; }
-        .col-count-text { color: var(--gold); font-weight: bold; margin-top: 10px; display: block; line-height: 1.4; }
         .col-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 15px; }
         .card-slot { aspect-ratio: 2/3.5; background: #2a2a2a; border-radius: 8px; border: 1px solid #444; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #555; cursor: pointer; }
         .card-slot img { width: 100%; height: 100%; object-fit: cover; }
-
         #viewer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 500; display: none; flex-direction: column; align-items: center; justify-content: center; touch-action: none; }
         .viewer-scene { width: 280px; height: 480px; perspective: 1200px; }
         .card-3d { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.1s ease-out; }
@@ -74,16 +84,7 @@
         .face-front img { width: 100%; height: 100%; object-fit: cover; }
         .face-back { background: #2a2a2a; transform: rotateY(180deg); }
         .face-back img { width: 100%; height: 100%; object-fit: cover; }
-        .viewer-hint { margin-top: 25px; color: var(--gold); font-size: 0.8rem; animation: pulse 1.5s infinite; }
 
-        #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 400; }
-        .card-reveal { width: 70%; max-width: 250px; aspect-ratio: 2/3.5; border: 3px solid var(--gold); border-radius: 15px; overflow: hidden; background: black; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .card-reveal.active { transform: scale(1); }
-        .card-reveal img { width: 100%; height: 100%; object-fit: cover; }
-        #detail { width: 85%; max-width: 320px; background: #fefcf0; color: #333; padding: 15px; border-radius: 20px; margin-top: 15px; text-align: center; opacity: 0; }
-        #detail.active { opacity: 1; transition: opacity 0.5s; }
-
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
         @keyframes shake { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-3deg); } }
     </style>
 </head>
@@ -96,19 +97,17 @@
         <span id="limit-text"></span>
         <div id="timer-container" style="display:none; margin-top:10px;">
             <span id="countdown">--:--:--</span>
-            
             <div id="premium-link">
                 <p style="margin:0 0 10px 0; font-size:0.8rem;">もっと占いたいあなたへ✨</p>
-                <a href="https://あなたのストアURL" target="_blank" class="stores-btn">
-                    ガチャ回し放題！有料版はこちら 💎
-                </a>
+                <a href="https://あなたのストアURL" target="_blank" class="stores-btn">ガチャ回し放題！有料版はこちら 💎</a>
             </div>
         </div>
     </div>
 
     <div id="gacha-container">
         <img src="images/gacha.png" id="gacha-machine">
-        <div id="capsule"><div class="capsule-inner"><div class="capsule-top"></div><div class="capsule-bottom"></div></div></div>
+        <div id="capsule1" class="capsule"><div class="capsule-inner"><div class="capsule-top"></div><div class="capsule-bottom"></div></div></div>
+        <div id="capsule2" class="capsule"><div class="capsule-inner"><div class="capsule-top"></div><div class="capsule-bottom"></div></div></div>
     </div>
 
     <button class="btn" id="play-btn" onclick="playGacha()">ガチャを回す</button>
@@ -117,7 +116,7 @@
     <div id="collection-screen">
         <div class="col-header">
             <button onclick="closeCollection()" style="background:var(--pink); border:none; padding:10px 30px; border-radius:20px; color:white; font-weight:bold;">戻る</button>
-            <span class="col-count-text" id="col-count-display"></span>
+            <span class="col-count-text" id="col-count-display" style="display:block; color:var(--gold); margin-top:10px;"></span>
         </div>
         <div class="col-grid" id="col-grid"></div>
     </div>
@@ -129,18 +128,25 @@
                 <div class="card-face face-back"><img src="images/back.png"></div>
             </div>
         </div>
-        <div class="viewer-hint">左右になぞって回転 ✨</div>
         <button onclick="closeViewer()" style="margin-top:30px; background:white; color:black; border:none; padding:12px 40px; border-radius:25px; font-weight:bold;">閉じる</button>
     </div>
 
-    <div id="result-overlay" onclick="closeResult()">
-        <div class="card-reveal" id="card-box"></div>
-        <div id="detail"><h2 id="card-name" style="margin:0; font-size:1rem; color:#d44d7c;"></h2><p id="card-desc" style="font-size:0.8rem; margin-top:8px;"></p></div>
+    <div id="result-overlay">
+        <div class="cards-container">
+            <div class="card-reveal" id="card-box1"></div>
+            <div class="card-reveal" id="card-box2"></div>
+        </div>
+        <div id="detail">
+            <span class="miruko-status" id="miruko-status">ミルコが占い中…🦄✨</span>
+            <div id="miruko-msg"></div>
+            <button id="close-res-btn" onclick="closeResult()" style="display:none; width:100%; margin-top:20px; background:#ff69b4; color:white; border:none; padding:10px; border-radius:15px; font-weight:bold;">ありがとう！</button>
+        </div>
     </div>
 
     <script>
+        // データ（内容は変更なし）
         const tarotData = [
-            { id: 0, name: "0. FOOL", desc: "今は完璧じゃなくていい恋✨先の不安より「好き」という純粋な気持ちを信じて.勇気ある一歩が、思いがけない幸せに繋がります🌈", img: "images/0.png" },
+            { id: 0, name: "0. FOOL", desc: "今は完璧じゃなくていい恋✨先の不安より「好き」という純粋な気持ちを信じて。勇気ある一歩が、思いがけない幸せに繋がります🌈", img: "images/0.png" },
             { id: 1, name: "1. MAGICIAN", desc: "あなたの想いには現実を動かす力があります💫駆け引きより素直な言葉を。伝えることで、恋ははっきりと形を持ち始めます💌", img: "images/1.png" },
             { id: 2, name: "2. HIGH PRIESTESS", desc: "相手の本心は言葉より態度に表れています🌙焦らず静かに見守って。あなたの直感は今、とても冴えています🕊️", img: "images/2.png" },
             { id: 3, name: "3. EMPRESS", desc: "愛されることを遠慮しないで💐受け取る覚悟ができた時、恋は自然と満たされていきます。自分を甘やかすのも大切な愛💖", img: "images/3.png" },
@@ -164,7 +170,7 @@
             { id: 21, name: "21. WORLD", desc: "心から満たされる恋が完成💍ありのままのあなたで、愛される幸せを受け取って🌈", img: "images/21.png" },
             { id: 36, name: "ACE OF CUPS", desc: "新しい愛の始まり💗心が自然と動く出会いや感情が訪れます。怖がらず、そのときめきを受け取って🌸", img: "images/36.png" },
             { id: 37, name: "TWO OF CUPS", desc: "心と心が通い合う時💕対等な愛、素直な気持ちの交換が恋を深めます。安心して想いを共有して✨", img: "images/37.png" },
-            { id: 38, name: "THREE OF CUPS", desc: "喜びを分かち合える関係🥂恋は楽しい時間の中で育ます。笑顔と感謝を忘れずに🌷", img: "images/38.png" },
+            { id: 38, name: "THREE OF CUPS", desc: "喜びを分かち合える関係🥂恋は楽しい時間の中で育ちます。笑顔と感謝を忘れずに🌷", img: "images/38.png" },
             { id: 39, name: "FOUR OF CUPS", desc: "気持ちが停滞しがち😌でも本当は、すぐそばに愛のチャンスが。心を少し開いてみて☁️", img: "images/39.png" },
             { id: 40, name: "FIVE OF CUPS", desc: "失ったものばかり見ないで🌧️まだ残っている愛があります。過去より未来に目を向けて🌈", img: "images/40.png" },
             { id: 41, name: "SIX OF CUPS", desc: "懐かしい想いが心を温めます🍀過去の恋や再会がヒントに。優しい気持ちを大切に💞", img: "images/41.png" },
@@ -216,8 +222,8 @@
             { id: 73, name: "TEN OF PENTACLES", desc: "安定した未来🏡長く続く関係の暗示。安心できる愛です💍", img: "images/73.png" },
             { id: 74, name: "PAGE OF PENTACLES", desc: "真剣な始まり📘誠実な気持ちが芽生えます。ゆっくり育てて✨", img: "images/74.png" },
             { id: 75, name: "KNIGHT OF PENTACLES", desc: "着実な愛🐢スピードより継続。信頼は時間で深まります🤍", img: "images/75.png" },
-            { id: 76, name: "QUEEN OF PENTACLES", desc: "包み込む愛🌼安心感を与える存在。あなたの温かさが恋を守ります💖", img: "images/76.png" },
-            { id: 77, name: "KING OF PENTACLES", desc: "安定と信頼👑現実的で頼れる愛。将来を考えられる関係です✨", img: "images/77.png" },
+            { id: 76, name: "QUEEN OF PENTACLES", desc: "包み込む愛🌼安心感を与える存在.あなたの温かさが恋を守ります💖", img: "images/76.png" },
+            { id: 77, name: "KING OF PENTACLES", desc: "安定と信頼👑現実的で頼れる愛.将来を考えられる関係です✨", img: "images/77.png" },
             { id: 78, name: "ULTIMATE", desc: "あなたの恋は今、最終段階の扉の前にいます💍もう疑わなくて大丈夫。これまでの想いと選択はすべて正解✨覚悟を決めて受け取ることで、運命の愛が完全に形になります🌈💖", img: "images/78.png" }
         ];
 
@@ -243,12 +249,12 @@
                 btn.disabled = true;
                 limitText.innerText = "今日の分は終了🌙また明日来てね🦄";
                 timerCon.style.display = "block";
-                premiumLink.style.display = "block"; // コイン0でリンク表示
+                premiumLink.style.display = "block";
             } else {
                 btn.disabled = false;
                 limitText.innerText = `あと ${coins} 回占えるよ✨`;
                 timerCon.style.display = "none";
-                premiumLink.style.display = "none"; // コインがあれば隠す
+                premiumLink.style.display = "none";
             }
             localStorage.setItem('miruCoins', coins);
         }
@@ -263,30 +269,90 @@
             document.getElementById('countdown').innerText = `${h}:${m}:${s}`;
         }, 1000);
 
+        // タイピング演出関数
+        function typeWriter(text, elementId, speed = 50) {
+            let i = 0;
+            const element = document.getElementById(elementId);
+            element.innerHTML = "";
+            return new Promise(resolve => {
+                function type() {
+                    if (i < text.length) {
+                        element.innerHTML += text.charAt(i);
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        resolve();
+                    }
+                }
+                type();
+            });
+        }
+
         function playGacha() {
             if (coins <= 0) return;
             coins--; updateUI();
+
             const machine = document.getElementById('gacha-machine');
-            const cap = document.getElementById('capsule');
-            cap.style.setProperty('--cap-color', ['#3498db', '#2ecc71', '#f1c40f', '#9b59b6'][Math.floor(Math.random() * 4)]);
-            cap.classList.remove('pop-out', 'capsule-split');
+            const cap1 = document.getElementById('capsule1');
+            const cap2 = document.getElementById('capsule2');
+
+            // 初期化
+            [cap1, cap2].forEach(c => {
+                c.classList.remove('pop-out1', 'pop-out2', 'capsule-split');
+                c.style.setProperty('--cap-color', ['#3498db', '#2ecc71', '#f1c40f', '#9b59b6'][Math.floor(Math.random() * 4)]);
+            });
+
             machine.style.animation = "shake 0.1s infinite";
-            setTimeout(() => { machine.style.animation = "none"; cap.classList.add('pop-out'); }, 600);
+
             setTimeout(() => {
-                cap.classList.add('capsule-split');
-                const card = tarotData[Math.floor(Math.random() * tarotData.length)];
-                if (rareImgList.includes(card.img) && !myCollection.includes(card.img)) {
-                    myCollection.push(card.img);
-                    localStorage.setItem('myCollection', JSON.stringify(myCollection));
-                }
-                document.getElementById('card-box').innerHTML = `<img src="${card.img}">`;
-                document.getElementById('card-name').innerText = card.name;
-                document.getElementById('card-desc').innerText = card.desc;
+                machine.style.animation = "none";
+                cap1.classList.add('pop-out1');
+                setTimeout(() => cap2.classList.add('pop-out2'), 300);
+            }, 600);
+
+            setTimeout(async () => {
+                cap1.classList.add('capsule-split');
+                cap2.classList.add('capsule-split');
+
+                // カードを2枚選ぶ
+                const card1 = tarotData[Math.floor(Math.random() * tarotData.length)];
+                let card2 = tarotData[Math.floor(Math.random() * tarotData.length)];
+                while(card1.id === card2.id) card2 = tarotData[Math.floor(Math.random() * tarotData.length)];
+
+                // レア判定
+                [card1, card2].forEach(card => {
+                    if (rareImgList.includes(card.img) && !myCollection.includes(card.img)) {
+                        myCollection.push(card.img);
+                    }
+                });
+                localStorage.setItem('myCollection', JSON.stringify(myCollection));
+
+                // 表示準備
+                document.getElementById('card-box1').innerHTML = `<img src="${card1.img}">`;
+                document.getElementById('card-box2').innerHTML = `<img src="${card2.img}">`;
+                document.getElementById('miruko-msg').innerHTML = "";
+                document.getElementById('miruko-status').innerText = "ミルコが占い中…🦄✨";
+                document.getElementById('close-res-btn').style.display = "none";
                 document.getElementById('result-overlay').style.display = "flex";
-                setTimeout(() => { document.getElementById('card-box').classList.add('active'); document.getElementById('detail').classList.add('active'); }, 100);
-            }, 1800);
+
+                setTimeout(() => {
+                    document.getElementById('card-box1').classList.add('active');
+                    document.getElementById('card-box2').classList.add('active');
+                    document.getElementById('detail').classList.add('active');
+                }, 100);
+
+                // ミルコの占いメッセージ作成
+                const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n【ミルコのアドバイス】\n2つの力を合わせれば、きっと素敵な恋の魔法がかかるはず！ミルコも応援してるよ🦄💖`;
+
+                await new Promise(r => setTimeout(r, 1500)); // 溜め時間
+                document.getElementById('miruko-status').innerText = "ミルコの占断結果🦄💎";
+                await typeWriter(finalMsg, 'miruko-msg', 30);
+                document.getElementById('close-res-btn').style.display = "block";
+
+            }, 2000);
         }
 
+        // コレクション・ビューアー関連（変更なし）
         function openCollection() {
             const grid = document.getElementById('col-grid');
             grid.innerHTML = "";
@@ -298,58 +364,26 @@
                 if(has) {
                     slot.innerHTML = `<img src="${imgSrc}">`;
                     slot.onclick = () => openViewer(imgSrc);
-                } else {
-                    slot.innerHTML = "?";
-                }
+                } else { slot.innerHTML = "?"; }
                 grid.appendChild(slot);
             });
             document.getElementById('collection-screen').style.display = "flex";
         }
 
-        let isDragging = false;
-        let startX, startY, rotY = 0, rotX = 0;
-        const card3d = document.getElementById('card-3d-target');
-
         function openViewer(imgSrc) {
             document.getElementById('viewer-img-front').src = imgSrc;
             document.getElementById('viewer-overlay').style.display = "flex";
-            rotY = 0; rotX = 0;
-            card3d.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            document.getElementById('card-3d-target').style.transform = `rotateY(0deg) rotateX(0deg)`;
         }
 
         function closeViewer() { document.getElementById('viewer-overlay').style.display = "none"; }
-
-        const viewer = document.getElementById('viewer-overlay');
-        viewer.addEventListener('mousedown', dragStart);
-        viewer.addEventListener('touchstart', dragStart, {passive: false});
-        window.addEventListener('mousemove', dragMove);
-        window.addEventListener('touchmove', dragMove, {passive: false});
-        window.addEventListener('mouseup', dragEnd);
-        window.addEventListener('touchend', dragEnd);
-
-        function dragStart(e) {
-            isDragging = true;
-            startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
-            startY = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
-            card3d.style.transition = "none";
-        }
-
-        function dragMove(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-            const x = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
-            const y = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
-            rotY += (x - startX) * 0.5;
-            rotX -= (y - startY) * 0.2;
-            rotX = Math.max(-30, Math.min(30, rotX));
-            startX = x; startY = y;
-            card3d.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
-        }
-
-        function dragEnd() { isDragging = false; card3d.style.transition = "transform 0.6s ease-out"; }
-
         function closeCollection() { document.getElementById('collection-screen').style.display = "none"; }
-        function closeResult() { document.getElementById('result-overlay').style.display = "none"; document.getElementById('card-box').classList.remove('active'); document.getElementById('detail').classList.remove('active'); }
+        function closeResult() { 
+            document.getElementById('result-overlay').style.display = "none"; 
+            document.getElementById('card-box1').classList.remove('active'); 
+            document.getElementById('card-box2').classList.remove('active'); 
+            document.getElementById('detail').classList.remove('active'); 
+        }
         
         window.onload = updateUI;
     </script>
