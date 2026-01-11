@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -20,7 +19,6 @@
         #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.85rem; background: rgba(255,182,193,0.1); padding: 15px; border-radius: 15px; width: 85%; max-width: 320px; border: 1px solid rgba(255,182,193,0.2); }
         #countdown { font-family: monospace; font-size: 1.1rem; color: #fff; margin-top: 5px; display: block; }
         
-        /* ②有料版案内のスタイル追加 */
         #premium-info { display: none; margin-top: 15px; background: linear-gradient(135deg, #4b3a1a 0%, #1a1a1a 100%); border: 2px solid var(--gold); padding: 15px; border-radius: 20px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
         .premium-btn { display: inline-block; margin-top: 10px; padding: 12px 25px; background: var(--gold); color: #000; text-decoration: none; font-weight: bold; border-radius: 25px; font-size: 0.9rem; box-shadow: 0 4px 0 #927821; }
 
@@ -84,7 +82,7 @@
     <div id="limit-info">
         <span id="limit-text"></span>
         <div id="timer-container" style="display:none; margin-top:10px;">
-            <span id="countdown">--:--:--</span>
+            復活まで：あと <span id="countdown">--時間--分--秒</span>
         </div>
     </div>
 
@@ -181,7 +179,7 @@
             { id: 56, name: "SWORDS 7", desc: "駆け引きには慎重になって🕶️小手先のテクニックより、誠実さで勝負する方が吉✨", img: "images/56.png" },
             { id: 57, name: "SWORDS 8", desc: "自分で自分を閉じ込めていない？⛓️目隠しを外せば、逃げ道はいくらでもあるよ🌬️", img: "images/57.png" },
             { id: 58, name: "SWORDS 9", desc: "考えすぎて眠れない夜🌙不安の正体は妄想かも。現実はもっと明るいよ大丈夫🫧", img: "images/58.png" },
-            { id: 59, name: "SWORDS 10", desc: "これ以上の不幸はない、最悪期の脱出🌑夜明けはすぐそこ。新しい自分に生まれ変わろう🌅", img: "images/59.png" },
+            { id: 59, name: "SWORDS 10", desc: "これ以上の不幸はない、最悪期の脱出🌑夜明けはすぐそこ。新しい自分に生まれ変わろう🌅🌅", img: "images/59.png" },
             { id: 60, name: "SWORDS PAGE", desc: "警戒心と好奇性が入り混じる時👀慎重に様子を見ながら、有利なチャンスを伺って✨", img: "images/60.png" },
             { id: 61, name: "SWORDS KNIGHT", desc: "猛スピードで事態が動きます⚡言葉が刃にならないよう、冷静さを忘れないで🤍", img: "images/61.png" },
             { id: 62, name: "SWORDS QUEEN", desc: "知的な自立心で恋を切り盛り👑厳しいけれど正しい判断が、あなたを幸せにする✨", img: "images/62.png" },
@@ -207,8 +205,6 @@
         let lastAccess = localStorage.getItem('lastAccessDate');
         let isMuted = true;
         const bgm = document.getElementById('bgm');
-        
-        // ①音量を半分（0.5）に設定
         bgm.volume = 0.5;
 
         function updateUI() {
@@ -221,19 +217,22 @@
             }
             document.getElementById('coin-count').innerText = coins;
             const btn = document.getElementById('play-btn');
-            const limitInfo = document.getElementById('limit-info'); // セレクタ変更
-            const premiumInfo = document.getElementById('premium-info'); // ②案内エリア
+            const limitInfo = document.getElementById('limit-info');
+            const premiumInfo = document.getElementById('premium-info');
+            const timerCon = document.getElementById('timer-container'); // ここで定義
 
             if (coins <= 0) {
                 btn.disabled = true;
-                limitInfo.style.display = "none"; // 通常案内を非表示
-                premiumInfo.style.display = "block"; // ②有料版案内を表示
+                limitInfo.style.display = "block"; // タイマーの親要素なのでblock
+                document.getElementById('limit-text').innerText = ""; // テキストは消す
+                premiumInfo.style.display = "block";
+                timerCon.style.display = "block"; // タイマーを表示
             } else {
                 btn.disabled = false;
                 limitInfo.style.display = "block";
                 premiumInfo.style.display = "none";
                 document.getElementById('limit-text').innerText = `あと ${coins} 回占えるよ✨`;
-                document.getElementById('timer-container').style.display = "none";
+                timerCon.style.display = "none";
             }
         }
 
@@ -250,21 +249,19 @@
         }
 
         document.addEventListener("visibilitychange", () => {
-            if (document.hidden) {
-                bgm.pause();
-            } else {
-                if (!isMuted) bgm.play();
-            }
+            if (document.hidden) { bgm.pause(); } else { if (!isMuted) bgm.play(); }
         });
 
+        // 0時までのカウントダウン
         setInterval(() => {
             const now = new Date();
             const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
             const diff = tomorrow - now;
-            const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2,'0');
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2,'0');
-            const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2,'0');
-            document.getElementById('countdown').innerText = `${h}:${m}:${s}`;
+            const h = Math.floor(diff / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            const countdownEl = document.getElementById('countdown');
+            if(countdownEl) countdownEl.innerText = `${h}時間${m}分${s}秒`;
         }, 1000);
 
         function typeWriter(text, elementId, speed = 40) {
