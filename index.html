@@ -1,3 +1,4 @@
+音量最新
 
 
 <!DOCTYPE html>
@@ -5,59 +6,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ミルコーンの恋占いガチャ</title>
+    <title>Love Message Gacha - Music Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* 前回のスタイルを維持 */
         :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
         body { background: var(--bg); color: white; font-family: var(--font); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-
         .title { margin-top: 20px; font-size: 1.1rem; color: var(--gold); text-align: center; font-weight: 700; }
         .title img { width: 30px; vertical-align: middle; margin-right: 8px; border-radius: 50%; border: 1px solid var(--gold); }
-
         #coin-display { margin-top: 15px; background: rgba(212, 175, 55, 0.2); padding: 8px 25px; border-radius: 30px; border: 2px solid var(--gold); color: var(--gold); font-weight: bold; font-size: 1.1rem; }
-
         #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.85rem; background: rgba(255,182,193,0.1); padding: 15px; border-radius: 15px; width: 85%; max-width: 320px; border: 1px solid rgba(255,182,193,0.2); }
         #countdown { font-family: monospace; font-size: 1.1rem; color: #fff; margin-top: 5px; display: block; }
-        
         #premium-link { margin-top: 15px; border-top: 1px solid rgba(255,182,193,0.3); padding-top: 15px; display: none; }
         .stores-btn { display: inline-block; background: linear-gradient(to right, #d4af37, #f9f0b5); color: #5d4037; padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-
         #gacha-container { position: relative; width: 300px; height: 350px; margin-top: 10px; }
         #gacha-machine { width: 100%; height: 100%; object-fit: contain; position: relative; z-index: 10; }
-
         .capsule { position: absolute; bottom: 60px; right: 40px; width: 60px; height: 60px; z-index: 100; display: none; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
         .capsule-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
         .capsule-top { position: absolute; top: 0; width: 100%; height: 50%; border-radius: 30px 30px 0 0; background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 50%), var(--cap-color, #333); border: 1px solid rgba(255,255,255,0.3); transition: all 0.5s ease-out; }
         .capsule-bottom { position: absolute; bottom: 0; width: 100%; height: 50%; border-radius: 0 0 30px 30px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(2px); border: 1px solid rgba(255,255,255,0.4); transition: all 0.5s ease-out; }
-
         .pop-out1 { display: block !important; animation: capsule-fly1 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
         .pop-out2 { display: block !important; animation: capsule-fly2 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
-        
         @keyframes capsule-fly1 { 0% { transform: translate(0, 0) scale(0.3) rotate(0deg); } 100% { transform: translate(-130px, -120px) scale(2.2) rotate(720deg); } }
         @keyframes capsule-fly2 { 0% { transform: translate(0, 0) scale(0.3) rotate(0deg); } 100% { transform: translate(-50px, -120px) scale(2.2) rotate(-720deg); } }
         .capsule-split .capsule-top { transform: translateY(-80px) rotate(-40deg); opacity: 0; }
         .capsule-split .capsule-bottom { transform: translateY(80px) rotate(40deg); opacity: 0; }
-
         .btn { margin-top: 10px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 5px 0 #db7093; cursor: pointer; }
         .btn:disabled { background: #666; box-shadow: 0 5px 0 #444; cursor: not-allowed; }
-
         #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: flex-start; z-index: 400; padding-top: 40px; overflow-y: auto; }
         .cards-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
         .card-reveal { width: 120px; aspect-ratio: 2/3.5; border: 2px solid var(--gold); border-radius: 10px; overflow: hidden; background: black; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .card-reveal.active { transform: scale(1); }
         .card-reveal img { width: 100%; height: 100%; object-fit: cover; }
-        
         #detail { width: 90%; max-width: 350px; background: #fefcf0; color: #333; padding: 20px; border-radius: 20px; text-align: left; opacity: 0; box-sizing: border-box; margin-bottom: 30px; position: relative; }
         #detail.active { opacity: 1; transition: opacity 0.5s; }
         #miruko-msg { font-size: 0.85rem; line-height: 1.6; min-height: 100px; white-space: pre-wrap; }
         .miruko-status { color: #d44d7c; font-weight: bold; margin-bottom: 10px; display: block; border-bottom: 1px dashed #ffb6c1; padding-bottom: 5px; }
-
         @keyframes shake { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-3deg); } }
+
+        /* ミュートボタンのスタイル */
+        #music-toggle {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(212, 175, 55, 0.8);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: fuwafuwa 3s ease-in-out infinite;
+        }
+        @keyframes fuwafuwa { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
     </style>
 </head>
 <body>
 
-    <div class="title"><img src="images/icon2.png">ミルコーンの恋占いガチャ</div>
+    <div class="title"><img src="images/icon2.png">Love Message Gacha</div>
     <div id="coin-display">ミルコイン: <span id="coin-count">0</span> 枚</div>
 
     <div id="limit-info">
@@ -65,7 +76,6 @@
         <div id="timer-container" style="display:none; margin-top:10px;">
             <span id="countdown">--:--:--</span>
             <div id="premium-link">
-                <p style="margin:0 0 10px 0; font-size:0.8rem;">もっと占いたいあなたへ✨</p>
                 <a href="https://あなたのストアURL" target="_blank" class="stores-btn">ガチャ回し放題！有料版はこちら 💎</a>
             </div>
         </div>
@@ -79,22 +89,27 @@
 
     <button class="btn" id="play-btn" onclick="playGacha()">ガチャを回す</button>
 
+    <div id="music-toggle" onclick="toggleMusic()">🔇</div>
+
     <div id="result-overlay">
         <div class="cards-container">
             <div class="card-reveal" id="card-box1"></div>
             <div class="card-reveal" id="card-box2"></div>
         </div>
         <div id="detail">
-            <span class="miruko-status" id="miruko-status">ミルコが一生懸命占い中…🦄✨</span>
+            <span class="miruko-status" id="miruko-status">ミルコが占い中…🦄✨</span>
             <div id="miruko-msg"></div>
             <button id="close-res-btn" onclick="closeResult()" style="display:none; width:100%; margin-top:20px; background:#ff69b4; color:white; border:none; padding:12px; border-radius:15px; font-weight:bold; cursor:pointer;">ありがとう！</button>
         </div>
     </div>
 
+    <audio id="bgm" loop preload="auto">
+        <source src="sounds/bgm.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
-        // 【完全版】全78枚タロットデータ
+        // タロットデータ（全78枚）
         const tarotData = [
-            // 大アルカナ (0-21)
             { id: 0, name: "0. FOOL", desc: "今は完璧じゃなくていい恋✨先の不安より「好き」という純粋な気持ちを信じて。勇気ある一歩が、思いがけない幸せに繋がります🌈", img: "images/0.png" },
             { id: 1, name: "1. MAGICIAN", desc: "あなたの想いには現実を動かす力があります💫駆け引きより素直な言葉を。伝えることで、恋ははっきりと形を持ち始めます💌", img: "images/1.png" },
             { id: 2, name: "2. HIGH PRIESTESS", desc: "相手の本心は言葉より態度に表れています🌙焦らず静かに見守って。あなたの直感は今、とても冴えています🕊️", img: "images/2.png" },
@@ -117,8 +132,7 @@
             { id: 19, name: "19. SUN", desc: "素直な笑顔が恋を輝かせます☀️喜びを分かち合える関係が、あなたを幸せにします💛", img: "images/19.png" },
             { id: 20, name: "20. JUDGEMENT", desc: "過去の恋に答えが出る時📯許しと気づきが、新しい愛への扉を開きます✨", img: "images/20.png" },
             { id: 21, name: "21. WORLD", desc: "心から満たされる恋が完成💍ありのままのあなたで、愛される幸せを受け取って🌈", img: "images/21.png" },
-            
-            // ワンド (22-35)
+            // ワンド
             { id: 22, name: "WANDS ACE", desc: "恋の情熱が着火する時🔥一気に距離が縮まるチャンス。ワクワクに従って進んで✨", img: "images/22.png" },
             { id: 23, name: "WANDS 2", desc: "次の一歩を考える時🌍未来への期待が高まっています。理想の恋を描き始めて✨", img: "images/23.png" },
             { id: 24, name: "WANDS 3", desc: "恋の可能性が広がります⛵着実に進展している証拠。自信を持って見守って🌈", img: "images/24.png" },
@@ -133,8 +147,7 @@
             { id: 33, name: "WANDS KNIGHT", desc: "情熱的に突き進む時🏇迷っている暇はありません。直感で駆け抜けて🔥", img: "images/33.png" },
             { id: 34, name: "WANDS QUEEN", desc: "あなたの魅力が溢れています太陽のように明るい笑顔が素敵な人を惹きつけるよ🌻", img: "images/34.png" },
             { id: 35, name: "WANDS KING", desc: "強いリーダーシップが鍵👑あなたが主導権を握ることで、理想の恋が実現します✨", img: "images/35.png" },
-
-            // カップ (36-49)
+            // カップ
             { id: 36, name: "CUPS ACE", desc: "愛の喜びが溢れ出す時💗新しいトキメキや、深い愛情を受け取る準備をして🌸", img: "images/36.png" },
             { id: 37, name: "CUPS 2", desc: "心と心が通じ合う最高の調和💕対等な関係で、愛を誓い合える幸せが訪れます✨", img: "images/37.png" },
             { id: 38, name: "CUPS 3", desc: "喜びを分かち合う祝福の時間🥂仲間のサポートや楽しい交流が恋を応援します🌷", img: "images/38.png" },
@@ -142,15 +155,14 @@
             { id: 40, name: "CUPS 5", desc: "失ったものに囚われないで🌧️後ろを向けば、まだ残っている温かい愛に気づくはず🌈", img: "images/40.png" },
             { id: 41, name: "CUPS 6", desc: "懐かしい記憶が幸せを運びます🍀純粋だった頃の気持ちが、今の恋を癒してくれます💞", img: "images/41.png" },
             { id: 42, name: "CUPS 7", desc: "理想が膨らみすぎているかも☁️夢を見るのもいいけど、今は現実的な愛を選んで現実✨", img: "images/42.png" },
-            { id: 43, name: "CUPS 8", desc: "次のステージへ進む時🌙今の関係に区切りをつけて、より高い愛を求めて旅立とう🚪", img: "images/43.png" },
+            { id: 43, name: "CUPS 8", desc: "次のステージへ進む時🌙今の関係に区切りをつけて、より高い愛を求めて旅立おう🚪", img: "images/43.png" },
             { id: 44, name: "CUPS 9", desc: "願いが叶う満たされた時💖あなたの心が満たされれば、恋も自然とうまくいきます✨", img: "images/44.png" },
             { id: 45, name: "CUPS 10", desc: "最高の幸福感家族や大切な人と、穏やかで深い愛に包まれる未来が待っています🌈", img: "images/45.png" },
             { id: 46, name: "CUPS PAGE", desc: "感受性が豊かになっている時🐚素直な想いを表現することで、可愛がられる恋に💓", img: "images/46.png" },
             { id: 47, name: "CUPS KNIGHT", desc: "ロマンチックな誘いの予感🌹王子様のような優しい愛が、あなたを迎えに来るよ✨", img: "images/47.png" },
             { id: 48, name: "CUPS QUEEN", desc: "母性的な深い愛の力🌊慈しみの心で接することで、相手の心を完全に掴めます💗", img: "images/48.png" },
             { id: 49, name: "CUPS KING", desc: "包容力のある安定した愛👑感情をコントロールし、優しさで関係を導けるときだよ✨", img: "images/49.png" },
-
-            // ソード (50-63)
+            // ソード
             { id: 50, name: "SWORDS ACE", desc: "真実を見極める強い意志⚡曖昧な関係を断ち切り、新しい道を決断する時です切り拓く✨", img: "images/50.png" },
             { id: 51, name: "SWORDS 2", desc: "葛藤の中でバランスを探して⚖️無理に動かず、心が定まるのをじっと待って🤍", img: "images/51.png" },
             { id: 52, name: "SWORDS 3", desc: "心が痛む経験は浄化のプロセス💔この痛みを知ることで、あなたはもっと優しくなれる🌱", img: "images/52.png" },
@@ -165,8 +177,7 @@
             { id: 61, name: "SWORDS KNIGHT", desc: "猛スピードで事態が動きます⚡言葉が刃にならないよう、冷静さを忘れないで🤍", img: "images/61.png" },
             { id: 62, name: "SWORDS QUEEN", desc: "知的な自立心で恋を切り盛り👑厳しいけれど正しい判断が、あなたを幸せにする✨", img: "images/62.png" },
             { id: 63, name: "SWORDS KING", desc: "冷静で公正な愛の裁き🧠感情に流されず、真実に基づいて関係を築ける時です✨", img: "images/63.png" },
-
-            // ペンタクル (64-77)
+            // ペンタクル
             { id: 64, name: "PENTACLES ACE", desc: "現実的な幸せの種がまかれます🌱結婚や将来を見据えた、確かな愛の始まりです✨", img: "images/64.png" },
             { id: 65, name: "PENTACLES 2", desc: "器用に恋をコントロール⚖️変化を楽しみながら、二人のバランスを調整して🤍", img: "images/65.png" },
             { id: 66, name: "PENTACLES 3", desc: "着実な協力関係を築く時🔧共通の目標を持つことで、絆がより強固になります✨", img: "images/66.png" },
@@ -181,13 +192,13 @@
             { id: 75, name: "PENTACLES KNIGHT", desc: "慎重に、でも確実に愛を運びます🐢スピードよりも誠実さを大切にして🤍", img: "images/75.png" },
             { id: 76, name: "PENTACLES QUEEN", desc: "豊かな包容力で愛を育む🌼心からの安心感を与える存在として、恋を守り抜こう💖", img: "images/76.png" },
             { id: 77, name: "PENTACLES KING", desc: "揺るぎない安定と信頼👑経済的にも精神的にも、頼れるパートナーとの良縁✨", img: "images/77.png" },
-
-            // スペシャル
             { id: 78, name: "ULTIMATE", desc: "あなたの恋は今、最終段階の扉の前にいます💍もう疑わなくて大丈夫。これまでの想いと選択はすべて正解✨覚悟を決めて受け取ることで、運命の愛が完全に形になります🌈💖", img: "images/78.png" }
         ];
 
         let coins = parseInt(localStorage.getItem('miruCoins') || '1');
         let lastAccess = localStorage.getItem('lastAccessDate');
+        let isMuted = true; // 初期はミュート
+        const bgm = document.getElementById('bgm');
 
         function updateUI() {
             const today = new Date().toLocaleDateString();
@@ -197,22 +208,34 @@
                 localStorage.setItem('lastAccessDate', today);
                 localStorage.setItem('miruCoins', coins);
             }
-
             document.getElementById('coin-count').innerText = coins;
             const btn = document.getElementById('play-btn');
             const limitText = document.getElementById('limit-text');
             const timerCon = document.getElementById('timer-container');
-            const premiumLink = document.getElementById('premium-link');
-
             if (coins <= 0) {
                 btn.disabled = true;
                 limitText.innerText = "今日の分は終了🌙また明日来てね🦄";
                 timerCon.style.display = "block";
-                premiumLink.style.display = "block";
             } else {
                 btn.disabled = false;
                 limitText.innerText = `あと ${coins} 回占えるよ✨`;
                 timerCon.style.display = "none";
+            }
+        }
+
+        // ミュート切り替え
+        function toggleMusic() {
+            isMuted = !isMuted;
+            const toggleBtn = document.getElementById('music-toggle');
+            if (isMuted) {
+                bgm.pause();
+                toggleBtn.innerText = "🔇";
+            } else {
+                bgm.play().catch(() => {
+                    // まだ画面を一度も触っていない場合はエラーになるのでボタンだけ変えておく
+                    console.log("Music will start on next interaction.");
+                });
+                toggleBtn.innerText = "🎵";
             }
         }
 
@@ -244,6 +267,10 @@
 
         async function playGacha() {
             if (coins <= 0) return;
+
+            // ガチャボタンが押された際、ミュート解除中なら再生開始
+            if (!isMuted) bgm.play();
+
             coins--; 
             localStorage.setItem('miruCoins', coins);
             updateUI();
@@ -308,10 +335,9 @@
                 const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n【恋愛アドバイス】\n${adviceSnippet}`;
 
                 await new Promise(r => setTimeout(r, 1500)); 
-                document.getElementById('miruko-status').innerText = "ミルコの占い結果🦄💎";
+                document.getElementById('miruko-status').innerText = "ミルコの占断結果🦄💎";
                 await typeWriter(finalMsg, 'miruko-msg', 35);
                 document.getElementById('close-res-btn').style.display = "block";
-
             }, 2000);
         }
 
