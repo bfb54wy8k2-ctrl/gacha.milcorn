@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ミルコーンの冒険タロットガチャ</title>
+    <title>ミルコ恋愛占いガチャ</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
@@ -52,14 +52,6 @@
         #miruko-msg { font-size: 0.85rem; line-height: 1.6; min-height: 100px; white-space: pre-wrap; }
         .miruko-status { color: #d44d7c; font-weight: bold; margin-bottom: 10px; display: block; border-bottom: 1px dashed #ffb6c1; padding-bottom: 5px; }
 
-        #collection-btn { position: fixed; right: 20px; bottom: 30px; width: 65px; height: 65px; background: var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); animation: fuwafuwa 2.5s ease-in-out infinite; }
-        @keyframes fuwafuwa { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-        #collection-screen { position: fixed; inset: 0; background: #1a1a1a; z-index: 300; display: none; flex-direction: column; }
-        .col-header { padding: 15px; text-align: center; border-bottom: 1px solid #333; }
-        .col-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 15px; }
-        .card-slot { aspect-ratio: 2/3.5; background: #2a2a2a; border-radius: 8px; border: 1px solid #444; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #555; cursor: pointer; }
-        .card-slot img { width: 100%; height: 100%; object-fit: cover; }
-        
         @keyframes shake { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-3deg); } }
     </style>
 </head>
@@ -86,7 +78,6 @@
     </div>
 
     <button class="btn" id="play-btn" onclick="playGacha()">ガチャを回す</button>
-    <div id="collection-btn" onclick="openCollection()">📖<br><span style="font-size:0.6rem;">レア図鑑</span></div>
 
     <div id="result-overlay">
         <div class="cards-container">
@@ -100,16 +91,7 @@
         </div>
     </div>
 
-    <div id="collection-screen">
-        <div class="col-header">
-            <button onclick="closeCollection()" style="background:var(--pink); border:none; padding:10px 30px; border-radius:20px; color:white; font-weight:bold;">戻る</button>
-            <span id="col-count-display" style="display:block; color:var(--gold); margin-top:10px;"></span>
-        </div>
-        <div class="col-grid" id="col-grid"></div>
-    </div>
-
     <script>
-        // タロットデータ（全カード）
         const tarotData = [
             { id: 0, name: "0. FOOL", desc: "今は完璧じゃなくていい恋✨先の不安より「好き」という純粋な気持ちを信じて。勇気ある一歩が、思いがけない幸せに繋がります🌈", img: "images/0.png" },
             { id: 1, name: "1. MAGICIAN", desc: "あなたの想いには現実を動かす力があります💫駆け引きより素直な言葉を。伝えることで、恋ははっきりと形を持ち始めます💌", img: "images/1.png" },
@@ -136,14 +118,20 @@
             { id: 36, name: "ACE OF CUPS", desc: "新しい愛の始まり💗心が自然と動く出会いや感情が訪ります。怖がらず、そのときめきを受け取って🌸", img: "images/36.png" },
             { id: 37, name: "TWO OF CUPS", desc: "心と心が通い合う時💕対等な愛、素直な気持ちの交換が恋を深めます。安心して想いを共有して✨", img: "images/37.png" },
             { id: 78, name: "ULTIMATE", desc: "あなたの恋は今、最終段階の扉の前にいます💍もう疑わなくて大丈夫。これまでの想いと選択はすべて正解✨覚悟を決めて受け取ることで、運命の愛が完全に形になります🌈💖", img: "images/78.png" }
-            // ...必要に応じて他カードも追加...
         ];
 
-        const rareImgList = ["images/6.png", "images/17.png", "images/37.png", "images/44.png", "images/78.png"];
-        let coins = parseInt(localStorage.getItem('miruCoins') || '2');
-        let myCollection = JSON.parse(localStorage.getItem('myCollection') || '[]');
+        let coins = parseInt(localStorage.getItem('miruCoins') || '1');
+        let lastAccess = localStorage.getItem('lastAccessDate');
 
         function updateUI() {
+            const today = new Date().toLocaleDateString();
+            if (lastAccess !== today) {
+                coins = 1; // 1日1回に変更
+                lastAccess = today;
+                localStorage.setItem('lastAccessDate', today);
+                localStorage.setItem('miruCoins', coins);
+            }
+
             document.getElementById('coin-count').innerText = coins;
             const btn = document.getElementById('play-btn');
             const limitText = document.getElementById('limit-text');
@@ -160,8 +148,17 @@
                 limitText.innerText = `あと ${coins} 回占えるよ✨`;
                 timerCon.style.display = "none";
             }
-            localStorage.setItem('miruCoins', coins);
         }
+
+        setInterval(() => {
+            const now = new Date();
+            const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+            const diff = tomorrow - now;
+            const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2,'0');
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2,'0');
+            const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2,'0');
+            document.getElementById('countdown').innerText = `${h}:${m}:${s}`;
+        }, 1000);
 
         function typeWriter(text, elementId, speed = 40) {
             let i = 0;
@@ -181,13 +178,14 @@
 
         async function playGacha() {
             if (coins <= 0) return;
-            coins--; updateUI();
+            coins--; 
+            localStorage.setItem('miruCoins', coins);
+            updateUI();
 
             const machine = document.getElementById('gacha-machine');
             const cap1 = document.getElementById('capsule1');
             const cap2 = document.getElementById('capsule2');
 
-            // 演出リセット
             [cap1, cap2].forEach(c => {
                 c.classList.remove('pop-out1', 'pop-out2', 'capsule-split');
                 c.style.setProperty('--cap-color', ['#ff8aae', '#a2d2ff', '#ffd700', '#b19cd9'][Math.floor(Math.random() * 4)]);
@@ -205,22 +203,14 @@
                 cap1.classList.add('capsule-split');
                 cap2.classList.add('capsule-split');
 
-                // カード選定（重複なし）
                 const card1 = tarotData[Math.floor(Math.random() * tarotData.length)];
                 let card2 = tarotData[Math.floor(Math.random() * tarotData.length)];
                 while(card1.id === card2.id) card2 = tarotData[Math.floor(Math.random() * tarotData.length)];
 
-                // 図鑑登録
-                [card1, card2].forEach(c => {
-                    if (rareImgList.includes(c.img) && !myCollection.includes(c.img)) myCollection.push(c.img);
-                });
-                localStorage.setItem('myCollection', JSON.stringify(myCollection));
-
-                // 画面表示
                 document.getElementById('card-box1').innerHTML = `<img src="${card1.img}">`;
                 document.getElementById('card-box2').innerHTML = `<img src="${card2.img}">`;
                 document.getElementById('miruko-msg').innerHTML = "";
-                document.getElementById('miruko-status').innerText = "ミルコが一生懸命占い中…🦄✨";
+                document.getElementById('miruko-status').innerText = "ミルコが占い中…🦄✨";
                 document.getElementById('close-res-btn').style.display = "none";
                 document.getElementById('result-overlay').style.display = "flex";
 
@@ -230,45 +220,45 @@
                     document.getElementById('detail').classList.add('active');
                 }, 100);
 
-                // --- カード読み取りロジック ---
+                // --- 恋愛アドバイスのレパートリー強化 ---
                 let adviceSnippet = "";
                 const ids = [card1.id, card2.id];
                 
-                if (ids.includes(78) || ids.includes(19) || ids.includes(21) || ids.includes(6)) {
+                if (ids.includes(78) || ids.includes(19) || ids.includes(6)) {
                     adviceSnippet = "ミラクルが起きそうな予感！今は「楽しい！」という直感を信じて動くのが正解。最高の結果が待っているよ✨";
-                } else if (ids.some(id => [13, 15, 16, 18, 52, 59].includes(id))) {
+                } else if (ids.some(id => [13, 15, 16, 18].includes(id))) {
                     adviceSnippet = "今は少しデトックスの時期。焦って答えを出そうとせず、まずは自分をたっぷり癒してあげて。夜更かしは禁物だよ🌙";
-                } else if (ids.some(id => id >= 64)) {
-                    adviceSnippet = "焦りは禁物！一歩ずつ、誠実な言葉を積み重ねるのが一番の近道だよ。まずは自分を整えることから始めよう🌱";
+                } else if (ids.some(id => [1, 7, 22, 33].includes(id))) {
+                    // 情熱・行動系
+                    adviceSnippet = "追い風が吹いているよ！「待つ」より「自分から動く」ことで運命の歯車が回りだすはず。勇気を出して一歩踏み出して！🔥";
+                } else if (ids.some(id => [2, 5, 9, 12].includes(id))) {
+                    // 内省・静止系
+                    adviceSnippet = "今は「静寂」が味方してくれる時。無理に答えを出そうとしなくて大丈夫。自分の心とゆっくり対話する時間を大切にしてね🌿";
+                } else if (ids.some(id => [3, 14, 36, 37].includes(id))) {
+                    // 愛情・交流系
+                    adviceSnippet = "愛のエネルギーが満ちているよ。周りの人への感謝を言葉にしてみて。優しい波動が、素敵な縁を引き寄せてくれるからね💖";
+                } else if (ids.some(id => [4, 11, 20].includes(id))) {
+                    // 決断・誠実系
+                    adviceSnippet = "誠実さが鍵になるよ。自分の本音に嘘をつかないで、凛とした態度でいること。その姿が相手の信頼をグッと引き寄せるよ凛✨";
                 } else {
-                    adviceSnippet = "二つの運命が重なり合って、新しい道が見えてくるよ。ありのままの君でいることが、素敵な恋を惹きつける魔法になるよ🦄💖";
+                    // その他
+                    adviceSnippet = "二つの運命が重なり合って、新しい道が見えてくるよ。ありのままの君でいることが、最高の魔法になるからね🦄💖";
                 }
 
                 const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n【恋愛アドバイス】\n${adviceSnippet}`;
 
                 await new Promise(r => setTimeout(r, 1500)); 
-                document.getElementById('miruko-status').innerText = "ミルコの占い結果🦄💎";
+                document.getElementById('miruko-status').innerText = "ミルコの占断結果🦄💎";
                 await typeWriter(finalMsg, 'miruko-msg', 35);
                 document.getElementById('close-res-btn').style.display = "block";
 
             }, 2000);
         }
 
-        function openCollection() {
-            const grid = document.getElementById('col-grid');
-            grid.innerHTML = "";
-            document.getElementById('col-count-display').innerText = `レア発見：${myCollection.length} / 5 枚`;
-            rareImgList.forEach(img => {
-                const slot = document.createElement('div');
-                slot.className = 'card-slot';
-                if(myCollection.includes(img)) slot.innerHTML = `<img src="${img}">`;
-                else slot.innerHTML = "?";
-                grid.appendChild(slot);
-            });
-            document.getElementById('collection-screen').style.display = "flex";
+        function closeResult() { 
+            document.getElementById('result-overlay').style.display = "none"; 
+            document.querySelectorAll('.card-reveal, #detail').forEach(el => el.classList.remove('active')); 
         }
-        function closeCollection() { document.getElementById('collection-screen').style.display = "none"; }
-        function closeResult() { document.getElementById('result-overlay').style.display = "none"; document.querySelectorAll('.card-reveal, #detail').forEach(el => el.classList.remove('active')); }
 
         window.onload = updateUI;
     </script>
