@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LOVE Message Gacha</title>
+    <title>Love Message Gacha</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
@@ -17,7 +17,9 @@
         #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.85rem; background: rgba(255,182,193,0.1); padding: 15px; border-radius: 15px; width: 85%; max-width: 320px; border: 1px solid rgba(255,182,193,0.2); }
         #countdown { font-family: monospace; font-size: 1.1rem; color: #fff; margin-top: 5px; display: block; }
         
-        .code-btn { margin-top: 12px; background: none; border: 1px dashed var(--pink); color: var(--pink); padding: 8px 15px; border-radius: 10px; font-size: 0.75rem; cursor: pointer; }
+        /* 有料版案内リンクのスタイル */
+        #premium-link { margin-top: 15px; border-top: 1px solid rgba(255,182,193,0.3); padding-top: 15px; display: none; }
+        .stores-btn { display: inline-block; background: linear-gradient(to right, #d4af37, #f9f0b5); color: #5d4037; padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
         #gacha-container { position: relative; width: 300px; height: 350px; margin-top: 10px; }
         #gacha-machine { width: 100%; height: 100%; object-fit: contain; position: relative; z-index: 10; }
@@ -87,15 +89,21 @@
 </head>
 <body>
 
-    <div class="title"><img src="images/icon2.png">LOVE Message Gacha</div>
+    <div class="title"><img src="images/icon2.png">Love Message Gacha</div>
     <div id="coin-display">ミルコイン: <span id="coin-count">0</span> 枚</div>
 
     <div id="limit-info">
         <span id="limit-text"></span>
         <div id="timer-container" style="display:none; margin-top:10px;">
             <span id="countdown">--:--:--</span>
+            
+            <div id="premium-link">
+                <p style="margin:0 0 10px 0; font-size:0.8rem;">もっと占いたいあなたへ✨</p>
+                <a href="https://あなたのストアURL" target="_blank" class="stores-btn">
+                    ガチャ回し放題！有料版はこちら 💎
+                </a>
+            </div>
         </div>
-        <button class="code-btn" onclick="enterCode()">秘密のコード</button>
     </div>
 
     <div id="gacha-container">
@@ -132,7 +140,7 @@
 
     <script>
         const tarotData = [
-            { id: 0, name: "0. FOOL", desc: "今は完璧じゃなくていい恋✨先の不安より「好き」という純粋な気持ちを信じて。勇気ある一歩が、思いがけない幸せに繋がります🌈", img: "images/0.png" },
+            { id: 0, name: "0. FOOL", desc: "今は完璧じゃなくていい恋✨先の不安より「好き」という純粋な気持ちを信じて.勇気ある一歩が、思いがけない幸せに繋がります🌈", img: "images/0.png" },
             { id: 1, name: "1. MAGICIAN", desc: "あなたの想いには現実を動かす力があります💫駆け引きより素直な言葉を。伝えることで、恋ははっきりと形を持ち始めます💌", img: "images/1.png" },
             { id: 2, name: "2. HIGH PRIESTESS", desc: "相手の本心は言葉より態度に表れています🌙焦らず静かに見守って。あなたの直感は今、とても冴えています🕊️", img: "images/2.png" },
             { id: 3, name: "3. EMPRESS", desc: "愛されることを遠慮しないで💐受け取る覚悟ができた時、恋は自然と満たされていきます。自分を甘やかすのも大切な愛💖", img: "images/3.png" },
@@ -156,13 +164,13 @@
             { id: 21, name: "21. WORLD", desc: "心から満たされる恋が完成💍ありのままのあなたで、愛される幸せを受け取って🌈", img: "images/21.png" },
             { id: 36, name: "ACE OF CUPS", desc: "新しい愛の始まり💗心が自然と動く出会いや感情が訪れます。怖がらず、そのときめきを受け取って🌸", img: "images/36.png" },
             { id: 37, name: "TWO OF CUPS", desc: "心と心が通い合う時💕対等な愛、素直な気持ちの交換が恋を深めます。安心して想いを共有して✨", img: "images/37.png" },
-            { id: 38, name: "THREE OF CUPS", desc: "喜びを分かち合える関係🥂恋は楽しい時間の中で育ちます。笑顔と感謝を忘れずに🌷", img: "images/38.png" },
+            { id: 38, name: "THREE OF CUPS", desc: "喜びを分かち合える関係🥂恋は楽しい時間の中で育ます。笑顔と感謝を忘れずに🌷", img: "images/38.png" },
             { id: 39, name: "FOUR OF CUPS", desc: "気持ちが停滞しがち😌でも本当は、すぐそばに愛のチャンスが。心を少し開いてみて☁️", img: "images/39.png" },
             { id: 40, name: "FIVE OF CUPS", desc: "失ったものばかり見ないで🌧️まだ残っている愛があります。過去より未来に目を向けて🌈", img: "images/40.png" },
             { id: 41, name: "SIX OF CUPS", desc: "懐かしい想いが心を温めます🍀過去の恋や再会がヒントに。優しい気持ちを大切に💞", img: "images/41.png" },
             { id: 42, name: "SEVEN OF CUPS", desc: "迷いが生じやすい時☁️甘い幻想より、現実の愛を選んで。心が落ち着く方が答え✨", img: "images/42.png" },
             { id: 43, name: "EIGHT OF CUPS", desc: "離れる勇気も愛の形🌙満たされない関係から卒業して、新しい幸せへ進んで🚪", img: "images/43.png" },
-            { id: 44, name: "NINE OF CUPS", desc: "願いが叶う（レア）💖自分の幸せを素直に望んでOK。満足感のある恋が近づいています✨", img: "images/44.png" },
+            { id: 44, name: "NINE OF CUPS", desc: "願いが叶いやすい時💖自分の幸せを素直に望んでOK。満足感のある恋が近づいています✨", img: "images/44.png" },
             { id: 45, name: "TEN OF CUPS", desc: "心からの幸せ💐安心と愛に包まれる関係。あなたが望んできた愛の完成形です🌈", img: "images/45.png" },
             { id: 46, name: "PAGE OF CUPS", desc: "ピュアな恋心が芽生えます🐚小さなときめきを大切に。素直さが恋を動かします💓", img: "images/46.png" },
             { id: 47, name: "KNIGHT OF CUPS", desc: "ロマンチックな展開🌹想いを行動で示す時。愛を信じて一歩踏み出して✨", img: "images/47.png" },
@@ -176,7 +184,7 @@
             { id: 55, name: "SIX OF SWORDS", desc: "心が軽くなる方向へ🚤静かに前進しています。過去の痛みから抜け出せる時🌈", img: "images/55.png" },
             { id: 56, name: "SEVEN OF SWORDS", desc: "隠し事や不安に注意🕶️違和感は見逃さないで。誠実さが大切です✨", img: "images/56.png" },
             { id: 57, name: "EIGHT OF SWORDS", desc: "自分で自分を縛らないで⛓️思い込みを外せば、恋は動き出します🌬️", img: "images/57.png" },
-            { id: 58, name: "NINE OF SWORDS", desc: "不安が膨みやすい夜🌙でも現実は思うほど悪くない。心を休ませて🫧", img: "images/58.png" },
+            { id: 58, name: "NINE OF SWORDS", desc: "不安が膨らみやすい夜🌙でも現実は思うほど悪くない。心を休ませて🫧", img: "images/58.png" },
             { id: 59, name: "TEN OF SWORDS", desc: "どん底は再生の始まり🌑これ以上傷つかないための終わり。必ず朝は来ます🌅", img: "images/59.png" },
             { id: 60, name: "PAGE OF SWORDS", desc: "気になる相手を観察中👀焦らず距離感を保って。情報収集の時✨", img: "images/60.png" },
             { id: 61, name: "KNIGHT OF SWORDS", desc: "勢いある展開⚡言葉が強くなりがち。冷静さを忘れないで🤍", img: "images/61.png" },
@@ -201,7 +209,7 @@
             { id: 66, name: "THREE OF PENTACLES", desc: "協力が鍵🔧二人で築く関係。努力が形になります✨", img: "images/66.png" },
             { id: 67, name: "FOUR OF PENTACLES", desc: "執着に注意🔒握りしめすぎると苦しくなります。信頼して💫", img: "images/67.png" },
             { id: 68, name: "FIVE OF PENTACLES", desc: "孤独を感じやすい時❄️でもあなたは一人じゃない。助けを受け取って🤍", img: "images/68.png" },
-            { id: 69, name: "SIX OF PENTACLES", desc: "与える愛、受け取る愛🎁バランスが整う時。優しさが循環します✨", img: "images/69.png" },
+            { id: 69, name: "SIX OF PENTACLES", desc: "与える愛、受け取る愛🎁バランスが整う時.優しさが循環します✨", img: "images/69.png" },
             { id: 70, name: "SEVEN OF PENTACLES", desc: "結果を待つ時⏳恋は着実に育っています。焦らなくて大丈夫🌿", img: "images/70.png" },
             { id: 71, name: "EIGHT OF PENTACLES", desc: "コツコツ努力🔨努力は裏切りません。誠実さが信頼に✨", img: "images/71.png" },
             { id: 72, name: "NINE OF PENTACLES", desc: "自立した幸せ🌹一人でも満たされるからこそ、良い恋が来ます✨", img: "images/72.png" },
@@ -217,7 +225,6 @@
         let coins = parseInt(localStorage.getItem('miruCoins') || '2');
         let lastAccess = localStorage.getItem('lastAccessDate');
         let myCollection = JSON.parse(localStorage.getItem('myCollection') || '[]');
-        let usedCodes = JSON.parse(localStorage.getItem('usedCodes') || '[]');
 
         function updateUI() {
             const today = new Date().toLocaleDateString();
@@ -230,15 +237,18 @@
             const btn = document.getElementById('play-btn');
             const limitText = document.getElementById('limit-text');
             const timerCon = document.getElementById('timer-container');
+            const premiumLink = document.getElementById('premium-link');
 
             if (coins <= 0) {
                 btn.disabled = true;
                 limitText.innerText = "今日の分は終了🌙また明日来てね🦄";
                 timerCon.style.display = "block";
+                premiumLink.style.display = "block"; // コイン0でリンク表示
             } else {
                 btn.disabled = false;
                 limitText.innerText = `あと ${coins} 回占えるよ✨`;
                 timerCon.style.display = "none";
+                premiumLink.style.display = "none"; // コインがあれば隠す
             }
             localStorage.setItem('miruCoins', coins);
         }
@@ -341,14 +351,6 @@
         function closeCollection() { document.getElementById('collection-screen').style.display = "none"; }
         function closeResult() { document.getElementById('result-overlay').style.display = "none"; document.getElementById('card-box').classList.remove('active'); document.getElementById('detail').classList.remove('active'); }
         
-        function enterCode() {
-            const code = prompt("秘密のコードを入力してね🦄");
-            if (code === "MIRUCORN777" && !usedCodes.includes(code)) {
-                coins += 5; usedCodes.push(code);
-                localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
-                updateUI(); alert("5枚追加！");
-            }
-        }
         window.onload = updateUI;
     </script>
 </body>
