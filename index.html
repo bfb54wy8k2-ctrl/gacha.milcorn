@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ミルコ恋愛占いガチャ</title>
+    <title>ミルコーンの恋占いガチャ</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
@@ -57,7 +57,7 @@
 </head>
 <body>
 
-    <div class="title"><img src="images/icon2.png">Love Message Gacha</div>
+    <div class="title"><img src="images/icon2.png">ミルコーンの恋占いガチャ</div>
     <div id="coin-display">ミルコイン: <span id="coin-count">0</span> 枚</div>
 
     <div id="limit-info">
@@ -92,7 +92,9 @@
     </div>
 
     <script>
+        // 【完全版】全78枚タロットデータ
         const tarotData = [
+            // 大アルカナ (0-21)
             { id: 0, name: "0. FOOL", desc: "今は完璧じゃなくていい恋✨先の不安より「好き」という純粋な気持ちを信じて。勇気ある一歩が、思いがけない幸せに繋がります🌈", img: "images/0.png" },
             { id: 1, name: "1. MAGICIAN", desc: "あなたの想いには現実を動かす力があります💫駆け引きより素直な言葉を。伝えることで、恋ははっきりと形を持ち始めます💌", img: "images/1.png" },
             { id: 2, name: "2. HIGH PRIESTESS", desc: "相手の本心は言葉より態度に表れています🌙焦らず静かに見守って。あなたの直感は今、とても冴えています🕊️", img: "images/2.png" },
@@ -115,8 +117,72 @@
             { id: 19, name: "19. SUN", desc: "素直な笑顔が恋を輝かせます☀️喜びを分かち合える関係が、あなたを幸せにします💛", img: "images/19.png" },
             { id: 20, name: "20. JUDGEMENT", desc: "過去の恋に答えが出る時📯許しと気づきが、新しい愛への扉を開きます✨", img: "images/20.png" },
             { id: 21, name: "21. WORLD", desc: "心から満たされる恋が完成💍ありのままのあなたで、愛される幸せを受け取って🌈", img: "images/21.png" },
-            { id: 36, name: "ACE OF CUPS", desc: "新しい愛の始まり💗心が自然と動く出会いや感情が訪ります。怖がらず、そのときめきを受け取って🌸", img: "images/36.png" },
-            { id: 37, name: "TWO OF CUPS", desc: "心と心が通い合う時💕対等な愛、素直な気持ちの交換が恋を深めます。安心して想いを共有して✨", img: "images/37.png" },
+            
+            // ワンド (22-35)
+            { id: 22, name: "WANDS ACE", desc: "恋の情熱が着火する時🔥一気に距離が縮まるチャンス。ワクワクに従って進んで✨", img: "images/22.png" },
+            { id: 23, name: "WANDS 2", desc: "次の一歩を考える時🌍未来への期待が高まっています。理想の恋を描き始めて✨", img: "images/23.png" },
+            { id: 24, name: "WANDS 3", desc: "恋の可能性が広がります⛵着実に進展している証拠。自信を持って見守って🌈", img: "images/24.png" },
+            { id: 25, name: "WANDS 4", desc: "心安らぐ平和な時間🏡二人の土台が固まり、安心できる関係へと成長します💞", img: "images/25.png" },
+            { id: 26, name: "WANDS 5", desc: "小さなぶつかり合いは成長のサイン⚡本音で向き合うことで愛が深まります✨", img: "images/26.png" },
+            { id: 27, name: "WANDS 6", desc: "恋の勝利はもうすぐ🎉周囲も認めるような嬉しい進展が期待できるときだよ🏆", img: "images/27.png" },
+            { id: 28, name: "WANDS 7", desc: "自分の立場や恋を守り抜く時🛡️あなたの強い想いが運命を切り開きます💪", img: "images/28.png" },
+            { id: 29, name: "WANDS 8", desc: "急展開のサイン📩トントン拍子に話が進む予感。流れを逃さず乗って💨", img: "images/29.png" },
+            { id: 30, name: "WANDS 9", desc: "踏ん張りどころ🚧少し疲れ気味かも。でもゴールは目の前だから諦めないで✨", img: "images/30.png" },
+            { id: 31, name: "WANDS 10", desc: "抱え込みすぎかも💦恋の責任を一人で負わないで。もっと相手を頼ってみて🤝", img: "images/31.png" },
+            { id: 32, name: "WANDS PAGE", desc: "フレッシュな知らせ✨純粋な好奇心が恋の新しい扉を開けてくれるよワクワク🌟", img: "images/32.png" },
+            { id: 33, name: "WANDS KNIGHT", desc: "情熱的に突き進む時🏇迷っている暇はありません。直感で駆け抜けて🔥", img: "images/33.png" },
+            { id: 34, name: "WANDS QUEEN", desc: "あなたの魅力が溢れています太陽のように明るい笑顔が素敵な人を惹きつけるよ🌻", img: "images/34.png" },
+            { id: 35, name: "WANDS KING", desc: "強いリーダーシップが鍵👑あなたが主導権を握ることで、理想の恋が実現します✨", img: "images/35.png" },
+
+            // カップ (36-49)
+            { id: 36, name: "CUPS ACE", desc: "愛の喜びが溢れ出す時💗新しいトキメキや、深い愛情を受け取る準備をして🌸", img: "images/36.png" },
+            { id: 37, name: "CUPS 2", desc: "心と心が通じ合う最高の調和💕対等な関係で、愛を誓い合える幸せが訪れます✨", img: "images/37.png" },
+            { id: 38, name: "CUPS 3", desc: "喜びを分かち合う祝福の時間🥂仲間のサポートや楽しい交流が恋を応援します🌷", img: "images/38.png" },
+            { id: 39, name: "CUPS 4", desc: "少しマンネリ気味？😌不満に目を向けるより、差し出された愛に気づくことが大切☁️", img: "images/39.png" },
+            { id: 40, name: "CUPS 5", desc: "失ったものに囚われないで🌧️後ろを向けば、まだ残っている温かい愛に気づくはず🌈", img: "images/40.png" },
+            { id: 41, name: "CUPS 6", desc: "懐かしい記憶が幸せを運びます🍀純粋だった頃の気持ちが、今の恋を癒してくれます💞", img: "images/41.png" },
+            { id: 42, name: "CUPS 7", desc: "理想が膨らみすぎているかも☁️夢を見るのもいいけど、今は現実的な愛を選んで現実✨", img: "images/42.png" },
+            { id: 43, name: "CUPS 8", desc: "次のステージへ進む時🌙今の関係に区切りをつけて、より高い愛を求めて旅立とう🚪", img: "images/43.png" },
+            { id: 44, name: "CUPS 9", desc: "願いが叶う満たされた時💖あなたの心が満たされれば、恋も自然とうまくいきます✨", img: "images/44.png" },
+            { id: 45, name: "CUPS 10", desc: "最高の幸福感家族や大切な人と、穏やかで深い愛に包まれる未来が待っています🌈", img: "images/45.png" },
+            { id: 46, name: "CUPS PAGE", desc: "感受性が豊かになっている時🐚素直な想いを表現することで、可愛がられる恋に💓", img: "images/46.png" },
+            { id: 47, name: "CUPS KNIGHT", desc: "ロマンチックな誘いの予感🌹王子様のような優しい愛が、あなたを迎えに来るよ✨", img: "images/47.png" },
+            { id: 48, name: "CUPS QUEEN", desc: "母性的な深い愛の力🌊慈しみの心で接することで、相手の心を完全に掴めます💗", img: "images/48.png" },
+            { id: 49, name: "CUPS KING", desc: "包容力のある安定した愛👑感情をコントロールし、優しさで関係を導けるときだよ✨", img: "images/49.png" },
+
+            // ソード (50-63)
+            { id: 50, name: "SWORDS ACE", desc: "真実を見極める強い意志⚡曖昧な関係を断ち切り、新しい道を決断する時です切り拓く✨", img: "images/50.png" },
+            { id: 51, name: "SWORDS 2", desc: "葛藤の中でバランスを探して⚖️無理に動かず、心が定まるのをじっと待って🤍", img: "images/51.png" },
+            { id: 52, name: "SWORDS 3", desc: "心が痛む経験は浄化のプロセス💔この痛みを知ることで、あなたはもっと優しくなれる🌱", img: "images/52.png" },
+            { id: 53, name: "SWORDS 4", desc: "一旦休息して、戦うのをやめよう🕊️静かな眠りが、あなたの恋に明快な答えをくれる🫧", img: "images/53.png" },
+            { id: 54, name: "SWORDS 5", desc: "勝ち負けに意味はありません⚔️意地を張るより、心の平和を守る選択をしよう🤍", img: "images/54.png" },
+            { id: 55, name: "SWORDS 6", desc: "困難から離れ、安らぎの地へ⛵誰かの助けを借りて、より良い環境へ移動する時です🌈", img: "images/55.png" },
+            { id: 56, name: "SWORDS 7", desc: "駆け引きには慎重になって🕶️小手先のテクニックより、誠実さで勝負する方が吉✨", img: "images/56.png" },
+            { id: 57, name: "SWORDS 8", desc: "自分で自分を閉じ込めていない？⛓️目隠しを外せば、逃げ道はいくらでもあるよ🌬️", img: "images/57.png" },
+            { id: 58, name: "SWORDS 9", desc: "考えすぎて眠れない夜🌙不安の正体は妄想かも。現実はもっと明るいよ大丈夫🫧", img: "images/58.png" },
+            { id: 59, name: "SWORDS 10", desc: "これ以上の不幸はない、最悪期の脱出🌑夜明けはすぐそこ。新しい自分に生まれ変わろう🌅", img: "images/59.png" },
+            { id: 60, name: "SWORDS PAGE", desc: "警戒心と好奇心が入り混じる時👀慎重に様子を見ながら、有利なチャンスを伺って✨", img: "images/60.png" },
+            { id: 61, name: "SWORDS KNIGHT", desc: "猛スピードで事態が動きます⚡言葉が刃にならないよう、冷静さを忘れないで🤍", img: "images/61.png" },
+            { id: 62, name: "SWORDS QUEEN", desc: "知的な自立心で恋を切り盛り👑厳しいけれど正しい判断が、あなたを幸せにする✨", img: "images/62.png" },
+            { id: 63, name: "SWORDS KING", desc: "冷静で公正な愛の裁き🧠感情に流されず、真実に基づいて関係を築ける時です✨", img: "images/63.png" },
+
+            // ペンタクル (64-77)
+            { id: 64, name: "PENTACLES ACE", desc: "現実的な幸せの種がまかれます🌱結婚や将来を見据えた、確かな愛の始まりです✨", img: "images/64.png" },
+            { id: 65, name: "PENTACLES 2", desc: "器用に恋をコントロール⚖️変化を楽しみながら、二人のバランスを調整して🤍", img: "images/65.png" },
+            { id: 66, name: "PENTACLES 3", desc: "着実な協力関係を築く時🔧共通の目標を持つことで、絆がより強固になります✨", img: "images/66.png" },
+            { id: 67, name: "PENTACLES 4", desc: "独占欲が強くなっているかも🔒握りしめすぎず、心を開いて相手を信じて💫", img: "images/67.png" },
+            { id: 68, name: "PENTACLES 5", desc: "厳しい状況に負けないで❄️孤独を感じても、救いの手は必ず近くにあります🤍", img: "images/68.png" },
+            { id: 69, name: "PENTACLES 6", desc: "慈悲深く、対等な愛のギブ＆テイク🎁優しさを循環させることで、愛が倍増します✨", img: "images/69.png" },
+            { id: 70, name: "PENTACLES 7", desc: "今の成果を見直す収穫待ち⏳焦らずこれまでの努力を信じれば、豊かな実りが訪れる🌿", img: "images/70.png" },
+            { id: 71, name: "PENTACLES 8", desc: "恋も自分磨きもコツコツと🔨日々の小さな積み重ねが、大きな信頼へと変わります✨", img: "images/71.png" },
+            { id: 72, name: "PENTACLES 9", desc: "洗練された魅力で人を惹きつけます🌹自立した大人の恋を楽しめる充実期✨", img: "images/72.png" },
+            { id: 73, name: "PENTACLES 10", desc: "盤石な繁栄と幸福🏡受け継がれるような、深く安定した愛の形が完成します💍", img: "images/73.png" },
+            { id: 74, name: "PENTACLES PAGE", desc: "真面目で誠実な学びの恋📘ゆっくりと時間をかけて、価値観を共有していこう✨", img: "images/74.png" },
+            { id: 75, name: "PENTACLES KNIGHT", desc: "慎重に、でも確実に愛を運びます🐢スピードよりも誠実さを大切にして🤍", img: "images/75.png" },
+            { id: 76, name: "PENTACLES QUEEN", desc: "豊かな包容力で愛を育む🌼心からの安心感を与える存在として、恋を守り抜こう💖", img: "images/76.png" },
+            { id: 77, name: "PENTACLES KING", desc: "揺るぎない安定と信頼👑経済的にも精神的にも、頼れるパートナーとの良縁✨", img: "images/77.png" },
+
+            // スペシャル
             { id: 78, name: "ULTIMATE", desc: "あなたの恋は今、最終段階の扉の前にいます💍もう疑わなくて大丈夫。これまでの想いと選択はすべて正解✨覚悟を決めて受け取ることで、運命の愛が完全に形になります🌈💖", img: "images/78.png" }
         ];
 
@@ -126,7 +192,7 @@
         function updateUI() {
             const today = new Date().toLocaleDateString();
             if (lastAccess !== today) {
-                coins = 1; // 1日1回に変更
+                coins = 1; 
                 lastAccess = today;
                 localStorage.setItem('lastAccessDate', today);
                 localStorage.setItem('miruCoins', coins);
@@ -220,28 +286,22 @@
                     document.getElementById('detail').classList.add('active');
                 }, 100);
 
-                // --- 恋愛アドバイスのレパートリー強化 ---
                 let adviceSnippet = "";
                 const ids = [card1.id, card2.id];
                 
                 if (ids.includes(78) || ids.includes(19) || ids.includes(6)) {
                     adviceSnippet = "ミラクルが起きそうな予感！今は「楽しい！」という直感を信じて動くのが正解。最高の結果が待っているよ✨";
-                } else if (ids.some(id => [13, 15, 16, 18].includes(id))) {
+                } else if (ids.some(id => [13, 15, 16, 18, 52, 58, 59, 68].includes(id))) {
                     adviceSnippet = "今は少しデトックスの時期。焦って答えを出そうとせず、まずは自分をたっぷり癒してあげて。夜更かしは禁物だよ🌙";
-                } else if (ids.some(id => [1, 7, 22, 33].includes(id))) {
-                    // 情熱・行動系
+                } else if (ids.some(id => [1, 7, 22, 29, 33, 61].includes(id))) {
                     adviceSnippet = "追い風が吹いているよ！「待つ」より「自分から動く」ことで運命の歯車が回りだすはず。勇気を出して一歩踏み出して！🔥";
-                } else if (ids.some(id => [2, 5, 9, 12].includes(id))) {
-                    // 内省・静止系
+                } else if (ids.some(id => [2, 5, 9, 12, 51, 53, 70, 75].includes(id))) {
                     adviceSnippet = "今は「静寂」が味方してくれる時。無理に答えを出そうとしなくて大丈夫。自分の心とゆっくり対話する時間を大切にしてね🌿";
-                } else if (ids.some(id => [3, 14, 36, 37].includes(id))) {
-                    // 愛情・交流系
+                } else if (ids.some(id => [3, 14, 36, 37, 38, 41, 44, 45, 69].includes(id))) {
                     adviceSnippet = "愛のエネルギーが満ちているよ。周りの人への感謝を言葉にしてみて。優しい波動が、素敵な縁を引き寄せてくれるからね💖";
-                } else if (ids.some(id => [4, 11, 20].includes(id))) {
-                    // 決断・誠実系
-                    adviceSnippet = "誠実さが鍵になるよ。自分の本音に嘘をつかないで、凛とした態度でいること。その姿が相手の信頼をグッと引き寄せるよ凛✨";
+                } else if (ids.some(id => [4, 11, 20, 50, 62, 63, 71, 77].includes(id))) {
+                    adviceSnippet = "誠実さが鍵になるよ。自分の本音に嘘をつかないで、凛とした態度でいること。その姿が相手の信頼をグッと引き寄せるよ✨";
                 } else {
-                    // その他
                     adviceSnippet = "二つの運命が重なり合って、新しい道が見えてくるよ。ありのままの君でいることが、最高の魔法になるからね🦄💖";
                 }
 
