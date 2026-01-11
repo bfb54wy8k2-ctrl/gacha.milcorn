@@ -19,113 +19,64 @@
         
         .code-btn { margin-top: 12px; background: none; border: 1px dashed var(--pink); color: var(--pink); padding: 8px 15px; border-radius: 10px; font-size: 0.75rem; cursor: pointer; }
 
-        /* ガチャコンテナ */
         #gacha-container { position: relative; width: 300px; height: 350px; margin-top: 10px; }
         #gacha-machine { width: 100%; height: 100%; object-fit: contain; position: relative; z-index: 10; }
 
-        /* 立体的なリアルカプセル */
         #capsule {
-            position: absolute;
-            bottom: 60px;
-            right: 40px;
-            width: 70px;
-            height: 70px;
-            z-index: 100;
-            display: none;
+            position: absolute; bottom: 60px; right: 40px; width: 70px; height: 70px; z-index: 100; display: none;
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
         }
-
-        .capsule-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-        }
-
+        .capsule-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
         .capsule-top {
-            position: absolute;
-            top: 0; width: 100%; height: 50%;
-            border-radius: 35px 35px 0 0;
+            position: absolute; top: 0; width: 100%; height: 50%; border-radius: 35px 35px 0 0;
             background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 50%), var(--cap-color, #333);
-            border: 1px solid rgba(255,255,255,0.3);
-            transition: all 0.5s ease-out;
+            border: 1px solid rgba(255,255,255,0.3); transition: all 0.5s ease-out;
         }
-
         .capsule-bottom {
-            position: absolute;
-            bottom: 0; width: 100%; height: 50%;
-            border-radius: 0 0 35px 35px;
-            background: rgba(255, 255, 255, 0.7);
-            background-image: radial-gradient(circle at 70% 70%, rgba(255,255,255,0.8) 0%, transparent 60%);
-            backdrop-filter: blur(2px);
-            border: 1px solid rgba(255,255,255,0.4);
-            transition: all 0.5s ease-out;
+            position: absolute; bottom: 0; width: 100%; height: 50%; border-radius: 0 0 35px 35px;
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(2px); border: 1px solid rgba(255,255,255,0.4); transition: all 0.5s ease-out;
         }
 
-        /* 飛び出しアニメーション */
-        .pop-out {
-            display: block !important;
-            animation: capsule-fly 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-        }
-
+        .pop-out { display: block !important; animation: capsule-fly 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
         @keyframes capsule-fly {
             0% { transform: translate(0, 0) scale(0.3) rotate(0deg); }
             30% { transform: translate(-50px, -150px) scale(1.2) rotate(180deg); }
             100% { transform: translate(-115px, -100px) scale(2.8) rotate(720deg); }
         }
-
         .capsule-split .capsule-top { transform: translateY(-80px) rotate(-40deg); opacity: 0; }
         .capsule-split .capsule-bottom { transform: translateY(80px) rotate(40deg); opacity: 0; }
 
         .btn { margin-top: 10px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 5px 0 #db7093; cursor: pointer; }
         .btn:disabled { background: #666; box-shadow: 0 5px 0 #444; cursor: not-allowed; }
 
-        /* 図鑑ボタンのふわふわ */
         #collection-btn { 
             position: fixed; right: 20px; bottom: 30px; width: 65px; height: 65px; 
             background: var(--gold); border-radius: 50%; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; z-index: 100; border: 2px solid white; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            animation: fuwafuwa 2.5s ease-in-out infinite;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); animation: fuwafuwa 2.5s ease-in-out infinite;
         }
-        @keyframes fuwafuwa {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-        }
+        @keyframes fuwafuwa { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
-        /* 図鑑画面 */
         #collection-screen { position: fixed; inset: 0; background: #1a1a1a; z-index: 300; display: none; flex-direction: column; }
         .col-header { padding: 15px; text-align: center; border-bottom: 1px solid #333; }
         .col-count-text { color: var(--gold); font-weight: bold; margin-top: 10px; display: block; line-height: 1.4; }
-        .col-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
+        .col-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 15px; }
         .card-slot { aspect-ratio: 2/3.5; background: #2a2a2a; border-radius: 8px; border: 1px solid #444; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #555; }
         .card-slot img { width: 100%; height: 100%; object-fit: cover; }
 
         .secret-door-banner {
-            grid-column: 1 / span 3; margin-bottom: 10px; padding: 15px;
-            background: linear-gradient(45deg, #FFD700, #FF69B4, #00BFFF);
-            background-size: 200% 200%; animation: grad-flow 3s ease infinite;
+            grid-column: 1 / span 2; margin-bottom: 10px; padding: 15px;
+            background: linear-gradient(45deg, #FFD700, #FF69B4, #00BFFF); background-size: 200% 200%; animation: grad-flow 3s ease infinite;
             border-radius: 12px; text-align: center; border: 2px solid white;
         }
         @keyframes grad-flow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 
-        /* カード出現 */
         #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 400; }
-        .card-reveal { 
-            width: 70%; max-width: 250px; aspect-ratio: 2/3.5; border: 3px solid var(--gold); 
-            border-radius: 15px; overflow: hidden; background: black; 
-            transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        .card-reveal { width: 70%; max-width: 250px; aspect-ratio: 2/3.5; border: 3px solid var(--gold); border-radius: 15px; overflow: hidden; background: black; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .card-reveal.active { transform: scale(1); }
         .card-reveal img { width: 100%; height: 100%; object-fit: cover; }
         #detail { width: 85%; max-width: 320px; background: #fefcf0; color: #333; padding: 15px; border-radius: 20px; margin-top: 15px; text-align: center; opacity: 0; }
         #detail.active { opacity: 1; transition: opacity 0.5s; }
-
-        #zoom-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 500; display: none; flex-direction: column; align-items: center; justify-content: center; perspective: 1000px; touch-action: none; }
-        .card-3d-wrapper { width: 280px; height: 460px; position: relative; transform-style: preserve-3d; transition: transform 0.1s; }
-        .card-face { position: absolute; inset: 0; border-radius: 15px; border: 3px solid var(--gold); backface-visibility: hidden; background: black; }
-        .card-back { transform: rotateY(180deg); }
-        .card-face img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; display: block; }
 
         @keyframes shake { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-3deg); } }
     </style>
@@ -138,39 +89,25 @@
     <div id="limit-info">
         <span id="limit-text"></span>
         <div id="timer-container" style="display:none; margin-top:10px;">
-            <span style="font-size:0.7rem; opacity:0.8;">全回復(2枚)まであと</span>
             <span id="countdown">--:--:--</span>
         </div>
-        <button class="code-btn" onclick="enterCode()">ミルコインを追加する秘密のコード</button>
+        <button class="code-btn" onclick="enterCode()">秘密のコード</button>
     </div>
 
     <div id="gacha-container">
         <img src="images/gacha.png" id="gacha-machine">
-        <div id="capsule">
-            <div class="capsule-inner">
-                <div class="capsule-top"></div>
-                <div class="capsule-bottom"></div>
-            </div>
-        </div>
+        <div id="capsule"><div class="capsule-inner"><div class="capsule-top"></div><div class="capsule-bottom"></div></div></div>
     </div>
 
     <button class="btn" id="play-btn" onclick="playGacha()">ガチャを回す</button>
-    <div id="collection-btn" onclick="openCollection()">📖<br><span style="font-size:0.6rem;">図鑑</span></div>
+    <div id="collection-btn" onclick="openCollection()">📖<br><span style="font-size:0.6rem;">レア図鑑</span></div>
 
     <div id="collection-screen">
         <div class="col-header">
-            <button onclick="closeCollection()" style="background:var(--pink); border:none; padding:10px 30px; border-radius:20px; font-weight:bold; color:white;">戻る</button>
+            <button onclick="closeCollection()" style="background:var(--pink); border:none; padding:10px 30px; border-radius:20px; color:white; font-weight:bold;">戻る</button>
             <span class="col-count-text" id="col-count-display"></span>
         </div>
         <div class="col-grid" id="col-grid"></div>
-    </div>
-
-    <div id="zoom-overlay">
-        <div class="card-3d-wrapper" id="card-3d">
-            <div class="card-face card-front"><img id="zoom-img-front" src=""></div>
-            <div class="card-face card-back"><img src="images/back.png"></div>
-        </div>
-        <p style="color:white; margin-top:20px; font-size:0.8rem;">左右回転 / 下スワイプで閉じる</p>
     </div>
 
     <div id="result-overlay" onclick="closeResult()">
@@ -178,88 +115,92 @@
         <div id="detail"><h2 id="card-name" style="margin:0; font-size:1rem; color:#d44d7c;"></h2><p id="card-desc" style="font-size:0.8rem; margin-top:8px;"></p></div>
     </div>
 
-<script>
+    <script>
+        // 全79種類のデータ（ここから抽選される）
         const tarotData = [
-            { name: "0. THE FOOL", desc: "💫 新しい冒険のはじまり\nワクワクする方を選んで大正解。\n今は深く考えすぎなくてOKだよ。", img: "images/0.png" },
-            { name: "1. THE MAGICIAN", desc: "✨ 願いが動き出すタイミング\nあなたの言葉や行動が、現実を変えていくよ。", img: "images/1.png" },
-            { name: "2. THE HIGH PRIESTESS", desc: "🌙 直感を信じて\n理由はなくて大丈夫。\n「なんとなく」の感覚が当たってるよ。", img: "images/2.png" },
-            { name: "3. THE EMPRESS", desc: "🌷 愛と豊かさに包まれる時\n受け取ることを遠慮しないで。\nあなたは愛されていい存在。", img: "images/3.png" },
-            { name: "4. THE EMPEROR", desc: "👑 安定と安心が手に入る\nしっかりした選択が、未来を守ってくれるよ。", img: "images/4.png" },
-            { name: "5. THE HIEROPHANT", desc: "📖 大切な学びがある\n誰かの言葉や経験が、今のヒントになるよ。", img: "images/5.png" },
-            { name: "6. THE LOVERS", desc: "💖 心が選ぶ答えが正解\n迷ったら、本音を大事にしてね。", img: "images/6.png" },
-            { name: "7. THE CHARIOT", desc: "🚀 一気に前進！\n勢いに乗ってOK。\n今のあなたは止まらない。", img: "images/7.png" },
-            { name: "8. STRENGTH", desc: "🕊 優しさが最大の武器\n無理に強がらなくて大丈夫だよ。", img: "images/8.png" },
+            { name: "0. THE FOOL", desc: "💫 新しい冒険のはじまり\n今は深く考えすぎなくてOKだよ。", img: "images/0.png" },
+            { name: "1. THE MAGICIAN", desc: "✨ 願いが動き出すタイミング\nあなたの行動が、現実を変えていくよ。", img: "images/1.png" },
+            { name: "2. THE HIGH PRIESTESS", desc: "🌙 直感を信じて\n「なんとなく」の感覚が当たってるよ。", img: "images/2.png" },
+            { name: "3. THE EMPRESS", desc: "🌷 愛と豊かさに包まれる時\nあなたは愛されていい存在。", img: "images/3.png" },
+            { name: "4. THE EMPEROR", desc: "👑 安定と安心が手に入る\nしっかりした選択が、未来を守るよ。", img: "images/4.png" },
+            { name: "5. THE HIEROPHANT", desc: "📖 大切な学びがある\n誰かの言葉が、今のヒントになるよ。", img: "images/5.png" },
+            { name: "6. THE LOVERS", desc: "💖 心が選ぶ答えが正解\n本音を大事にしてね。", img: "images/6.png" },
+            { name: "7. THE CHARIOT", desc: "🚀 一気に前進！\n今のあなたは止まらない。", img: "images/7.png" },
+            { name: "8. STRENGTH", desc: "🕊 優しさが最大の武器\n無理に強がらなくて大丈夫。", img: "images/8.png" },
             { name: "9. THE HERMIT", desc: "🔦 一人の時間が答えをくれる\n静かに自分と向き合ってみて。", img: "images/9.png" },
-            { name: "10. WHEEL OF FORTUNE", desc: "🎡 運命が動いてる！\n流れが変わる時。\nチャンスを信じてね。", img: "images/10.png" },
-            { name: "11. JUSTICE", desc: "⚖ 正しい選択ができる時\n誠実でいることが、あなたを守るよ。", img: "images/11.png" },
-            { name: "12. THE HANGED MAN", desc: "⏳ 今は待つことも大切\n見方を変えると、答えが見えてくるよ。", img: "images/12.png" },
-            { name: "13. DEATH", desc: "🌱 終わり＝新しい始まり\n手放した先に、ちゃんと幸せが待ってる。", img: "images/13.png" },
+            { name: "10. WHEEL OF FORTUNE", desc: "🎡 運勢が動いてる！\nチャンスを信じてね。", img: "images/10.png" },
+            { name: "11. JUSTICE", desc: "⚖ 正しい選択ができる時\n誠実でいることが鍵。", img: "images/11.png" },
+            { name: "12. THE HANGED MAN", desc: "⏳ 今は待つことも大切\n見方を変えると、答えが見えるよ。", img: "images/12.png" },
+            { name: "13. DEATH", desc: "🌱 終わり＝新しい始まり\n手放した先に、幸せが待ってる。", img: "images/13.png" },
             { name: "14. TEMPERANCE", desc: "💗 心と現実のバランス◎\n焦らず、ちょうどいいペースで。", img: "images/14.png" },
-            { name: "15. THE DEVIL", desc: "🔓 その不安、もう手放せるよ\n本当はあなた、自由なんだ。", img: "images/15.png" },
-            { name: "16. THE TOWER", desc: "⚡ 突然の変化にびっくりしても大丈夫\n必要ないものが壊れてるだけ。", img: "images/16.png" },
-            { name: "17. THE STAR", desc: "🌟 希望はちゃんと残ってる\n信じる気持ちが、未来を照らすよ。", img: "images/17.png" },
+            { name: "15. THE DEVIL", desc: "🔓 その不安、もう手放せるよ\nあなたは自由なんだ。", img: "images/15.png" },
+            { name: "16. THE TOWER", desc: "⚡ 突然の変化に驚いても大丈夫\n必要ないものが壊れてるだけ。", img: "images/16.png" },
+            { name: "17. THE STAR", desc: "🌟 希望はちゃんと残ってる\n信じる気持ちが未来を照らす。", img: "images/17.png" },
             { name: "18. THE MOON", desc: "🌫 気持ちが揺れやすい時\n無理に答えを出さなくていいよ。", img: "images/18.png" },
             { name: "19. THE SUN", desc: "☀ 最高にハッピーな流れ\n笑顔でいるだけで運気アップ！", img: "images/19.png" },
             { name: "20. JUDGEMENT", desc: "🎺 目覚めのタイミング\n過去を超えて、新しい自分へ。", img: "images/20.png" },
             { name: "21. THE WORLD", desc: "🌈 願いがひとつ完成する\nここまで本当によく頑張ったね。", img: "images/21.png" },
-            { name: "ACE OF WANDS", desc: "🔥 WANDS\n✨ 新しいやる気が芽生えるよ。今がスタート！", img: "images/22.png" },
-            { name: "TWO OF WANDS", desc: "🔥 WANDS\n🌈 未来の選択肢が広がってる。どっちも素敵。", img: "images/23.png" },
-            { name: "THREE OF WANDS", desc: "🔥 WANDS\n🚢 期待して待ってて. ちゃんと進展があるよ。", img: "images/24.png" },
-            { name: "FOUR OF WANDS", desc: "🔥 WANDS\n🏡 安心できる場所で、嬉しい出来事がありそう。", img: "images/25.png" },
-            { name: "FIVE OF WANDS", desc: "🔥 WANDS\n💥 ちょっとしたぶつかり合い。深刻じゃないよ。", img: "images/26.png" },
-            { name: "SIX OF WANDS", desc: "🔥 WANDS\n🏆 頑張りが認められる時。自信持って！", img: "images/27.png" },
-            { name: "SEVEN OF WANDS", desc: "🔥 WANDS\n🛡 自分を守ってOK。あなたは間違ってない。", img: "images/28.png" },
-            { name: "EIGHT OF WANDS", desc: "🔥 WANDS\n💌 急展開の予感！連絡や進展が早いよ。", img: "images/29.png" },
-            { name: "NINE OF WANDS", desc: "🔥 WANDS\n💪 もう少しでゴール。踏ん張りどき。", img: "images/30.png" },
-            { name: "TEN OF WANDS", desc: "🔥 WANDS\n🎒 抱えすぎてるかも。少し手放してね。", img: "images/31.png" },
-            { name: "PAGE OF WANDS", desc: "🔥 WANDS\n🌱 ワクワクするお知らせ。好奇心を大切に。", img: "images/32.png" },
-            { name: "KNIGHT OF WANDS", desc: "🔥 WANDS\n🔥 勢い重視でOK！行動がチャンスを呼ぶ。", img: "images/33.png" },
-            { name: "QUEEN OF WANDS", desc: "🔥 WANDS\n👑 自分らしく輝ける時。魅力がアップ中。", img: "images/34.png" },
-            { name: "KING OF WANDS", desc: "🔥 WANDS\n🦁 リーダーシップ発揮！堂々として大丈夫。", img: "images/35.png" },
-            { name: "ACE OF CUPS", desc: "💧 CUPS\n💖 新しい愛が始まる予感。心がときめくよ。", img: "images/36.png" },
-            { name: "TWO OF CUPS", desc: "💧 CUPS\n💕 想いが通じ合う。両想いのカード。", img: "images/37.png" },
-            { name: "THREE OF CUPS", desc: "💧 CUPS\n🎉 嬉しいことをみんなでシェアできそう。", img: "images/38.png" },
-            { name: "FOUR OF CUPS", desc: "💧 CUPS\n😌 ちょっと気持ちが停滞中。無理しないで。", img: "images/39.png" },
-            { name: "FIVE OF CUPS", desc: "💧 CUPS\n💧 落ち込んでも大丈夫。まだ希望はあるよ。", img: "images/40.png" },
-            { name: "SIX OF CUPS", desc: "💧 CUPS\n🧸 懐かしい気持ち。優しい再会の予感。", img: "images/41.png" },
-            { name: "SEVEN OF CUPS", desc: "💧 CUPS\n🌫 迷いやすい時。今は決めなくてOK。", img: "images/42.png" },
-            { name: "EIGHT OF CUPS", desc: "💧 CUPS\n🚶‍♀️ 次の幸せへ進む準備ができてる。", img: "images/43.png" },
-            { name: "NINE OF CUPS", desc: "💧 CUPS\n🍰 願いが叶いやすい！満足感たっぷり。", img: "images/44.png" },
-            { name: "TEN OF CUPS", desc: "💧 CUPS\n🌈 心からの幸せ。愛に満たされるよ。", img: "images/45.png" },
-            { name: "PAGE OF CUPS", desc: "💧 CUPS\n💌 可愛いメッセージ。ときめきの予感。", img: "images/46.png" },
-            { name: "KNIGHT OF CUPS", desc: "💧 CUPS\n🌹 ロマンチックな展開。優しいアプローチ。", img: "images/47.png" },
-            { name: "QUEEN OF CUPS", desc: "💧 CUPS\n🫶 愛情深くなれる時。思いやりが鍵。", img: "images/48.png" },
-            { name: "KING OF CUPS", desc: "💧 CUPS\n🌊 感情を上手にコントロールできるよ。", img: "images/49.png" },
-            { name: "ACE OF SWORDS", desc: "🌬 SWORDS\n💡 はっきりした答えが出るよ。", img: "images/50.png" },
-            { name: "TWO OF SWORDS", desc: "🌬 SWORDS\n🙈 決断を先延ばし中。心の準備待ち。", img: "images/51.png" },
-            { name: "THREE OF SWORDS", desc: "🌬 SWORDS\n💔 傷ついた心。ちゃんと癒えるからね。", img: "images/52.png" },
-            { name: "FOUR OF SWORDS", desc: "🌬 SWORDS\n😴 休息が必要。無理しないで。", img: "images/53.png" },
-            { name: "FIVE OF SWORDS", desc: "🌬 SWORDS\n⚠ ちょっと後味悪め。深入り注意。", img: "images/54.png" },
-            { name: "SIX OF SWORDS", desc: "🌬 SWORDS\n🚤 少しずつ楽になる。心が軽くなるよ。", img: "images/55.png" },
-            { name: "SEVEN OF SWORDS", desc: "🌬 SWORDS\n🦊 隠し事に注意。違和感を大切に。", img: "images/56.png" },
-            { name: "EIGHT OF SWORDS", desc: "🌬 SWORDS\n🕸 動けない気がしてるだけ。本当は自由。", img: "images/57.png" },
-            { name: "NINE OF SWORDS", desc: "🌬 SWORDS\n🌙 不安でいっぱい。でも考えすぎだよ。", img: "images/58.png" },
-            { name: "TEN OF SWORDS", desc: "🌬 SWORDS\n🌅 これで終わり。ここから回復。", img: "images/59.png" },
-            { name: "PAGE OF SWORDS", desc: "🌬 SWORDS\n👀 気になる情報。様子見でOK。", img: "images/60.png" },
-            { name: "KNIGHT OF SWORDS", desc: "🌬 SWORDS\n💨 勢い注意！一度深呼吸。", img: "images/61.png" },
-            { name: "QUEEN OF SWORDS", desc: "🌬 SWORDS\n❄ 冷静な判断ができる時。", img: "images/62.png" },
-            { name: "KING OF SWORDS", desc: "🌬 SWORDS\n🧠 論理的に考えると正解が出る。", img: "images/63.png" },
-            { name: "ACE OF PENTACLES", desc: "🌱 PENTACLES\n🌟 新しいチャンス。現実的な幸運。", img: "images/64.png" },
-            { name: "TWO OF PENTACLES", desc: "🌱 PENTACLES\n🔄 忙しいけど回せてる。大丈夫。", img: "images/65.png" },
-            { name: "THREE OF PENTACLES", desc: "🌱 PENTACLES\n🤝 協力すると成功するよ。", img: "images/66.png" },
-            { name: "FOUR OF PENTACLES", desc: "🌱 PENTACLES\n🔒 守りすぎ注意。少し緩めて。", img: "images/67.png" },
-            { name: "FIVE OF PENTACLES", desc: "🌱 PENTACLES\n❄ 心細さを感じやすい時。助けはあるよ。", img: "images/68.png" },
-            { name: "SIX OF PENTACLES", desc: "🌱 PENTACLES\n🎁 与える・受け取るバランス◎", img: "images/69.png" },
-            { name: "SEVEN OF PENTACLES", desc: "🌱 PENTACLES\n🌳 結果待ち。焦らなくてOK。", img: "images/70.png" },
-            { name: "EIGHT OF PENTACLES", desc: "🌱 PENTACLES\n📚 コツコツ努力が実る。", img: "images/71.png" },
-            { name: "NINE OF PENTACLES", desc: "🌱 PENTACLES\n💎 自立と満足。自分を褒めて。", img: "images/72.png" },
-            { name: "TEN OF PENTACLES", desc: "🌱 PENTACLES\n🏰 安定と豊かさ。長く続く幸せ。", img: "images/73.png" },
-            { name: "PAGE OF PENTACLES", desc: "🌱 PENTACLES\n🌱 新しい学びや挑戦。", img: "images/74.png" },
-            { name: "KNIGHT OF PENTACLES", desc: "🌱 PENTACLES\n🐢 ゆっくりでも確実に進む。", img: "images/75.png" },
-            { name: "QUEEN OF PENTACLES", desc: "🌱 PENTACLES\n🌸 優しさと安心感。", img: "images/76.png" },
-            { name: "KING OF PENTACLES", desc: "🌱 PENTACLES\n👑 しっかりした基盤。信頼できる未来。", img: "images/77.png" },
+            { name: "ACE OF WANDS", desc: "🔥 WANDS\n✨ 新しいやる気が芽生えるよ。", img: "images/22.png" },
+            { name: "TWO OF WANDS", desc: "🔥 WANDS\n🌈 未来の選択肢が広がってる。", img: "images/23.png" },
+            { name: "THREE OF WANDS", desc: "🔥 WANDS\n🚢 期待して待ってて。", img: "images/24.png" },
+            { name: "FOUR OF WANDS", desc: "🔥 WANDS\n🏡 安心できる場所で、嬉しい出来事が。", img: "images/25.png" },
+            { name: "FIVE OF WANDS", desc: "🔥 WANDS\n💥 ちょっとしたぶつかり合い。", img: "images/26.png" },
+            { name: "SIX OF WANDS", desc: "🔥 WANDS\n🏆 頑張りが認められる時。", img: "images/27.png" },
+            { name: "SEVEN OF WANDS", desc: "🔥 WANDS\n🛡 自分を守ってOK。", img: "images/28.png" },
+            { name: "EIGHT OF WANDS", desc: "🔥 WANDS\n💌 急展開の予感！連絡が早いよ。", img: "images/29.png" },
+            { name: "NINE OF WANDS", desc: "🔥 WANDS\n💪 もう少しでゴール。", img: "images/30.png" },
+            { name: "TEN OF WANDS", desc: "🔥 WANDS\n🎒 抱えすぎかも。少し手放して。", img: "images/31.png" },
+            { name: "PAGE OF WANDS", desc: "🔥 WANDS\n🌱 好奇心を大切に。", img: "images/32.png" },
+            { name: "KNIGHT OF WANDS", desc: "🔥 WANDS\n🔥 勢い重視でOK！行動が鍵。", img: "images/33.png" },
+            { name: "QUEEN OF WANDS", desc: "🔥 WANDS\n👑 自分らしく輝ける時。", img: "images/34.png" },
+            { name: "KING OF WANDS", desc: "🔥 WANDS\n🦁 堂々として大丈夫。", img: "images/35.png" },
+            { name: "ACE OF CUPS", desc: "💧 CUPS\n💖 新しい愛が始まる予感。", img: "images/36.png" },
+            { name: "TWO OF CUPS", desc: "💧 CUPS\n💕 想いが通じ合う。", img: "images/37.png" },
+            { name: "THREE OF CUPS", desc: "💧 CUPS\n🎉 嬉しいことをシェアできそう。", img: "images/38.png" },
+            { name: "FOUR OF CUPS", desc: "💧 CUPS\n😌 ちょっと停滞中。無理しないで。", img: "images/39.png" },
+            { name: "FIVE OF CUPS", desc: "💧 CUPS\n💧 まだ希望はあるよ。", img: "images/40.png" },
+            { name: "SIX OF CUPS", desc: "💧 CUPS\n🧸 懐かしい優しい再会。", img: "images/41.png" },
+            { name: "SEVEN OF CUPS", desc: "💧 CUPS\n🌫 今は決めなくてOK。", img: "images/42.png" },
+            { name: "EIGHT OF CUPS", desc: "💧 CUPS\n🚶‍♀️ 次の幸せへ進む準備。", img: "images/43.png" },
+            { name: "NINE OF CUPS", desc: "💧 CUPS\n🍰 願いが叶いやすい！", img: "images/44.png" },
+            { name: "TEN OF CUPS", desc: "💧 CUPS\n🌈 心からの幸せ。", img: "images/45.png" },
+            { name: "PAGE OF CUPS", desc: "💧 CUPS\n💌 ときめきの予感。", img: "images/46.png" },
+            { name: "KNIGHT OF CUPS", desc: "💧 CUPS\n🌹 ロマンチックな展開。", img: "images/47.png" },
+            { name: "QUEEN OF CUPS", desc: "💧 CUPS\n🫶 思いやりが鍵。", img: "images/48.png" },
+            { name: "KING OF CUPS", desc: "💧 CUPS\n🌊 感情をコントロールできる。", img: "images/49.png" },
+            { name: "ACE OF SWORDS", desc: "🌬 SWORDS\n💡 はっきりした答えが出る。", img: "images/50.png" },
+            { name: "TWO OF SWORDS", desc: "🌬 SWORDS\n🙈 心の準備待ち。", img: "images/51.png" },
+            { name: "THREE OF SWORDS", desc: "🌬 SWORDS\n💔 ちゃんと癒えるからね。", img: "images/52.png" },
+            { name: "FOUR OF SWORDS", desc: "🌬 SWORDS\n😴 休息が必要。", img: "images/53.png" },
+            { name: "FIVE OF SWORDS", desc: "🌬 SWORDS\n⚠ 深入り注意。", img: "images/54.png" },
+            { name: "SIX OF SWORDS", desc: "🌬 SWORDS\n🚤 少しずつ楽になる。", img: "images/55.png" },
+            { name: "SEVEN OF SWORDS", desc: "🌬 SWORDS\n🦊 違和感を大切に。", img: "images/56.png" },
+            { name: "EIGHT OF SWORDS", desc: "🌬 SWORDS\n🕸 本当は自由だよ。", img: "images/57.png" },
+            { name: "NINE OF SWORDS", desc: "🌬 SWORDS\n🌙 考えすぎだよ。", img: "images/58.png" },
+            { name: "TEN OF SWORDS", desc: "🌬 SWORDS\n🌅 ここから回復。", img: "images/59.png" },
+            { name: "PAGE OF SWORDS", desc: "🌬 SWORDS\n👀 様子見でOK。", img: "images/60.png" },
+            { name: "KNIGHT OF SWORDS", desc: "🌬 SWORDS\n💨 一度深呼吸。", img: "images/61.png" },
+            { name: "QUEEN OF SWORDS", desc: "🌬 SWORDS\n❄ 冷静な判断を。", img: "images/62.png" },
+            { name: "KING OF SWORDS", desc: "🌬 SWORDS\n🧠 論理的に考えて。", img: "images/63.png" },
+            { name: "ACE OF PENTACLES", desc: "🌱 PENTACLES\n🌟 現実的な幸運。", img: "images/64.png" },
+            { name: "TWO OF PENTACLES", desc: "🌱 PENTACLES\n🔄 忙しくても大丈夫。", img: "images/65.png" },
+            { name: "THREE OF PENTACLES", desc: "🌱 PENTACLES\n🤝 協力すると成功する。", img: "images/66.png" },
+            { name: "FOUR OF PENTACLES", desc: "🌱 PENTACLES\n🔒 少し緩めてみて。", img: "images/67.png" },
+            { name: "FIVE OF PENTACLES", desc: "🌱 PENTACLES\n❄ 助けはあるよ。", img: "images/68.png" },
+            { name: "SIX OF PENTACLES", desc: "🌱 PENTACLES\n🎁 バランスが良い時。", img: "images/69.png" },
+            { name: "SEVEN OF PENTACLES", desc: "🌱 PENTACLES\n🌳 焦らなくてOK。", img: "images/70.png" },
+            { name: "EIGHT OF PENTACLES", desc: "🌱 PENTACLES\n📚 努力が実る。", img: "images/71.png" },
+            { name: "NINE OF PENTACLES", desc: "🌱 PENTACLES\n💎 自分を褒めて。", img: "images/72.png" },
+            { name: "TEN OF PENTACLES", desc: "🌱 PENTACLES\n🏰 長く続く幸せ。", img: "images/73.png" },
+            { name: "PAGE OF PENTACLES", desc: "🌱 PENTACLES\n🌱 新しい挑戦を。", img: "images/74.png" },
+            { name: "KNIGHT OF PENTACLES", desc: "🌱 PENTACLES\n🐢 確実に進む。", img: "images/75.png" },
+            { name: "QUEEN OF PENTACLES", desc: "🌱 PENTACLES\n🌸 安心感を大切に。", img: "images/76.png" },
+            { name: "KING OF PENTACLES", desc: "🌱 PENTACLES\n👑 信頼できる未来。", img: "images/77.png" },
             { name: "🦄 ULTIMATE", desc: "嬉しすぎる究極のかたちへ進むよ。", img: "images/78.png" }
         ];
+
+        // 図鑑に登録される5枚のレアカード画像
+        const rareImgList = ["images/rare1.png", "images/rare2.png", "images/rare3.png", "images/rare4.png", "images/rare5.png"];
 
         let coins = parseInt(localStorage.getItem('miruCoins') || '2');
         let lastAccess = localStorage.getItem('lastAccessDate');
@@ -272,7 +213,6 @@
                 if (coins < 2) coins = 2; 
                 lastAccess = today;
                 localStorage.setItem('lastAccessDate', today);
-                localStorage.setItem('miruCoins', coins);
             }
             document.getElementById('coin-count').innerText = coins;
             const btn = document.getElementById('play-btn');
@@ -294,27 +234,11 @@
             const now = new Date();
             const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
             const diff = tomorrow - now;
-            const h = Math.floor(diff / (1000 * 60 * 60));
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
-            const countdownEl = document.getElementById('countdown');
-            if(countdownEl) countdownEl.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2,'0');
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2,'0');
+            const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2,'0');
+            document.getElementById('countdown').innerText = `${h}:${m}:${s}`;
         }, 1000);
-
-        function enterCode() {
-            const code = prompt("秘密のコードを入力してね🦄");
-            if (!code) return;
-            const rewards = { "MIRUCORN777": 3, "LUCKY2026": 5, "OPEN": 1 };
-            if (usedCodes.includes(code)) {
-                alert("そのコードはもう使ったよ！");
-            } else if (rewards[code]) {
-                coins += rewards[code];
-                usedCodes.push(code);
-                localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
-                alert(`魔法成功！${rewards[code]}枚追加✨`);
-                updateUI();
-            } else { alert("コードが違うよ😢"); }
-        }
 
         function playGacha() {
             if (coins <= 0) return;
@@ -322,10 +246,7 @@
 
             const machine = document.getElementById('gacha-machine');
             const cap = document.getElementById('capsule');
-            
-            const colors = ['#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
-            cap.style.setProperty('--cap-color', colors[Math.floor(Math.random() * colors.length)]);
-
+            cap.style.setProperty('--cap-color', ['#3498db', '#2ecc71', '#f1c40f', '#9b59b6'][Math.floor(Math.random() * 4)]);
             cap.classList.remove('pop-out', 'capsule-split');
             machine.style.animation = "shake 0.1s infinite";
 
@@ -337,82 +258,73 @@
             setTimeout(() => {
                 cap.classList.add('capsule-split');
                 
-                const id = Math.floor(Math.random() * tarotData.length);
-                if(!myCollection.includes(id)) myCollection.push(id);
-                localStorage.setItem('myCollection', JSON.stringify(myCollection));
+                // 15%の確率で図鑑対象のレアが、85%の確率で通常のタロットが出る
+                const isRare = Math.random() < 0.15;
+                let card;
+                if (isRare) {
+                    const rIdx = Math.floor(Math.random() * rareImgList.length);
+                    const rImg = rareImgList[rIdx];
+                    card = { name: "🌟超レアカード🌟", desc: "伝説のミルコーンを見つけたよ！図鑑に登録されたよ✨", img: rImg };
+                    if(!myCollection.includes(rImg)) myCollection.push(rImg);
+                    localStorage.setItem('myCollection', JSON.stringify(myCollection));
+                } else {
+                    card = tarotData[Math.floor(Math.random() * tarotData.length)];
+                }
                 
-                document.getElementById('card-box').innerHTML = `<img src="${tarotData[id].img}">`;
-                document.getElementById('card-name').innerText = tarotData[id].name;
-                document.getElementById('card-desc').innerText = tarotData[id].desc;
-                
+                document.getElementById('card-box').innerHTML = `<img src="${card.img}">`;
+                document.getElementById('card-name').innerText = card.name;
+                document.getElementById('card-desc').innerText = card.desc;
                 document.getElementById('result-overlay').style.display = "flex";
                 setTimeout(() => {
                     document.getElementById('card-box').classList.add('active');
                     document.getElementById('detail').classList.add('active');
-                }, 150);
+                }, 100);
             }, 1800);
         }
 
-        function closeResult() {
-            document.getElementById('result-overlay').style.display = "none";
-            document.getElementById('card-box').classList.remove('active');
-            document.getElementById('detail').classList.remove('active');
-            document.getElementById('capsule').classList.remove('pop-out', 'capsule-split');
-        }
-
-        // --- 図鑑部分を最軽量化 ---
         function openCollection() {
-            const grid = document.getElementById('col-grid'); 
-            grid.innerHTML = ""; // 前回の残骸を完全に消去（メモリ解放）
+            const grid = document.getElementById('col-grid');
+            grid.innerHTML = "";
+            document.getElementById('col-count-display').innerHTML = `レア発見：${myCollection.length} / 5 枚<br><span style="font-size:0.6rem; font-weight:normal; opacity:0.7;">図鑑対象の5枚を集めよう！</span>`;
             
-            document.getElementById('col-count-display').innerHTML = `${myCollection.length} / ${tarotData.length}枚 コンプリート<br><span style="font-size:0.6rem; font-weight:normal; opacity:0.7;">※履歴を消すとデータが消えるので注意してね</span>`;
-            
-            if (myCollection.length >= tarotData.length) {
+            if (myCollection.length >= 5) {
                 const door = document.createElement('div');
                 door.className = "secret-door-banner";
                 door.innerHTML = `<p style="margin:0; font-weight:bold; color:white;">🌟 伝説のコンプリート 🌟</p><a href="#" style="display:inline-block; margin-top:10px; background:white; color:#ff69b4; padding:8px 20px; border-radius:10px; text-decoration:none; font-weight:bold;">秘密の扉を開く🦄</a>`;
                 grid.appendChild(door);
             }
 
-            // JavaScriptでの画像生成をやめ、ブラウザ標準のLazy Loadにすべて任せる
-            let contentHtml = "";
-            tarotData.forEach((c, i) => {
-                const has = myCollection.includes(i);
-                if(has) {
-                    // loading="lazy" を追加。ブラウザが必要な時だけ読み込む。
-                    contentHtml += `<div class="card-slot" onclick="openZoom('${c.img}')"><img src="${c.img}" loading="lazy" alt="card"></div>`;
-                } else {
-                    contentHtml += `<div class="card-slot">?</div>`;
-                }
+            rareImgList.forEach(imgSrc => {
+                const has = myCollection.includes(imgSrc);
+                const slot = document.createElement('div');
+                slot.className = 'card-slot';
+                slot.innerHTML = has ? `<img src="${imgSrc}" loading="lazy">` : "?";
+                grid.appendChild(slot);
             });
-            grid.innerHTML = contentHtml;
-
             document.getElementById('collection-screen').style.display = "flex";
         }
 
         function closeCollection() { 
-            document.getElementById('collection-screen').style.display = "none"; 
-            // 閉じるときに中身を空にして、画像がメモリに残らないようにする
+            document.getElementById('collection-screen').style.display = "none";
             document.getElementById('col-grid').innerHTML = ""; 
         }
 
-        let isD = false, sX = 0, sY = 0, rY = 0;
-        function openZoom(s) { 
-            document.getElementById('zoom-img-front').src = s; rY = 0;
-            document.getElementById('card-3d').style.transform = `rotateY(0deg)`;
-            document.getElementById('zoom-overlay').style.display = "flex"; 
+        function closeResult() {
+            document.getElementById('result-overlay').style.display = "none";
+            document.getElementById('card-box').classList.remove('active');
+            document.getElementById('detail').classList.remove('active');
         }
-        document.getElementById('zoom-overlay').addEventListener('touchstart', (e) => { isD = true; sX = e.touches[0].pageX; sY = e.touches[0].pageY; });
-        document.getElementById('zoom-overlay').addEventListener('touchmove', (e) => {
-            if(!isD) return;
-            let mX = e.touches[0].pageX - sX; let mY = e.touches[0].pageY - sY;
-            rY += mX * 0.6; document.getElementById('card-3d').style.transform = `rotateY(${rY}deg)`;
-            sX = e.touches[0].pageX;
-            if(mY > 80) document.getElementById('zoom-overlay').style.display = "none";
-        });
-        document.getElementById('zoom-overlay').addEventListener('touchend', () => isD = false);
 
-        window.onload = () => { updateUI(); };
+        function enterCode() {
+            const code = prompt("秘密のコードを入力してね🦄");
+            if (code === "MIRUCORN777" && !usedCodes.includes(code)) {
+                coins += 5; usedCodes.push(code);
+                localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
+                updateUI(); alert("5枚追加！");
+            } else if (code) { alert("無効なコード、または使用済みだよ😢"); }
+        }
+
+        window.onload = updateUI;
     </script>
 </body>
 </html>
