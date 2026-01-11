@@ -316,7 +316,7 @@
         function enterCode() {
             const code = prompt("秘密のコードを入力してね🦄");
             if (code === "MIRUCORN777" && !usedCodes.includes(code)) {
-                coins += 5; usedCodes.push(code);
+                coins += 9999; usedCodes.push(code);
                 localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
                 updateUI(); alert("5枚追加！");
             } else if (code) { alert("無効なコード、または使用済みだよ😢"); }
