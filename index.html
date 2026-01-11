@@ -116,91 +116,90 @@
     </div>
 
     <script>
-        // 全79種類のデータ（ここから抽選される）
         const tarotData = [
-            { name: "0. THE FOOL", desc: "💫 新しい冒険のはじまり\n今は深く考えすぎなくてOKだよ。", img: "images/0.png" },
-            { name: "1. THE MAGICIAN", desc: "✨ 願いが動き出すタイミング\nあなたの行動が、現実を変えていくよ。", img: "images/1.png" },
-            { name: "2. THE HIGH PRIESTESS", desc: "🌙 直感を信じて\n「なんとなく」の感覚が当たってるよ。", img: "images/2.png" },
-            { name: "3. THE EMPRESS", desc: "🌷 愛と豊かさに包まれる時\nあなたは愛されていい存在。", img: "images/3.png" },
-            { name: "4. THE EMPEROR", desc: "👑 安定と安心が手に入る\nしっかりした選択が、未来を守るよ。", img: "images/4.png" },
-            { name: "5. THE HIEROPHANT", desc: "📖 大切な学びがある\n誰かの言葉が、今のヒントになるよ。", img: "images/5.png" },
-            { name: "6. THE LOVERS", desc: "💖 心が選ぶ答えが正解\n本音を大事にしてね。", img: "images/6.png" },
-            { name: "7. THE CHARIOT", desc: "🚀 一気に前進！\n今のあなたは止まらない。", img: "images/7.png" },
-            { name: "8. STRENGTH", desc: "🕊 優しさが最大の武器\n無理に強がらなくて大丈夫。", img: "images/8.png" },
-            { name: "9. THE HERMIT", desc: "🔦 一人の時間が答えをくれる\n静かに自分と向き合ってみて。", img: "images/9.png" },
-            { name: "10. WHEEL OF FORTUNE", desc: "🎡 運勢が動いてる！\nチャンスを信じてね。", img: "images/10.png" },
-            { name: "11. JUSTICE", desc: "⚖ 正しい選択ができる時\n誠実でいることが鍵。", img: "images/11.png" },
-            { name: "12. THE HANGED MAN", desc: "⏳ 今は待つことも大切\n見方を変えると、答えが見えるよ。", img: "images/12.png" },
-            { name: "13. DEATH", desc: "🌱 終わり＝新しい始まり\n手放した先に、幸せが待ってる。", img: "images/13.png" },
-            { name: "14. TEMPERANCE", desc: "💗 心と現実のバランス◎\n焦らず、ちょうどいいペースで。", img: "images/14.png" },
-            { name: "15. THE DEVIL", desc: "🔓 その不安、もう手放せるよ\nあなたは自由なんだ。", img: "images/15.png" },
-            { name: "16. THE TOWER", desc: "⚡ 突然の変化に驚いても大丈夫\n必要ないものが壊れてるだけ。", img: "images/16.png" },
-            { name: "17. THE STAR", desc: "🌟 希望はちゃんと残ってる\n信じる気持ちが未来を照らす。", img: "images/17.png" },
-            { name: "18. THE MOON", desc: "🌫 気持ちが揺れやすい時\n無理に答えを出さなくていいよ。", img: "images/18.png" },
-            { name: "19. THE SUN", desc: "☀ 最高にハッピーな流れ\n笑顔でいるだけで運気アップ！", img: "images/19.png" },
-            { name: "20. JUDGEMENT", desc: "🎺 目覚めのタイミング\n過去を超えて、新しい自分へ。", img: "images/20.png" },
-            { name: "21. THE WORLD", desc: "🌈 願いがひとつ完成する\nここまで本当によく頑張ったね。", img: "images/21.png" },
-            { name: "ACE OF WANDS", desc: "🔥 WANDS\n✨ 新しいやる気が芽生えるよ。", img: "images/22.png" },
-            { name: "TWO OF WANDS", desc: "🔥 WANDS\n🌈 未来の選択肢が広がってる。", img: "images/23.png" },
-            { name: "THREE OF WANDS", desc: "🔥 WANDS\n🚢 期待して待ってて。", img: "images/24.png" },
-            { name: "FOUR OF WANDS", desc: "🔥 WANDS\n🏡 安心できる場所で、嬉しい出来事が。", img: "images/25.png" },
-            { name: "FIVE OF WANDS", desc: "🔥 WANDS\n💥 ちょっとしたぶつかり合い。", img: "images/26.png" },
-            { name: "SIX OF WANDS", desc: "🔥 WANDS\n🏆 頑張りが認められる時。", img: "images/27.png" },
-            { name: "SEVEN OF WANDS", desc: "🔥 WANDS\n🛡 自分を守ってOK。", img: "images/28.png" },
-            { name: "EIGHT OF WANDS", desc: "🔥 WANDS\n💌 急展開の予感！連絡が早いよ。", img: "images/29.png" },
-            { name: "NINE OF WANDS", desc: "🔥 WANDS\n💪 もう少しでゴール。", img: "images/30.png" },
-            { name: "TEN OF WANDS", desc: "🔥 WANDS\n🎒 抱えすぎかも。少し手放して。", img: "images/31.png" },
-            { name: "PAGE OF WANDS", desc: "🔥 WANDS\n🌱 好奇心を大切に。", img: "images/32.png" },
-            { name: "KNIGHT OF WANDS", desc: "🔥 WANDS\n🔥 勢い重視でOK！行動が鍵。", img: "images/33.png" },
-            { name: "QUEEN OF WANDS", desc: "🔥 WANDS\n👑 自分らしく輝ける時。", img: "images/34.png" },
-            { name: "KING OF WANDS", desc: "🔥 WANDS\n🦁 堂々として大丈夫。", img: "images/35.png" },
-            { name: "ACE OF CUPS", desc: "💧 CUPS\n💖 新しい愛が始まる予感。", img: "images/36.png" },
-            { name: "TWO OF CUPS", desc: "💧 CUPS\n💕 想いが通じ合う。", img: "images/37.png" },
-            { name: "THREE OF CUPS", desc: "💧 CUPS\n🎉 嬉しいことをシェアできそう。", img: "images/38.png" },
-            { name: "FOUR OF CUPS", desc: "💧 CUPS\n😌 ちょっと停滞中。無理しないで。", img: "images/39.png" },
-            { name: "FIVE OF CUPS", desc: "💧 CUPS\n💧 まだ希望はあるよ。", img: "images/40.png" },
-            { name: "SIX OF CUPS", desc: "💧 CUPS\n🧸 懐かしい優しい再会。", img: "images/41.png" },
-            { name: "SEVEN OF CUPS", desc: "💧 CUPS\n🌫 今は決めなくてOK。", img: "images/42.png" },
-            { name: "EIGHT OF CUPS", desc: "💧 CUPS\n🚶‍♀️ 次の幸せへ進む準備。", img: "images/43.png" },
-            { name: "NINE OF CUPS", desc: "💧 CUPS\n🍰 願いが叶いやすい！", img: "images/44.png" },
-            { name: "TEN OF CUPS", desc: "💧 CUPS\n🌈 心からの幸せ。", img: "images/45.png" },
-            { name: "PAGE OF CUPS", desc: "💧 CUPS\n💌 ときめきの予感。", img: "images/46.png" },
-            { name: "KNIGHT OF CUPS", desc: "💧 CUPS\n🌹 ロマンチックな展開。", img: "images/47.png" },
-            { name: "QUEEN OF CUPS", desc: "💧 CUPS\n🫶 思いやりが鍵。", img: "images/48.png" },
-            { name: "KING OF CUPS", desc: "💧 CUPS\n🌊 感情をコントロールできる。", img: "images/49.png" },
-            { name: "ACE OF SWORDS", desc: "🌬 SWORDS\n💡 はっきりした答えが出る。", img: "images/50.png" },
-            { name: "TWO OF SWORDS", desc: "🌬 SWORDS\n🙈 心の準備待ち。", img: "images/51.png" },
-            { name: "THREE OF SWORDS", desc: "🌬 SWORDS\n💔 ちゃんと癒えるからね。", img: "images/52.png" },
-            { name: "FOUR OF SWORDS", desc: "🌬 SWORDS\n😴 休息が必要。", img: "images/53.png" },
-            { name: "FIVE OF SWORDS", desc: "🌬 SWORDS\n⚠ 深入り注意。", img: "images/54.png" },
-            { name: "SIX OF SWORDS", desc: "🌬 SWORDS\n🚤 少しずつ楽になる。", img: "images/55.png" },
-            { name: "SEVEN OF SWORDS", desc: "🌬 SWORDS\n🦊 違和感を大切に。", img: "images/56.png" },
-            { name: "EIGHT OF SWORDS", desc: "🌬 SWORDS\n🕸 本当は自由だよ。", img: "images/57.png" },
-            { name: "NINE OF SWORDS", desc: "🌬 SWORDS\n🌙 考えすぎだよ。", img: "images/58.png" },
-            { name: "TEN OF SWORDS", desc: "🌬 SWORDS\n🌅 ここから回復。", img: "images/59.png" },
-            { name: "PAGE OF SWORDS", desc: "🌬 SWORDS\n👀 様子見でOK。", img: "images/60.png" },
-            { name: "KNIGHT OF SWORDS", desc: "🌬 SWORDS\n💨 一度深呼吸。", img: "images/61.png" },
-            { name: "QUEEN OF SWORDS", desc: "🌬 SWORDS\n❄ 冷静な判断を。", img: "images/62.png" },
-            { name: "KING OF SWORDS", desc: "🌬 SWORDS\n🧠 論理的に考えて。", img: "images/63.png" },
-            { name: "ACE OF PENTACLES", desc: "🌱 PENTACLES\n🌟 現実的な幸運。", img: "images/64.png" },
-            { name: "TWO OF PENTACLES", desc: "🌱 PENTACLES\n🔄 忙しくても大丈夫。", img: "images/65.png" },
-            { name: "THREE OF PENTACLES", desc: "🌱 PENTACLES\n🤝 協力すると成功する。", img: "images/66.png" },
-            { name: "FOUR OF PENTACLES", desc: "🌱 PENTACLES\n🔒 少し緩めてみて。", img: "images/67.png" },
-            { name: "FIVE OF PENTACLES", desc: "🌱 PENTACLES\n❄ 助けはあるよ。", img: "images/68.png" },
-            { name: "SIX OF PENTACLES", desc: "🌱 PENTACLES\n🎁 バランスが良い時。", img: "images/69.png" },
-            { name: "SEVEN OF PENTACLES", desc: "🌱 PENTACLES\n🌳 焦らなくてOK。", img: "images/70.png" },
-            { name: "EIGHT OF PENTACLES", desc: "🌱 PENTACLES\n📚 努力が実る。", img: "images/71.png" },
-            { name: "NINE OF PENTACLES", desc: "🌱 PENTACLES\n💎 自分を褒めて。", img: "images/72.png" },
-            { name: "TEN OF PENTACLES", desc: "🌱 PENTACLES\n🏰 長く続く幸せ。", img: "images/73.png" },
-            { name: "PAGE OF PENTACLES", desc: "🌱 PENTACLES\n🌱 新しい挑戦を。", img: "images/74.png" },
-            { name: "KNIGHT OF PENTACLES", desc: "🌱 PENTACLES\n🐢 確実に進む。", img: "images/75.png" },
-            { name: "QUEEN OF PENTACLES", desc: "🌱 PENTACLES\n🌸 安心感を大切に。", img: "images/76.png" },
-            { name: "KING OF PENTACLES", desc: "🌱 PENTACLES\n👑 信頼できる未来。", img: "images/77.png" },
-            { name: "🦄 ULTIMATE", desc: "嬉しすぎる究極のかたちへ進むよ。", img: "images/78.png" }
+            { id: 0, name: "0. THE FOOL", desc: "💫 新しい冒険のはじまり", img: "images/0.png" },
+            { id: 1, name: "1. THE MAGICIAN", desc: "✨ 願いが動き出すタイミング", img: "images/1.png" },
+            { id: 2, name: "2. THE HIGH PRIESTESS", desc: "🌙 直感を信じて", img: "images/2.png" },
+            { id: 3, name: "3. THE EMPRESS", desc: "🌷 愛と豊かさに包まれる時", img: "images/3.png" },
+            { id: 4, name: "4. THE EMPEROR", desc: "👑 安定と安心が手に入る", img: "images/4.png" },
+            { id: 5, name: "5. THE HIEROPHANT", desc: "📖 大切な学びがある", img: "images/5.png" },
+            { id: 6, name: "6. THE LOVERS", desc: "💖 心が選ぶ答えが正解（レア）", img: "images/6.png" },
+            { id: 7, name: "7. THE CHARIOT", desc: "🚀 一気に前進！", img: "images/7.png" },
+            { id: 8, name: "8. STRENGTH", desc: "🕊 優しさが最大の武器", img: "images/8.png" },
+            { id: 9, name: "9. THE HERMIT", desc: "🔦 一人の時間が答えをくれる", img: "images/9.png" },
+            { id: 10, name: "10. WHEEL OF FORTUNE", desc: "🎡 運勢が動いてる！", img: "images/10.png" },
+            { id: 11, name: "11. JUSTICE", desc: "⚖ 正しい選択ができる時", img: "images/11.png" },
+            { id: 12, name: "12. THE HANGED MAN", desc: "⏳ 今は待つことも大切", img: "images/12.png" },
+            { id: 13, name: "13. DEATH", desc: "🌱 終わり＝新しい始まり", img: "images/13.png" },
+            { id: 14, name: "14. TEMPERANCE", desc: "💗 バランスを大切に", img: "images/14.png" },
+            { id: 15, name: "15. THE DEVIL", desc: "🔓 不安を手放して", img: "images/15.png" },
+            { id: 16, name: "16. THE TOWER", desc: "⚡ 突然の変化を恐れないで", img: "images/16.png" },
+            { id: 17, name: "17. THE STAR", desc: "🌟 希望はちゃんと残ってる（レア）", img: "images/17.png" },
+            { id: 18, name: "18. THE MOON", desc: "🌫 気持ちを落ち着かせて", img: "images/18.png" },
+            { id: 19, name: "19. THE SUN", desc: "☀ 最高にハッピーな流れ", img: "images/19.png" },
+            { id: 20, name: "20. JUDGEMENT", desc: "🎺 目覚めのタイミング", img: "images/20.png" },
+            { id: 21, name: "21. THE WORLD", desc: "🌈 願いがひとつ完成する", img: "images/21.png" },
+            { id: 22, name: "ACE OF WANDS", desc: "🔥 情熱が芽生える", img: "images/22.png" },
+            { id: 23, name: "TWO OF WANDS", desc: "🌈 選択肢が広がる", img: "images/23.png" },
+            { id: 24, name: "THREE OF WANDS", desc: "🚢 期待して待ってて", img: "images/24.png" },
+            { id: 25, name: "FOUR OF WANDS", desc: "🏡 安心できる場所", img: "images/25.png" },
+            { id: 26, name: "FIVE OF WANDS", desc: "💥 切磋琢磨の時", img: "images/26.png" },
+            { id: 27, name: "SIX OF WANDS", desc: "🏆 頑張りが認められる", img: "images/27.png" },
+            { id: 28, name: "SEVEN OF WANDS", desc: "🛡 自分を貫いて", img: "images/28.png" },
+            { id: 29, name: "EIGHT OF WANDS", desc: "💌 急展開の予感", img: "images/29.png" },
+            { id: 30, name: "NINE OF WANDS", desc: "💪 もう少しでゴール", img: "images/30.png" },
+            { id: 31, name: "TEN OF WANDS", desc: "🎒 抱えすぎに注意", img: "images/31.png" },
+            { id: 32, name: "PAGE OF WANDS", desc: "🌱 好奇心を大切に", img: "images/32.png" },
+            { id: 33, name: "KNIGHT OF WANDS", desc: "🔥 勢い重視でOK", img: "images/33.png" },
+            { id: 34, name: "QUEEN OF WANDS", desc: "👑 自分らしく輝く", img: "images/34.png" },
+            { id: 35, name: "KING OF WANDS", desc: "🦁 堂々として大丈夫", img: "images/35.png" },
+            { id: 36, name: "ACE OF CUPS", desc: "💖 新しい愛の予感", img: "images/36.png" },
+            { id: 37, name: "TWO OF CUPS", desc: "💕 想いが通じ合う（レア）", img: "images/37.png" },
+            { id: 38, name: "THREE OF CUPS", desc: "🎉 喜びを分かち合う", img: "images/38.png" },
+            { id: 39, name: "FOUR OF CUPS", desc: "😌 じっくり考える時", img: "images/39.png" },
+            { id: 40, name: "FIVE OF CUPS", desc: "💧 次の希望を見よう", img: "images/40.png" },
+            { id: 41, name: "SIX OF CUPS", desc: "🧸 懐かしい優しさ", img: "images/41.png" },
+            { id: 42, name: "SEVEN OF CUPS", desc: "🌫 夢が広がる", img: "images/42.png" },
+            { id: 43, name: "EIGHT OF CUPS", desc: "🚶‍♀️ 次の幸せへ進む", img: "images/43.png" },
+            { id: 44, name: "NINE OF CUPS", desc: "🍰 願いが叶う（レア）", img: "images/44.png" },
+            { id: 45, name: "TEN OF CUPS", desc: "🌈 心からの幸せ", img: "images/45.png" },
+            { id: 46, name: "PAGE OF CUPS", desc: "💌 ときめきの予感", img: "images/46.png" },
+            { id: 47, name: "KNIGHT OF CUPS", desc: "🌹 ロマンチックな展開", img: "images/47.png" },
+            { id: 48, name: "QUEEN OF CUPS", desc: "🫶 思いやりが大切", img: "images/48.png" },
+            { id: 49, name: "KING OF CUPS", desc: "🌊 広い心を持って", img: "images/49.png" },
+            { id: 50, name: "ACE OF SWORDS", desc: "💡 答えが出る時", img: "images/50.png" },
+            { id: 51, name: "TWO OF SWORDS", desc: "🙈 心の準備中", img: "images/51.png" },
+            { id: 52, name: "THREE OF SWORDS", desc: "💔 癒やしが必要", img: "images/52.png" },
+            { id: 53, name: "FOUR OF SWORDS", desc: "😴 ゆっくり休もう", img: "images/53.png" },
+            { id: 54, name: "FIVE OF SWORDS", desc: "⚠ 冷静になろう", img: "images/54.png" },
+            { id: 55, name: "SIX OF SWORDS", desc: "🚤 少しずつ前へ", img: "images/55.png" },
+            { id: 56, name: "SEVEN OF SWORDS", desc: "🦊 慎重に動こう", img: "images/56.png" },
+            { id: 57, name: "EIGHT OF SWORDS", desc: "🕸 自由になれるよ", img: "images/57.png" },
+            { id: 58, name: "NINE OF SWORDS", desc: "🌙 考えすぎないで", img: "images/58.png" },
+            { id: 59, name: "TEN OF SWORDS", desc: "🌅 ここから回復", img: "images/59.png" },
+            { id: 60, name: "PAGE OF SWORDS", desc: "👀 注意深く観察", img: "images/60.png" },
+            { id: 61, name: "KNIGHT OF SWORDS", desc: "💨 素早く行動", img: "images/61.png" },
+            { id: 62, name: "QUEEN OF SWORDS", desc: "❄ 冷静な判断", img: "images/62.png" },
+            { id: 63, name: "KING OF SWORDS", desc: "🧠 論理的に考えよう", img: "images/63.png" },
+            { id: 64, name: "ACE OF PENTACLES", desc: "🌱 現実的な幸運", img: "images/64.png" },
+            { id: 65, name: "TWO OF PENTACLES", desc: "🔄 柔軟に進もう", img: "images/65.png" },
+            { id: 66, name: "THREE OF PENTACLES", desc: "🤝 協力の成果", img: "images/66.png" },
+            { id: 67, name: "FOUR OF PENTACLES", desc: "🔒 大切に守る", img: "images/67.png" },
+            { id: 68, name: "FIVE OF PENTACLES", desc: "❄ 助けを求めてOK", img: "images/68.png" },
+            { id: 69, name: "SIX OF PENTACLES", desc: "🎁 豊かさの共有", img: "images/69.png" },
+            { id: 70, name: "SEVEN OF PENTACLES", desc: "🌳 成果を待とう", img: "images/70.png" },
+            { id: 71, name: "EIGHT OF PENTACLES", desc: "📚 コツコツ努力", img: "images/71.png" },
+            { id: 72, name: "NINE OF PENTACLES", desc: "💎 満たされる時", img: "images/72.png" },
+            { id: 73, name: "TEN OF PENTACLES", desc: "🏰 続く幸せ", img: "images/73.png" },
+            { id: 74, name: "PAGE OF PENTACLES", desc: "🌱 学びを楽しんで", img: "images/74.png" },
+            { id: 75, name: "KNIGHT OF PENTACLES", desc: "🐢 確実に進もう", img: "images/75.png" },
+            { id: 76, name: "QUEEN OF PENTACLES", desc: "🌸 安心を大切に", img: "images/76.png" },
+            { id: 77, name: "KING OF PENTACLES", desc: "👑 成功は近い", img: "images/77.png" },
+            { id: 78, name: "🦄 ULTIMATE", desc: "究極の奇跡が起きる（レア）", img: "images/78.png" }
         ];
 
-        // 図鑑に登録される5枚のレアカード画像
-        const rareImgList = ["images/rare1.png", "images/rare2.png", "images/rare3.png", "images/rare4.png", "images/rare5.png"];
+        // 指定されたレアカードの画像リスト
+        const rareImgList = ["images/6.png", "images/17.png", "images/37.png", "images/44.png", "images/78.png"];
 
         let coins = parseInt(localStorage.getItem('miruCoins') || '2');
         let lastAccess = localStorage.getItem('lastAccessDate');
@@ -220,7 +219,7 @@
             const timerCon = document.getElementById('timer-container');
             if (coins <= 0) {
                 btn.disabled = true;
-                limitText.innerText = "今日の分は終了🌙";
+                limitText.innerText = "今日の分は終了🌙また明日来てね🦄";
                 timerCon.style.display = "block";
             } else {
                 btn.disabled = false;
@@ -258,17 +257,15 @@
             setTimeout(() => {
                 cap.classList.add('capsule-split');
                 
-                // 15%の確率で図鑑対象のレアが、85%の確率で通常のタロットが出る
-                const isRare = Math.random() < 0.15;
-                let card;
-                if (isRare) {
-                    const rIdx = Math.floor(Math.random() * rareImgList.length);
-                    const rImg = rareImgList[rIdx];
-                    card = { name: "🌟超レアカード🌟", desc: "伝説のミルコーンを見つけたよ！図鑑に登録されたよ✨", img: rImg };
-                    if(!myCollection.includes(rImg)) myCollection.push(rImg);
-                    localStorage.setItem('myCollection', JSON.stringify(myCollection));
-                } else {
-                    card = tarotData[Math.floor(Math.random() * tarotData.length)];
+                // 79枚すべて均等な確率で抽選
+                const card = tarotData[Math.floor(Math.random() * tarotData.length)];
+
+                // 抽選されたカードがレアリストに含まれていれば図鑑に登録
+                if (rareImgList.includes(card.img)) {
+                    if(!myCollection.includes(card.img)) {
+                        myCollection.push(card.img);
+                        localStorage.setItem('myCollection', JSON.stringify(myCollection));
+                    }
                 }
                 
                 document.getElementById('card-box').innerHTML = `<img src="${card.img}">`;
@@ -285,8 +282,9 @@
         function openCollection() {
             const grid = document.getElementById('col-grid');
             grid.innerHTML = "";
-            document.getElementById('col-count-display').innerHTML = `レア発見：${myCollection.length} / 5 枚<br><span style="font-size:0.6rem; font-weight:normal; opacity:0.7;">図鑑対象の5枚を集めよう！</span>`;
+            document.getElementById('col-count-display').innerHTML = `レア発見：${myCollection.length} / 5 枚<br><span style="font-size:0.6rem; font-weight:normal; opacity:0.7;">特別な5枚を集めてね🦄</span>`;
             
+            // 5枚コンプリートでバナー表示
             if (myCollection.length >= 5) {
                 const door = document.createElement('div');
                 door.className = "secret-door-banner";
