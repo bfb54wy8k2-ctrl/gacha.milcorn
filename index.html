@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ミルコーンの冒険タロットガチャ Premium 3D</title>
+    <title>ミルコーンの冒険タロットガチャ</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
@@ -345,9 +345,9 @@
         function enterCode() {
             const code = prompt("秘密のコードを入力してね🦄");
             if (code === "MIRUCORN777" && !usedCodes.includes(code)) {
-                coins += 5; usedCodes.push(code);
+                coins += 1; usedCodes.push(code);
                 localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
-                updateUI(); alert("5枚追加！");
+                updateUI(); alert("1枚追加！");
             }
         }
         window.onload = updateUI;
