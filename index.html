@@ -7,22 +7,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --pink: #ffb6c1; --bg: #1a1a1a; --font: 'Zen Maru Gothic', sans-serif; }
-        body { background: var(--bg); color: white; font-family: var(--font); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        
+        /* iPhone対策：文字サイズ自動調整防止 */
+        html { -webkit-text-size-adjust: 100%; }
 
+        body { 
+            background: var(--bg); 
+            color: white; 
+            font-family: var(--font); 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
+
+        /* タイトル・コイン表示 */
         .title { margin-top: 20px; font-size: 1.1rem; color: var(--gold); text-align: center; font-weight: 700; }
         .title img { width: 30px; vertical-align: middle; margin-right: 8px; border-radius: 50%; border: 1px solid var(--gold); }
-
         #coin-display { margin-top: 15px; background: rgba(212, 175, 55, 0.2); padding: 8px 25px; border-radius: 30px; border: 2px solid var(--gold); color: var(--gold); font-weight: bold; font-size: 1.1rem; }
 
+        /* ガチャ制限・プレミアム案内 */
         #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.85rem; background: rgba(255,182,193,0.1); padding: 15px; border-radius: 15px; width: 85%; max-width: 320px; border: 1px solid rgba(255,182,193,0.2); }
         #countdown { font-family: monospace; font-size: 1.1rem; color: #fff; margin-top: 5px; display: block; }
-        
         #premium-info { display: none; margin-top: 15px; background: linear-gradient(135deg, #4b3a1a 0%, #1a1a1a 100%); border: 2px solid var(--gold); padding: 15px; border-radius: 20px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
         .premium-btn { display: inline-block; margin-top: 10px; padding: 12px 25px; background: var(--gold); color: #000; text-decoration: none; font-weight: bold; border-radius: 25px; font-size: 0.9rem; box-shadow: 0 4px 0 #927821; }
 
+        /* ガチャ本体 */
         #gacha-container { position: relative; width: 300px; height: 350px; margin-top: 10px; }
         #gacha-machine { width: 100%; height: 100%; object-fit: contain; position: relative; z-index: 10; }
 
+        /* カプセル演出 */
         .capsule { position: absolute; bottom: 60px; right: 40px; width: 60px; height: 60px; z-index: 100; display: none; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
         .capsule-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
         .capsule-top { position: absolute; top: 0; width: 100%; height: 50%; border-radius: 30px 30px 0 0; background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 50%), var(--cap-color, #333); border: 1px solid rgba(255,255,255,0.3); transition: all 0.5s ease-out; }
@@ -30,97 +46,66 @@
 
         .pop-out1 { display: block !important; animation: capsule-fly1 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
         .pop-out2 { display: block !important; animation: capsule-fly2 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
-        
         @keyframes capsule-fly1 { 0% { transform: translate(0, 0) scale(0.3) rotate(0deg); } 100% { transform: translate(-130px, -120px) scale(2.2) rotate(720deg); } }
         @keyframes capsule-fly2 { 0% { transform: translate(0, 0) scale(0.3) rotate(0deg); } 100% { transform: translate(-50px, -120px) scale(2.2) rotate(-720deg); } }
         .capsule-split .capsule-top { transform: translateY(-80px) rotate(-40deg); opacity: 0; }
         .capsule-split .capsule-bottom { transform: translateY(80px) rotate(40deg); opacity: 0; }
 
-        .btn { margin-top: 10px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 5px 0 #db7093; cursor: pointer; }
+        /* ガチャボタン */
+        .btn { margin-top: 10px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 5px 0 #db7093; cursor: pointer; -webkit-appearance: none; }
         .btn:disabled { background: #666; box-shadow: 0 5px 0 #444; cursor: not-allowed; }
 
+        /* 結果画面 */
         #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: flex-start; z-index: 400; padding-top: 40px; overflow-y: auto; }
         .cards-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
         .card-reveal { width: 120px; aspect-ratio: 2/3.5; border: 2px solid var(--gold); border-radius: 10px; overflow: hidden; background: black; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .card-reveal.active { transform: scale(1); }
         .card-reveal img { width: 100%; height: 100%; object-fit: cover; }
-        
         #detail { width: 90%; max-width: 350px; background: #fefcf0; color: #333; padding: 20px; border-radius: 20px; text-align: left; opacity: 0; box-sizing: border-box; margin-bottom: 30px; position: relative; }
         #detail.active { opacity: 1; transition: opacity 0.5s; }
         #miruko-msg { font-size: 0.85rem; line-height: 1.6; min-height: 100px; white-space: pre-wrap; }
         .miruko-status { color: #d44d7c; font-weight: bold; margin-bottom: 10px; display: block; border-bottom: 1px dashed #ffb6c1; padding-bottom: 5px; }
 
-        /* 音量ボタン（位置を少し下に調整） */
-        #music-toggle {
-            position: fixed;
-            left: 20px;
-            top: 50px; /* 20pxから50pxへ変更 */
-            width: 45px;
-            height: 45px;
-            background: rgba(212, 175, 55, 0.9);
-            border: 2px solid white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 500;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        #collection-btn {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--gold), #927821);
-            border: 2px solid white;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 500;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            animation: fuwafuwa 3s ease-in-out infinite;
-        }
+        /* 音量・図鑑ボタン */
+        #music-toggle { position: fixed; left: 20px; top: 50px; width: 45px; height: 45px; background: rgba(212, 175, 55, 0.9); border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; z-index: 500; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        #collection-btn { position: fixed; right: 20px; bottom: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--gold), #927821); border: 2px solid white; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.5); animation: fuwafuwa 3s ease-in-out infinite; }
         #collection-btn span { font-size: 0.6rem; font-weight: bold; color: white; margin-top: -2px; }
 
-        /* 図鑑画面 */
+        /* 図鑑画面（二段レイアウト修正） */
         #collection-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .collection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; padding-bottom: 40px; }
+        .collection-nav { 
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2列にする */
+            gap: 10px; 
+            margin: 20px 0;
+            width: 100%;
+        }
+        .nav-btn { 
+            -webkit-appearance: none;
+            appearance: none;
+            padding: 12px 5px; 
+            background: #2a2a2a; 
+            color: #fff !important; 
+            border: 1px solid var(--gold); 
+            border-radius: 12px; 
+            font-size: 0.85rem; 
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px; /* 指で押しやすい高さ */
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .nav-btn.active { background: var(--gold); color: black !important; border-color: #fff; }
+        .nav-btn:first-child { grid-column: span 2; } /* 「全部」は1行ぶち抜き */
+
+        .collection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-bottom: 40px; }
         .collection-item { aspect-ratio: 2/3.5; background: #333; border-radius: 5px; border: 1px solid var(--gold); overflow: hidden; position: relative; }
         .collection-item img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.2) grayscale(1); }
         .collection-item.unlocked img { filter: brightness(1) grayscale(0); }
 
-        /* 図鑑ナビゲーション（右端の途切れ修正） */
-        .collection-nav { 
-            display: flex; 
-            gap: 10px; 
-            overflow-x: auto; 
-            padding: 10px 0; 
-            margin-top: 10px; 
-            -webkit-overflow-scrolling: touch; 
-        }
-        .collection-nav::after { content: ''; padding-right: 20px; } /* 右側に余白を確保 */
-
-        .nav-btn { 
-            padding: 10px 20px; 
-            background: #2a2a2a; 
-            color: #fff; 
-            border: 1px solid var(--gold); 
-            border-radius: 25px; 
-            white-space: nowrap; 
-            font-size: 0.85rem; 
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-        .nav-btn.active { background: var(--gold); color: black; border-color: #fff; }
-
+        /* カード3D表示 */
         #card-3d-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; perspective: 1000px; }
         #card-3d-container { width: 250px; aspect-ratio: 2/3.5; position: relative; transform-style: preserve-3d; cursor: grab; transition: transform 0.1s linear; }
         #card-3d-container img { width: 100%; height: 100%; border: 4px solid var(--gold); border-radius: 15px; backface-visibility: hidden; }
@@ -134,8 +119,7 @@
     <div id="music-toggle" onclick="toggleMusic()">🔇</div>
 
     <div id="collection-btn" onclick="openCollection()">
-        📖
-        <span>ずかん</span>
+        📖<span>ずかん</span>
     </div>
 
     <div class="title"><img src="images/icon2.png">ミルコーンの恋占いガチャ</div>
@@ -203,7 +187,6 @@
     </audio>
 
     <script>
-        // データ部分は省略せずにそのまま保持
         const tarotData = [
             { id: 0, group: "major", name: "0. FOOL", desc: "今は完璧じゃなくていい恋✨先の不安より「好き」という純粋な気持ちを信じて。勇気ある一歩が、思いがけない幸せに繋がります🌈", img: "images/0.png" },
             { id: 1, group: "major", name: "1. MAGICIAN", desc: "あなたの想いには現実を動かす力があります💫駆け引きより素直な言葉を。伝えることで、恋ははっきりと形を持ち始めます💌", img: "images/1.png" },
@@ -295,16 +278,10 @@
         const bgm = document.getElementById('bgm');
         bgm.volume = 0.5;
 
-        // --- バックグラウンド制御 ---
+        // バックグラウンド制御
         document.addEventListener("visibilitychange", () => {
-            if (document.hidden) {
-                bgm.pause();
-            } else {
-                // 図鑑が開いているか、ガチャ画面（通常時）でミュートでなければ再生
-                if (!isMuted && (isCollectionOpen || !isGachaRunning)) {
-                    bgm.play().catch(() => {});
-                }
-            }
+            if (document.hidden) { bgm.pause(); } 
+            else { if (!isMuted && (isCollectionOpen || !isGachaRunning)) bgm.play().catch(() => {}); }
         });
 
         function updateUI() {
@@ -339,13 +316,8 @@
         function toggleMusic() {
             isMuted = !isMuted;
             const toggleBtn = document.getElementById('music-toggle');
-            if (isMuted) {
-                bgm.pause();
-                toggleBtn.innerText = "🔇";
-            } else {
-                bgm.play().catch(() => console.log("Interaction required."));
-                toggleBtn.innerText = "🎵";
-            }
+            if (isMuted) { bgm.pause(); toggleBtn.innerText = "🔇"; } 
+            else { bgm.play().catch(() => {}); toggleBtn.innerText = "🎵"; }
         }
 
         setInterval(() => {
@@ -406,9 +378,8 @@
                 const card1 = pool[Math.floor(Math.random() * pool.length)];
                 
                 let card2;
-                if (Math.random() < 0.05) {
-                    card2 = tarotData.find(d => d.group === "secret");
-                } else {
+                if (Math.random() < 0.05) { card2 = tarotData.find(d => d.group === "secret"); } 
+                else {
                     card2 = pool[Math.floor(Math.random() * pool.length)];
                     while(card1.id === card2.id) card2 = pool[Math.floor(Math.random() * pool.length)];
                 }
@@ -465,19 +436,14 @@
         function filterCollection(group, btn) {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
             const grid = document.getElementById('collection-grid');
             grid.innerHTML = "";
-            
             const cards = group === 'all' ? tarotData : tarotData.filter(d => d.group === group);
-            
             cards.forEach(card => {
                 const item = document.createElement('div');
                 item.className = `collection-item ${unlockedCards.includes(card.id) ? 'unlocked' : ''}`;
                 item.innerHTML = `<img src="${card.img}" alt="${card.name}">`;
-                if (unlockedCards.includes(card.id)) {
-                    item.onclick = () => open3D(card.img);
-                }
+                if (unlockedCards.includes(card.id)) { item.onclick = () => open3D(card.img); }
                 grid.appendChild(item);
             });
         }
@@ -487,47 +453,41 @@
             const overlay = document.getElementById('card-3d-overlay');
             const img = document.getElementById('card-3d-img');
             const container = document.getElementById('card-3d-container');
-            
             img.src = imgSrc;
             overlay.style.display = 'flex';
             currentRotation = { x: 0, y: 0 };
             container.style.transform = `rotateX(0deg) rotateY(0deg)`;
-
-            container.onmousedown = startDrag;
-            container.ontouchstart = startDrag;
+            
+            // ドラッグ操作（簡易版）
+            let isDragging = false;
+            let prevX, prevY;
+            container.onmousedown = (e) => { isDragging = true; prevX = e.clientX; prevY = e.clientY; };
+            window.onmousemove = (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - prevX;
+                const dy = e.clientY - prevY;
+                currentRotation.y += dx * 0.5;
+                currentRotation.x -= dy * 0.5;
+                container.style.transform = `rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`;
+                prevX = e.clientX; prevY = e.clientY;
+            };
+            window.onmouseup = () => { isDragging = false; };
+            
+            // タッチ操作
+            container.ontouchstart = (e) => { isDragging = true; prevX = e.touches[0].clientX; prevY = e.touches[0].clientY; };
+            container.ontouchmove = (e) => {
+                if (!isDragging) return;
+                const dx = e.touches[0].clientX - prevX;
+                const dy = e.touches[0].clientY - prevY;
+                currentRotation.y += dx * 0.5;
+                currentRotation.x -= dy * 0.5;
+                container.style.transform = `rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`;
+                prevX = e.touches[0].clientX; prevY = e.touches[0].clientY;
+            };
+            container.ontouchend = () => { isDragging = false; };
         }
 
-        function close3D() {
-            document.getElementById('card-3d-overlay').style.display = 'none';
-        }
-
-        function startDrag(e) {
-            e.preventDefault();
-            const startX = e.pageX || e.touches[0].pageX;
-            const startY = e.pageY || e.touches[0].pageY;
-            const initialRotX = currentRotation.x;
-            const initialRotY = currentRotation.y;
-
-            function onMove(me) {
-                const moveX = (me.pageX || me.touches[0].pageX) - startX;
-                const moveY = (me.pageY || me.touches[0].pageY) - startY;
-                currentRotation.y = initialRotY + moveX * 0.5;
-                currentRotation.x = initialRotX - moveY * 0.5;
-                document.getElementById('card-3d-container').style.transform = `rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`;
-            }
-
-            function onEnd() {
-                document.removeEventListener('mousemove', onMove);
-                document.removeEventListener('touchmove', onMove);
-                document.removeEventListener('mouseup', onEnd);
-                document.removeEventListener('touchend', onEnd);
-            }
-
-            document.addEventListener('mousemove', onMove);
-            document.addEventListener('touchmove', onMove);
-            document.addEventListener('mouseup', onEnd);
-            document.addEventListener('touchend', onEnd);
-        }
+        function close3D() { document.getElementById('card-3d-overlay').style.display = 'none'; }
 
         window.onload = updateUI;
     </script>
