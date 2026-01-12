@@ -23,10 +23,22 @@
             overflow-x: hidden; 
         }
 
-        /* タイトル・コイン表示 */
+        /* タイトル */
         .title { margin-top: 20px; font-size: 1.1rem; color: var(--gold); text-align: center; font-weight: 700; }
         .title img { width: 30px; vertical-align: middle; margin-right: 8px; border-radius: 50%; border: 1px solid var(--gold); }
-        #coin-display { margin-top: 15px; background: rgba(212, 175, 55, 0.2); padding: 8px 25px; border-radius: 30px; border: 2px solid var(--gold); color: var(--gold); font-weight: bold; font-size: 1.1rem; }
+        
+        /* ミルコイン表示（位置調整後） */
+        #coin-display { 
+            margin: 10px 0; 
+            background: rgba(212, 175, 55, 0.15); 
+            padding: 6px 20px; 
+            border-radius: 30px; 
+            border: 1px solid var(--gold); 
+            color: var(--gold); 
+            font-weight: bold; 
+            font-size: 0.9rem; 
+            letter-spacing: 0.05em;
+        }
 
         /* ホーム画面追加ガイド */
         .app-guide-box { 
@@ -68,7 +80,7 @@
         .capsule-split .capsule-bottom { transform: translateY(80px) rotate(40deg); opacity: 0; }
 
         /* ガチャボタン */
-        .btn { margin-top: 10px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 5px 0 #db7093; cursor: pointer; -webkit-appearance: none; }
+        .btn { margin-top: 5px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 5px 0 #db7093; cursor: pointer; -webkit-appearance: none; }
         .btn:disabled { background: #666; box-shadow: 0 5px 0 #444; cursor: not-allowed; }
 
         /* 結果画面 */
@@ -121,7 +133,7 @@
         .collection-item img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.2) grayscale(1); }
         .collection-item.unlocked img { filter: brightness(1) grayscale(0); }
 
-        /* カード3D表示の裏面対応修正 */
+        /* カード3D表示 */
         #card-3d-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; perspective: 1200px; touch-action: none; }
         #card-3d-container { width: 250px; aspect-ratio: 2/3.5; position: relative; transform-style: preserve-3d; transition: transform 0.1s linear; }
         .card-face { position: absolute; inset: 0; backface-visibility: hidden; border: 4px solid var(--gold); border-radius: 15px; overflow: hidden; }
@@ -171,6 +183,19 @@
             display: none; flex-direction: column; align-items: center; justify-content: center;
             padding: 20px;
         }
+        
+        /* 待ち受け保存ガイドのテキスト用 */
+        .save-guide {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--gold);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            border: 1px solid var(--gold);
+            line-height: 1.5;
+            animation: fuwafuwa 2s ease-in-out infinite;
+        }
     </style>
 </head>
 <body>
@@ -197,8 +222,6 @@
         </div>
     </div>
 
-    <div id="coin-display">ミルコイン: <span id="coin-count">0</span> 枚</div>
-
     <div id="limit-info">
         <span id="limit-text"></span>
         <div id="timer-container" style="display:none; margin-top:10px;">
@@ -217,6 +240,8 @@
         <div id="capsule1" class="capsule"><div class="capsule-inner"><div class="capsule-top"></div><div class="capsule-bottom"></div></div></div>
         <div id="capsule2" class="capsule"><div class="capsule-inner"><div class="capsule-top"></div><div class="capsule-bottom"></div></div></div>
     </div>
+
+    <div id="coin-display">ミルコイン: <span id="coin-count">0</span> 枚</div>
 
     <button class="btn" id="play-btn" onclick="playGacha()">ガチャを回す</button>
 
@@ -267,8 +292,13 @@
     <div id="secret-modal" onclick="this.style.display='none'">
         <div style="color:var(--gold); font-weight:bold; margin-bottom:15px;">🎉コンプリートおめでとう！🎉</div>
         <img src="images/secret.png" style="width:100%; max-width:400px; border-radius:20px; box-shadow: 0 0 30px var(--gold);">
-        <p style="color:white; font-size:0.8rem; margin-top:20px; text-align:center;">画像を長押しして<br>待ち受けをダウンロードしてね🦄✨</p>
-        <button style="margin-top:20px; background:none; border:1px solid white; color:white; padding:10px 30px; border-radius:20px;">閉じる</button>
+        
+        <div class="save-guide">
+            画像の長押しで<br>「保存」や「コピー」ができるよ！<br>
+            お気に入りの待ち受けにしてね🦄✨
+        </div>
+
+        <button style="margin-top:25px; background:none; border:1px solid white; color:white; padding:10px 40px; border-radius:20px; font-weight:bold;">閉じる</button>
     </div>
 
     <audio id="bgm" loop preload="auto">
@@ -330,7 +360,7 @@
             { id: 27, group: "wands", name: "WANDS 6", desc: "恋の勝利はもうすぐ🎉周囲も認めるような嬉しい進展が期待できるときだよ🏆", img: "images/27.png" },
             { id: 28, group: "wands", name: "WANDS 7", desc: "自分の立場や恋を守り抜く時🛡️あなたの強い想いが運命を切り開きます💪", img: "images/28.png" },
             { id: 29, group: "wands", name: "WANDS 8", desc: "急展開のサイン📩トントン拍子に話が進む予感。流れを逃さず乗って💨", img: "images/29.png" },
-            { id: 30, group: "wands", name: "WANDS 9", desc: "踏ん張りどころ🚧少し疲れ気味かも。でもゴールは目の前だから諦めないで✨", img: "images/30.png" },
+            { id: 30, group: "wands", name: "WANDS 9", desc: "踏ん張りどころ🚧少し疲れ気味かも。ウェーイ！でもゴールは目の前だから諦めないで✨", img: "images/30.png" },
             { id: 31, group: "wands", name: "WANDS 10", desc: "抱え込みすぎかも💦恋の責任を一人で負わないで。もっと相手を頼ってみて🤝", img: "images/31.png" },
             { id: 32, group: "wands", name: "WANDS PAGE", desc: "フレッシュな知らせ✨純粋な好奇心が恋の新しい扉を開けてくれるよワクワク🌟", img: "images/32.png" },
             { id: 33, group: "wands", name: "WANDS KNIGHT", desc: "情熱的に突き進む時🏇迷っている暇はありません。直感で駆け抜けて🔥", img: "images/33.png" },
@@ -342,15 +372,15 @@
             { id: 39, group: "cups", name: "CUPS 4", desc: "少しマンネリ気味？😌不満に目を向けるより、差し出された愛に気づくことが大切☁️", img: "images/39.png" },
             { id: 40, group: "cups", name: "CUPS 5", desc: "失ったものに囚われないで🌧️後ろを向けば、まだ残っている温かい愛に気づくはず🌈", img: "images/40.png" },
             { id: 41, group: "cups", name: "CUPS 6", desc: "懐かしい記憶が幸せを運びます🍀純粋だった頃の気持ちが、今の恋を癒してくれます💞", img: "images/41.png" },
-            { id: 42, group: "cups", name: "CUPS 7", desc: "理想が膨らみすぎているかも☁️夢を見るのもいいけど、今は現実的な愛を選んで現実✨", img: "images/42.png" },
-            { id: 43, group: "cups", name: "CUPS 8", desc: "次のステージへ進む時🌙今の関係に区切りをつけて、より高い愛を求めて旅立おう🚪", img: "images/43.png" },
+            { id: 42, group: "cups", name: "CUPS 7", desc: "理想が膨らみすぎているかも☁️夢を見るのもいいけど、今は現実的な愛を選んで✨", img: "images/42.png" },
+            { id: 43, group: "cups", name: "CUPS 8", desc: "次のステージへ進む時🌙今の関係に区切りをつけて、より高い愛を求めて旅立とう🚪", img: "images/43.png" },
             { id: 44, group: "cups", name: "CUPS 9", desc: "願いが叶う満たされた時💖あなたの心が満たされれば、恋も自然とうまくいきます✨", img: "images/44.png" },
             { id: 45, group: "cups", name: "CUPS 10", desc: "最高の幸福感。家族や大切な人と、穏やかで深い愛に包まれる未来が待っています🌈", img: "images/45.png" },
             { id: 46, group: "cups", name: "CUPS PAGE", desc: "感受性が豊かになっている時🐚素直な想いを表現することで、可愛がられる恋に💓", img: "images/46.png" },
             { id: 47, group: "cups", name: "CUPS KNIGHT", desc: "ロマンチックな誘いの予感🌹王子様のような優しい愛が、あなたを迎えに来るよ✨", img: "images/47.png" },
             { id: 48, group: "cups", name: "CUPS QUEEN", desc: "母性的な深い愛の力🌊慈しみの心で接することで、相手の心を完全に掴めます💗", img: "images/48.png" },
             { id: 49, group: "cups", name: "CUPS KING", desc: "包容力のある安定した愛👑感情をコントロールし、優しさで関係を導けるときだよ✨", img: "images/49.png" },
-            { id: 50, group: "swords", name: "SWORDS ACE", desc: "真実を見極める強い意志⚡曖昧な関係を断ち切り、新しい道を決断する時です切り拓く✨", img: "images/50.png" },
+            { id: 50, group: "swords", name: "SWORDS ACE", desc: "真実を見極める強い意志⚡曖昧な関係を断ち切り、新しい道を決断する時です✨", img: "images/50.png" },
             { id: 51, group: "swords", name: "SWORDS 2", desc: "葛藤の中でバランスを探して⚖️無理に動かず、心が定まるのをじっと待って🤍", img: "images/51.png" },
             { id: 52, group: "swords", name: "SWORDS 3", desc: "心が痛む経験は浄化のプロセス💔この痛みを知ることで、あなたはもっと優しくなれる🌱", img: "images/52.png" },
             { id: 53, group: "swords", name: "SWORDS 4", desc: "一旦休息して、戦うのをやめよう🕊️静かな眠りが、あなたの恋に明快な答えをくれる🫧", img: "images/53.png" },
@@ -358,9 +388,9 @@
             { id: 55, group: "swords", name: "SWORDS 6", desc: "困難から離れ、安らぎの地へ⛵誰かの助けを借りて、より良い環境へ移動する時です🌈", img: "images/55.png" },
             { id: 56, group: "swords", name: "SWORDS 7", desc: "駆け引きには慎重になって🕶️小手先のテクニックより、誠実さで勝負する方が吉✨", img: "images/56.png" },
             { id: 57, group: "swords", name: "SWORDS 8", desc: "自分で自分を閉じ込めていない？⛓️目隠しを外せば、逃げ道はいくらでもあるよ🌬️", img: "images/57.png" },
-            { id: 58, group: "swords", name: "SWORDS 9", desc: "考えすぎて眠れない夜🌙不安の正体は妄望かも。現実はもっと明るいよ大丈夫🫧", img: "images/58.png" },
-            { id: 59, group: "swords", name: "SWORDS 10", desc: "これ以上の不幸はない、最悪期の脱出🌑夜明けはすぐそこ。新しい自分に生まれ変わろう🌅🌅", img: "images/59.png" },
-            { id: 60, group: "swords", name: "SWORDS PAGE", desc: "警戒心と好奇性が入り混じる時👀慎重に様子を見ながら、有利なチャンスを伺って✨", img: "images/60.png" },
+            { id: 58, group: "swords", name: "SWORDS 9", desc: "考えすぎて眠れない夜🌙不安の正体は妄想かも。現実はもっと明るいよ大丈夫🫧", img: "images/58.png" },
+            { id: 59, group: "swords", name: "SWORDS 10", desc: "最悪期の脱出🌑夜明けはすぐそこ。新しい自分に生まれ変わろう🌅", img: "images/59.png" },
+            { id: 60, group: "swords", name: "SWORDS PAGE", desc: "警戒心と好奇心が入り混じる時👀慎重に様子を見ながら、有利なチャンスを伺って✨", img: "images/60.png" },
             { id: 61, group: "swords", name: "SWORDS KNIGHT", desc: "猛スピードで事態が動きます⚡言葉が刃にならないよう、冷静さを忘れないで🤍", img: "images/61.png" },
             { id: 62, group: "swords", name: "SWORDS QUEEN", desc: "知的な自立心で恋を切り盛り👑厳しいけれど正しい判断が、あなたを幸せにする✨", img: "images/62.png" },
             { id: 63, group: "swords", name: "SWORDS KING", desc: "冷静で公正な愛の裁き🧠感情に流されず、真実に基づいて関係を築ける時です✨", img: "images/63.png" },
@@ -370,7 +400,7 @@
             { id: 67, group: "pentacles", name: "PENTACLES 4", desc: "独占欲が強くなっているかも🔒握りしめすぎず、心を開いて相手を信じて💫", img: "images/67.png" },
             { id: 68, group: "pentacles", name: "PENTACLES 5", desc: "厳しい状況に負けないで❄️孤独を感じても、救いの手は必ず近くにあります🤍", img: "images/68.png" },
             { id: 69, group: "pentacles", name: "PENTACLES 6", desc: "慈悲深く、対等な愛のギブ＆テイク🎁優しさを循環させることで、愛が倍増します✨", img: "images/69.png" },
-            { id: 70, group: "pentacles", name: "PENTACLES 7", desc: "今の成果を見直す収穫待ち⏳焦らずこれまでの努力を信じれば、豊かな実りが訪れる🌿", img: "images/70.png" },
+            { id: 70, group: "pentacles", name: "PENTACLES 7", desc: "収穫待ち⏳焦らずこれまでの努力を信じれば、豊かな実りが訪れる🌿", img: "images/70.png" },
             { id: 71, group: "pentacles", name: "PENTACLES 8", desc: "恋も自分磨きもコツコツと🔨日々の小さな積み重ねが、大きな信頼へと変わります✨", img: "images/71.png" },
             { id: 72, group: "pentacles", name: "PENTACLES 9", desc: "洗練された魅力で人を惹きつけます🌹自立した大人の恋を楽しめる充実期✨", img: "images/72.png" },
             { id: 73, group: "pentacles", name: "PENTACLES 10", desc: "盤石な繁栄と幸福🏡受け継がれるような、深く安定した愛の形が完成します💍", img: "images/73.png" },
@@ -381,7 +411,7 @@
             { id: 78, group: "secret", name: "ULTIMATE MIRUKO", desc: "あなたの恋は今、最終段階の扉の前にいます💍もう疑わなくて大丈夫。これまでの想いと選択はすべて正解✨覚悟を決めて受け取ることで、運命の愛が完全に形になります🌈💖", img: "images/78.png" }
         ];
 
-        let coins = 100;
+        let coins = parseInt(localStorage.getItem('miruCoins')) || 100;
         let lastAccess = localStorage.getItem('lastAccessDate');
         let unlockedCards = JSON.parse(localStorage.getItem('unlockedCards') || '[]');
         let isMuted = true;
@@ -390,7 +420,6 @@
         const bgm = document.getElementById('bgm');
         bgm.volume = 0.5;
 
-        // バックグラウンド制御
         document.addEventListener("visibilitychange", () => {
             if (document.hidden) { bgm.pause(); } 
             else { if (!isMuted && (isCollectionOpen || !isGachaRunning)) bgm.play().catch(() => {}); }
@@ -424,7 +453,6 @@
                 timerCon.style.display = "none";
             }
 
-            // 図鑑のカウントとボタン更新
             document.getElementById('collection-count').innerText = `${unlockedCards.length}/79 登録済み`;
             const doorBtn = document.getElementById('door-btn');
             if(unlockedCards.length >= 79) {
@@ -474,138 +502,139 @@
             if (coins <= 0) return;
             isGachaRunning = true;
             if (!isMuted) bgm.play();
-            coins--; 
+            coins--;
             localStorage.setItem('miruCoins', coins);
             updateUI();
 
-            const machine = document.getElementById('gacha-machine');
-            const cap1 = document.getElementById('capsule1');
-            const cap2 = document.getElementById('capsule2');
-            [cap1, cap2].forEach(c => {
-                c.classList.remove('pop-out1', 'pop-out2', 'capsule-split');
-                c.style.setProperty('--cap-color', ['#ff8aae', '#a2d2ff', '#ffd700', '#b19cd9'][Math.floor(Math.random() * 4)]);
-            });
+            const btn = document.getElementById('play-btn');
+            btn.disabled = true;
 
-            machine.style.animation = "shake 0.1s infinite";
-            setTimeout(() => {
-                machine.style.animation = "none";
-                cap1.classList.add('pop-out1');
-                setTimeout(() => cap2.classList.add('pop-out2'), 300);
-            }, 600);
+            const c1 = document.getElementById('capsule1');
+            const c2 = document.getElementById('capsule2');
+            c1.style.setProperty('--cap-color', `hsl(${Math.random()*360}, 70%, 60%)`);
+            c2.style.setProperty('--cap-color', `hsl(${Math.random()*360}, 70%, 60%)`);
+            
+            c1.classList.add('pop-out1');
+            c2.classList.add('pop-out2');
+
+            await new Promise(r => setTimeout(r, 1200));
+            c1.classList.add('capsule-split');
+            c2.classList.add('capsule-split');
+            
+            await new Promise(r => setTimeout(r, 500));
+            showResult();
+        }
+
+        function showResult() {
+            const resOverlay = document.getElementById('result-overlay');
+            resOverlay.style.display = 'flex';
+            
+            const card1 = tarotData[Math.floor(Math.random() * 79)];
+            const card2 = tarotData[Math.floor(Math.random() * 79)];
+            
+            const box1 = document.getElementById('card-box1');
+            const box2 = document.getElementById('card-box2');
+            box1.innerHTML = `<img src="${card1.img}">`;
+            box2.innerHTML = `<img src="${card2.img}">`;
+
+            setTimeout(() => box1.classList.add('active'), 100);
+            setTimeout(() => box2.classList.add('active'), 600);
+
+            [card1, card2].forEach(c => {
+                if(!unlockedCards.includes(c.id)) unlockedCards.push(c.id);
+            });
+            localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
 
             setTimeout(async () => {
-                cap1.classList.add('capsule-split');
-                cap2.classList.add('capsule-split');
-
-                const pool = tarotData.filter(d => d.group !== "secret");
-                const card1 = pool[Math.floor(Math.random() * pool.length)];
-                
-                let card2;
-                if (Math.random() < 0.05) { card2 = tarotData.find(d => d.group === "secret"); } 
-                else {
-                    card2 = pool[Math.floor(Math.random() * pool.length)];
-                    while(card1.id === card2.id) card2 = pool[Math.floor(Math.random() * pool.length)];
-                }
-
-                saveToCollection(card1.id);
-                saveToCollection(card2.id);
-
-                document.getElementById('card-box1').innerHTML = `<img src="${card1.img}">`;
-                document.getElementById('card-box2').innerHTML = `<img src="${card2.img}">`;
-                document.getElementById('miruko-msg').innerHTML = "";
-                document.getElementById('miruko-status').innerText = "ミルコが占い中…🦄✨";
-                document.getElementById('close-res-btn').style.display = "none";
-                document.getElementById('result-overlay').style.display = "flex";
-                
-                setTimeout(() => {
-                    document.getElementById('card-box1').classList.add('active');
-                    document.getElementById('card-box2').classList.add('active');
-                    document.getElementById('detail').classList.add('active');
-                }, 100);
-
-                // ランダムなアドバイスを選択
-                const randomAdvice = loveAdvices[Math.floor(Math.random() * loveAdvices.length)];
-
-                const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n【ミルコからの恋愛アドバイス】\n${randomAdvice}\n\n※ずかんに登録されたよ！右下の本からチェックしてね✨`;
-                
-                await new Promise(r => setTimeout(r, 1500)); 
-                document.getElementById('miruko-status').innerText = "ミルコの占い結果🦄💎";
-                await typeWriter(finalMsg, 'miruko-msg', 35);
-                document.getElementById('close-res-btn').style.display = "block";
-            }, 2000);
+                const detail = document.getElementById('detail');
+                detail.classList.add('active');
+                const advice = loveAdvices[Math.floor(Math.random() * loveAdvices.length)];
+                const message = `${card1.name}と${card2.name}が出たよ！\n\n${card1.desc}\n\n${card2.desc}\n\n${advice}`;
+                await typeWriter(message, 'miruko-msg', 30);
+                document.getElementById('close-res-btn').style.display = 'block';
+            }, 1200);
         }
 
-        function closeResult() { 
-            document.getElementById('result-overlay').style.display = "none"; 
-            document.querySelectorAll('.card-reveal, #detail').forEach(el => el.classList.remove('active')); 
+        function closeResult() {
+            const resOverlay = document.getElementById('result-overlay');
+            resOverlay.style.display = 'none';
+            document.getElementById('card-box1').classList.remove('active');
+            document.getElementById('card-box2').classList.remove('active');
+            document.getElementById('detail').classList.remove('active');
+            document.getElementById('close-res-btn').style.display = 'none';
+            
+            const c1 = document.getElementById('capsule1');
+            const c2 = document.getElementById('capsule2');
+            c1.className = 'capsule';
+            c2.className = 'capsule';
+            
             isGachaRunning = false;
-        }
-
-        function saveToCollection(id) {
-            if (!unlockedCards.includes(id)) {
-                unlockedCards.push(id);
-                localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
-            }
+            if (isMuted) bgm.pause();
+            updateUI();
         }
 
         function openCollection() {
             isCollectionOpen = true;
-            updateUI();
             document.getElementById('collection-overlay').style.display = 'flex';
-            filterCollection('all', document.querySelector('.nav-btn'));
-            if (!isMuted) bgm.play();
+            filterCollection('all');
+            if(!isMuted) bgm.play();
         }
 
         function closeCollection() {
             isCollectionOpen = false;
             document.getElementById('collection-overlay').style.display = 'none';
+            if(isMuted) bgm.pause();
         }
 
         function filterCollection(group, btn) {
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            if(btn) {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
             const grid = document.getElementById('collection-grid');
-            grid.innerHTML = "";
-
+            grid.innerHTML = '';
             tarotData.forEach(card => {
-                if (group !== 'all' && card.group !== group) return;
-                const isUnlocked = unlockedCards.includes(card.id);
+                if(group !== 'all' && card.group !== group) return;
                 const item = document.createElement('div');
-                item.className = `collection-item ${isUnlocked ? 'unlocked' : ''}`;
+                item.className = `collection-item ${unlockedCards.includes(card.id) ? 'unlocked' : ''}`;
                 item.innerHTML = `<img src="${card.img}">`;
-                if (isUnlocked) {
+                if(unlockedCards.includes(card.id)) {
                     item.onclick = () => open3D(card.img);
                 }
                 grid.appendChild(item);
             });
         }
 
-        // 3D表示機能
         let startX, startY, currentX = 0, currentY = 0;
         function open3D(imgSrc) {
             const overlay = document.getElementById('card-3d-overlay');
-            const img = document.getElementById('card-3d-img');
-            const container = document.getElementById('card-3d-container');
-            img.src = imgSrc;
-            container.style.transform = "rotateY(0deg) rotateX(0deg)";
-            currentX = 0; currentY = 0;
+            document.getElementById('card-3d-img').src = imgSrc;
             overlay.style.display = 'flex';
+            currentX = 0; currentY = 0;
+            updateRotation();
 
-            overlay.ontouchstart = (e) => {
-                startX = e.touches[0].pageX;
-                startY = e.touches[0].pageY;
-            };
-            overlay.ontouchmove = (e) => {
-                const dx = e.touches[0].pageX - startX;
-                const dy = e.touches[0].pageY - startY;
-                currentX += dx * 0.5;
-                currentY -= dy * 0.5;
-                container.style.transform = `rotateY(${currentX}deg) rotateX(${currentY}deg)`;
-                startX = e.touches[0].pageX;
-                startY = e.touches[0].pageY;
-            };
+            overlay.addEventListener('touchstart', handleStart);
+            overlay.addEventListener('touchmove', handleMove);
         }
-        function close3D() { document.getElementById('card-3d-overlay').style.display = 'none'; }
+
+        function handleStart(e) { startX = e.touches[0].pageX; startY = e.touches[0].pageY; }
+        function handleMove(e) {
+            const dx = e.touches[0].pageX - startX;
+            const dy = e.touches[0].pageY - startY;
+            currentX += dx * 0.5;
+            currentY -= dy * 0.5;
+            startX = e.touches[0].pageX;
+            startY = e.touches[0].pageY;
+            updateRotation();
+        }
+
+        function updateRotation() {
+            document.getElementById('card-3d-container').style.transform = `rotateY(${currentX}deg) rotateX(${currentY}deg)`;
+        }
+
+        function close3D() {
+            document.getElementById('card-3d-overlay').style.display = 'none';
+        }
 
         function openSecret() {
             if(unlockedCards.length >= 79) {
@@ -613,7 +642,7 @@
             }
         }
 
-        window.onload = updateUI;
+        updateUI();
     </script>
 </body>
 </html>
