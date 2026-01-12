@@ -50,14 +50,14 @@
         #miruko-msg { font-size: 0.85rem; line-height: 1.6; min-height: 100px; white-space: pre-wrap; }
         .miruko-status { color: #d44d7c; font-weight: bold; margin-bottom: 10px; display: block; border-bottom: 1px dashed #ffb6c1; padding-bottom: 5px; }
 
-        /* 左上の音量ボタン */
+        /* 音量ボタン（位置を少し下に調整） */
         #music-toggle {
             position: fixed;
             left: 20px;
-            top: 20px;
+            top: 50px; /* 20pxから50pxへ変更 */
             width: 45px;
             height: 45px;
-            background: rgba(212, 175, 55, 0.8);
+            background: rgba(212, 175, 55, 0.9);
             border: 2px solid white;
             border-radius: 50%;
             display: flex;
@@ -69,7 +69,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        /* 右下の図鑑ボタン */
         #collection-btn {
             position: fixed;
             right: 20px;
@@ -93,15 +92,35 @@
 
         /* 図鑑画面 */
         #collection-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .collection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .collection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; padding-bottom: 40px; }
         .collection-item { aspect-ratio: 2/3.5; background: #333; border-radius: 5px; border: 1px solid var(--gold); overflow: hidden; position: relative; }
         .collection-item img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.2) grayscale(1); }
         .collection-item.unlocked img { filter: brightness(1) grayscale(0); }
-        .collection-nav { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 10px; margin-top: 10px; }
-        .nav-btn { padding: 8px 15px; background: #333; color: var(--gold); border: 1px solid var(--gold); border-radius: 20px; white-space: nowrap; font-size: 0.8rem; }
-        .nav-btn.active { background: var(--gold); color: black; }
 
-        /* 3Dカード表示用 */
+        /* 図鑑ナビゲーション（右端の途切れ修正） */
+        .collection-nav { 
+            display: flex; 
+            gap: 10px; 
+            overflow-x: auto; 
+            padding: 10px 0; 
+            margin-top: 10px; 
+            -webkit-overflow-scrolling: touch; 
+        }
+        .collection-nav::after { content: ''; padding-right: 20px; } /* 右側に余白を確保 */
+
+        .nav-btn { 
+            padding: 10px 20px; 
+            background: #2a2a2a; 
+            color: #fff; 
+            border: 1px solid var(--gold); 
+            border-radius: 25px; 
+            white-space: nowrap; 
+            font-size: 0.85rem; 
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .nav-btn.active { background: var(--gold); color: black; border-color: #fff; }
+
         #card-3d-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; perspective: 1000px; }
         #card-3d-container { width: 250px; aspect-ratio: 2/3.5; position: relative; transform-style: preserve-3d; cursor: grab; transition: transform 0.1s linear; }
         #card-3d-container img { width: 100%; height: 100%; border: 4px solid var(--gold); border-radius: 15px; backface-visibility: hidden; }
@@ -184,6 +203,7 @@
     </audio>
 
     <script>
+        // データ部分は省略せずにそのまま保持
         const tarotData = [
             { id: 0, group: "major", name: "0. FOOL", desc: "今は完璧じゃなくていい恋✨先の不安より「好き」という純粋な気持ちを信じて。勇気ある一歩が、思いがけない幸せに繋がります🌈", img: "images/0.png" },
             { id: 1, group: "major", name: "1. MAGICIAN", desc: "あなたの想いには現実を動かす力があります💫駆け引きより素直な言葉を。伝えることで、恋ははっきりと形を持ち始めます💌", img: "images/1.png" },
@@ -270,10 +290,23 @@
         let lastAccess = localStorage.getItem('lastAccessDate');
         let unlockedCards = JSON.parse(localStorage.getItem('unlockedCards') || '[]');
         let isMuted = true;
+        let isCollectionOpen = false;
+        let isGachaRunning = false;
         const bgm = document.getElementById('bgm');
         bgm.volume = 0.5;
 
-        // --- 基本UIの更新 ---
+        // --- バックグラウンド制御 ---
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                bgm.pause();
+            } else {
+                // 図鑑が開いているか、ガチャ画面（通常時）でミュートでなければ再生
+                if (!isMuted && (isCollectionOpen || !isGachaRunning)) {
+                    bgm.play().catch(() => {});
+                }
+            }
+        });
+
         function updateUI() {
             const today = new Date().toLocaleDateString();
             if (lastAccess !== today) {
@@ -310,7 +343,7 @@
                 bgm.pause();
                 toggleBtn.innerText = "🔇";
             } else {
-                bgm.play().catch(() => console.log("Music interaction required."));
+                bgm.play().catch(() => console.log("Interaction required."));
                 toggleBtn.innerText = "🎵";
             }
         }
@@ -342,9 +375,9 @@
             });
         }
 
-        // --- ガチャ実行 ---
         async function playGacha() {
             if (coins <= 0) return;
+            isGachaRunning = true;
             if (!isMuted) bgm.play();
             coins--; 
             localStorage.setItem('miruCoins', coins);
@@ -369,20 +402,17 @@
                 cap1.classList.add('capsule-split');
                 cap2.classList.add('capsule-split');
 
-                // 抽選（シークレット以外から抽選。シークレットは低確率）
                 const pool = tarotData.filter(d => d.group !== "secret");
                 const card1 = pool[Math.floor(Math.random() * pool.length)];
                 
-                // 2枚目は低確率でシークレット
                 let card2;
-                if (Math.random() < 0.05) { // 5%の確率でシークレット
+                if (Math.random() < 0.05) {
                     card2 = tarotData.find(d => d.group === "secret");
                 } else {
                     card2 = pool[Math.floor(Math.random() * pool.length)];
                     while(card1.id === card2.id) card2 = pool[Math.floor(Math.random() * pool.length)];
                 }
 
-                // 図鑑に登録
                 saveToCollection(card1.id);
                 saveToCollection(card2.id);
 
@@ -410,9 +440,9 @@
         function closeResult() { 
             document.getElementById('result-overlay').style.display = "none"; 
             document.querySelectorAll('.card-reveal, #detail').forEach(el => el.classList.remove('active')); 
+            isGachaRunning = false;
         }
 
-        // --- 図鑑システム ---
         function saveToCollection(id) {
             if (!unlockedCards.includes(id)) {
                 unlockedCards.push(id);
@@ -421,11 +451,14 @@
         }
 
         function openCollection() {
+            isCollectionOpen = true;
             document.getElementById('collection-overlay').style.display = 'flex';
             filterCollection('all', document.querySelector('.nav-btn'));
+            if (!isMuted) bgm.play();
         }
 
         function closeCollection() {
+            isCollectionOpen = false;
             document.getElementById('collection-overlay').style.display = 'none';
         }
 
@@ -449,7 +482,6 @@
             });
         }
 
-        // --- 3Dカード表示システム ---
         let currentRotation = { x: 0, y: 0 };
         function open3D(imgSrc) {
             const overlay = document.getElementById('card-3d-overlay');
@@ -461,7 +493,6 @@
             currentRotation = { x: 0, y: 0 };
             container.style.transform = `rotateX(0deg) rotateY(0deg)`;
 
-            // タッチ/マウスイベント登録
             container.onmousedown = startDrag;
             container.ontouchstart = startDrag;
         }
@@ -482,19 +513,20 @@
                 const moveY = (me.pageY || me.touches[0].pageY) - startY;
                 currentRotation.y = initialRotY + moveX * 0.5;
                 currentRotation.x = initialRotX - moveY * 0.5;
-                document.getElementById('card-3d-container').style.transform = 
-                    `rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`;
+                document.getElementById('card-3d-container').style.transform = `rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`;
             }
 
             function onEnd() {
-                window.onmousemove = null;
-                window.ontouchmove = null;
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('touchmove', onMove);
+                document.removeEventListener('mouseup', onEnd);
+                document.removeEventListener('touchend', onEnd);
             }
 
-            window.onmousemove = onMove;
-            window.ontouchmove = onMove;
-            window.onmouseup = onEnd;
-            window.ontouchend = onEnd;
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('touchmove', onMove);
+            document.addEventListener('mouseup', onEnd);
+            document.addEventListener('touchend', onEnd);
         }
 
         window.onload = updateUI;
