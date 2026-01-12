@@ -83,15 +83,43 @@
         .btn { margin-top: 5px; padding: 18px 60px; background: linear-gradient(to bottom, #ffc0cb, #ff69b4); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 5px 0 #db7093; cursor: pointer; -webkit-appearance: none; }
         .btn:disabled { background: #666; box-shadow: 0 5px 0 #444; cursor: not-allowed; }
 
-        /* 結果画面 */
-        #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: flex-start; z-index: 400; padding-top: 40px; overflow-y: auto; }
-        .cards-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        /* 結果画面（修正：パディング追加とスクロール制御） */
+        #result-overlay { 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.95); 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-start; 
+            z-index: 400; 
+            padding-top: 40px; 
+            padding-bottom: 50px; /* 下部にはみ出さないよう余白追加 */
+            overflow-y: auto; 
+        }
+        .cards-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-shrink: 0; }
         .card-reveal { width: 120px; aspect-ratio: 2/3.5; border: 2px solid var(--gold); border-radius: 10px; overflow: hidden; background: black; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .card-reveal.active { transform: scale(1); }
         .card-reveal img { width: 100%; height: 100%; object-fit: cover; }
-        #detail { width: 90%; max-width: 350px; background: #fefcf0; color: #333; padding: 20px; border-radius: 20px; text-align: left; opacity: 0; box-sizing: border-box; margin-bottom: 30px; position: relative; }
+        
+        /* 詳細ボックス（修正：はみ出し防止） */
+        #detail { 
+            width: 90%; 
+            max-width: 350px; 
+            background: #fefcf0; 
+            color: #333; 
+            padding: 20px; 
+            border-radius: 20px; 
+            text-align: left; 
+            opacity: 0; 
+            box-sizing: border-box; 
+            margin-bottom: 20px; 
+            position: relative; 
+            max-height: 50vh; /* 画面の半分以上に広がらないよう制限 */
+            overflow-y: auto; /* 長い場合は内部スクロール */
+        }
         #detail.active { opacity: 1; transition: opacity 0.5s; }
-        #miruko-msg { font-size: 0.85rem; line-height: 1.6; min-height: 100px; white-space: pre-wrap; }
+        #miruko-msg { font-size: 0.85rem; line-height: 1.6; min-height: 80px; white-space: pre-wrap; }
         .miruko-status { color: #d44d7c; font-weight: bold; margin-bottom: 10px; display: block; border-bottom: 1px dashed #ffb6c1; padding-bottom: 5px; }
 
         /* 音量・図鑑ボタン */
@@ -307,7 +335,7 @@
 
     <script>
         const loveAdvices = [
-            "🦄「まずは自分をたっぷり甘やかして。あなたがご機嫌なら、恋も勝手にうまくいくよ✨」",
+            "🦄「まずは自分をたっぷり甘やかして。あなたがご機謙なら、恋も勝手にうまくいくよ✨」",
             "💖「深呼吸してみて。そのドキドキは、未来の幸せを予感してるサインかも！」",
             "💎「あなたはダイヤモンドの原石だよ。自信を持って、キラキラの笑顔を忘れないでね✨」",
             "🍬「恋は甘いだけじゃないけど、苦いのもスパイス。全部ひっくるめて楽しんじゃおう！」",
@@ -492,157 +520,158 @@
                         element.innerHTML += text.charAt(i);
                         i++;
                         setTimeout(type, speed);
-                    } else { resolve(); }
+                    } else {
+                        resolve();
+                    }
                 }
                 type();
             });
         }
 
         async function playGacha() {
-            if (coins <= 0) return;
+            if (coins <= 0 || isGachaRunning) return;
             isGachaRunning = true;
-            if (!isMuted) bgm.play();
             coins--;
             localStorage.setItem('miruCoins', coins);
             updateUI();
 
-            const btn = document.getElementById('play-btn');
-            btn.disabled = true;
-
-            const c1 = document.getElementById('capsule1');
-            const c2 = document.getElementById('capsule2');
-            c1.style.setProperty('--cap-color', `hsl(${Math.random()*360}, 70%, 60%)`);
-            c2.style.setProperty('--cap-color', `hsl(${Math.random()*360}, 70%, 60%)`);
+            const machine = document.getElementById('gacha-machine');
+            machine.style.animation = "shake 0.1s infinite";
             
-            c1.classList.add('pop-out1');
-            c2.classList.add('pop-out2');
-
-            await new Promise(r => setTimeout(r, 1200));
-            c1.classList.add('capsule-split');
-            c2.classList.add('capsule-split');
+            // ガチャ演出の音があればここで再生
             
-            await new Promise(r => setTimeout(r, 500));
-            showResult();
+            setTimeout(() => {
+                machine.style.animation = "";
+                const cap1 = document.getElementById('capsule1');
+                const cap2 = document.getElementById('capsule2');
+                cap1.className = "capsule pop-out1";
+                cap2.className = "capsule pop-out2";
+                
+                setTimeout(() => {
+                    cap1.classList.add('capsule-split');
+                    cap2.classList.add('capsule-split');
+                    setTimeout(showResult, 600);
+                }, 1200);
+            }, 1000);
         }
 
-        function showResult() {
+        async function showResult() {
             const resOverlay = document.getElementById('result-overlay');
-            resOverlay.style.display = 'flex';
+            const cardBox1 = document.getElementById('card-box1');
+            const cardBox2 = document.getElementById('card-box2');
+            const detail = document.getElementById('detail');
+            const status = document.getElementById('miruko-status');
+            const closeBtn = document.getElementById('close-res-btn');
             
-            const card1 = tarotData[Math.floor(Math.random() * 79)];
-            const card2 = tarotData[Math.floor(Math.random() * 79)];
-            
-            const box1 = document.getElementById('card-box1');
-            const box2 = document.getElementById('card-box2');
-            box1.innerHTML = `<img src="${card1.img}">`;
-            box2.innerHTML = `<img src="${card2.img}">`;
+            // ランダムに2枚選ぶ
+            const card1 = tarotData[Math.floor(Math.random() * (tarotData.length - 1))];
+            const card2 = tarotData[Math.floor(Math.random() * (tarotData.length - 1))];
+            const advice = loveAdvices[Math.floor(Math.random() * loveAdvices.length)];
 
-            setTimeout(() => box1.classList.add('active'), 100);
-            setTimeout(() => box2.classList.add('active'), 600);
-
-            [card1, card2].forEach(c => {
-                if(!unlockedCards.includes(c.id)) unlockedCards.push(c.id);
+            // 解放済みに追加
+            [card1.id, card2.id].forEach(id => {
+                if (!unlockedCards.includes(id)) unlockedCards.push(id);
             });
             localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
 
+            cardBox1.innerHTML = `<img src="${card1.img}">`;
+            cardBox2.innerHTML = `<img src="${card2.img}">`;
+            
+            resOverlay.style.display = "flex";
+            setTimeout(() => cardBox1.classList.add('active'), 100);
+            setTimeout(() => cardBox2.classList.add('active'), 400);
             setTimeout(async () => {
-                const detail = document.getElementById('detail');
                 detail.classList.add('active');
-                const advice = loveAdvices[Math.floor(Math.random() * loveAdvices.length)];
-                const message = `${card1.name}と${card2.name}が出たよ！\n\n${card1.desc}\n\n${card2.desc}\n\n${advice}`;
-                await typeWriter(message, 'miruko-msg', 30);
-                document.getElementById('close-res-btn').style.display = 'block';
-            }, 1200);
+                status.innerText = "✨鑑定完了✨";
+                const fullMsg = `【今日のカード】\n・${card1.name}\n・${card2.name}\n\n【ミルコのアドバイス】\n${advice}`;
+                await typeWriter(fullMsg, 'miruko-msg');
+                closeBtn.style.display = "block";
+            }, 1000);
         }
 
         function closeResult() {
             const resOverlay = document.getElementById('result-overlay');
-            resOverlay.style.display = 'none';
-            document.getElementById('card-box1').classList.remove('active');
-            document.getElementById('card-box2').classList.remove('active');
-            document.getElementById('detail').classList.remove('active');
-            document.getElementById('close-res-btn').style.display = 'none';
-            
-            const c1 = document.getElementById('capsule1');
-            const c2 = document.getElementById('capsule2');
-            c1.className = 'capsule';
-            c2.className = 'capsule';
-            
+            const cardBox1 = document.getElementById('card-box1');
+            const cardBox2 = document.getElementById('card-box2');
+            const detail = document.getElementById('detail');
+            const closeBtn = document.getElementById('close-res-btn');
+            const cap1 = document.getElementById('capsule1');
+            const cap2 = document.getElementById('capsule2');
+
+            resOverlay.style.display = "none";
+            cardBox1.classList.remove('active');
+            cardBox2.classList.remove('active');
+            detail.classList.remove('active');
+            closeBtn.style.display = "none";
+            cap1.className = "capsule";
+            cap2.className = "capsule";
             isGachaRunning = false;
-            if (isMuted) bgm.pause();
             updateUI();
         }
 
         function openCollection() {
             isCollectionOpen = true;
-            document.getElementById('collection-overlay').style.display = 'flex';
-            filterCollection('all');
-            if(!isMuted) bgm.play();
+            document.getElementById('collection-overlay').style.display = "flex";
+            filterCollection('all', document.querySelector('.nav-btn'));
+            if(!isMuted) bgm.play().catch(() => {});
         }
 
         function closeCollection() {
             isCollectionOpen = false;
-            document.getElementById('collection-overlay').style.display = 'none';
-            if(isMuted) bgm.pause();
+            document.getElementById('collection-overlay').style.display = "none";
         }
 
         function filterCollection(group, btn) {
-            if(btn) {
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            }
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
             const grid = document.getElementById('collection-grid');
-            grid.innerHTML = '';
+            grid.innerHTML = "";
+            
             tarotData.forEach(card => {
-                if(group !== 'all' && card.group !== group) return;
+                if (group !== 'all' && card.group !== group) return;
+                
                 const item = document.createElement('div');
                 item.className = `collection-item ${unlockedCards.includes(card.id) ? 'unlocked' : ''}`;
                 item.innerHTML = `<img src="${card.img}">`;
-                if(unlockedCards.includes(card.id)) {
+                if (unlockedCards.includes(card.id)) {
                     item.onclick = () => open3D(card.img);
                 }
                 grid.appendChild(item);
             });
         }
 
-        let startX, startY, currentX = 0, currentY = 0;
         function open3D(imgSrc) {
             const overlay = document.getElementById('card-3d-overlay');
-            document.getElementById('card-3d-img').src = imgSrc;
-            overlay.style.display = 'flex';
-            currentX = 0; currentY = 0;
-            updateRotation();
+            const img = document.getElementById('card-3d-img');
+            img.src = imgSrc;
+            overlay.style.display = "flex";
+            
+            const container = document.getElementById('card-3d-container');
+            let rotateY = 0;
+            let startX = 0;
 
-            overlay.addEventListener('touchstart', handleStart);
-            overlay.addEventListener('touchmove', handleMove);
-        }
-
-        function handleStart(e) { startX = e.touches[0].pageX; startY = e.touches[0].pageY; }
-        function handleMove(e) {
-            const dx = e.touches[0].pageX - startX;
-            const dy = e.touches[0].pageY - startY;
-            currentX += dx * 0.5;
-            currentY -= dy * 0.5;
-            startX = e.touches[0].pageX;
-            startY = e.touches[0].pageY;
-            updateRotation();
-        }
-
-        function updateRotation() {
-            document.getElementById('card-3d-container').style.transform = `rotateY(${currentX}deg) rotateX(${currentY}deg)`;
+            overlay.ontouchstart = (e) => startX = e.touches[0].pageX;
+            overlay.ontouchmove = (e) => {
+                const delta = e.touches[0].pageX - startX;
+                rotateY += delta * 0.5;
+                container.style.transform = `rotateY(${rotateY}deg)`;
+                startX = e.touches[0].pageX;
+            };
         }
 
         function close3D() {
-            document.getElementById('card-3d-overlay').style.display = 'none';
+            document.getElementById('card-3d-overlay').style.display = "none";
+            document.getElementById('card-3d-container').style.transform = "rotateY(0deg)";
         }
 
         function openSecret() {
-            if(unlockedCards.length >= 79) {
+            if (unlockedCards.length >= 79) {
                 document.getElementById('secret-modal').style.display = 'flex';
             }
         }
 
-        updateUI();
+        window.onload = updateUI;
     </script>
 </body>
 </html>
