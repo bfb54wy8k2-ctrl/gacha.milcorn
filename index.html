@@ -1,4 +1,4 @@
-ve4
+ve5
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -360,7 +360,7 @@ ve4
             { id: 27, group: "wands", name: "WANDS 6", desc: "恋の勝利はもうすぐ🎉周囲も認めるような嬉しい進展が期待できるときだよ🏆", img: "images/27.png" },
             { id: 28, group: "wands", name: "WANDS 7", desc: "自分の立場や恋を守り抜く時🛡️あなたの強い想いが運命を切り開きます💪", img: "images/28.png" },
             { id: 29, group: "wands", name: "WANDS 8", desc: "急展開のサイン📩トントン拍子に話が進む予感。流れを逃さず乗って💨", img: "images/29.png" },
-            { id: 30, group: "wands", name: "WANDS 9", desc: "踏ん張りどころ🚧少し疲れ気味かも。でもゴールは目の前だから諦めないで✨", img: "images/30.png" },
+            { id: 30, group: "wands", name: "WANDS 9", desc: "踏ん張りどころ🚧少し疲れ気気味かも。でもゴールは目の前だから諦めないで✨", img: "images/30.png" },
             { id: 31, group: "wands", name: "WANDS 10", desc: "抱え込みすぎかも💦恋の責任を一人で負わないで。もっと相手を頼ってみて🤝", img: "images/31.png" },
             { id: 32, group: "wands", name: "WANDS PAGE", desc: "フレッシュな知らせ✨純粋な好奇心が恋の新しい扉を開けてくれるよワクワク🌟", img: "images/32.png" },
             { id: 33, group: "wands", name: "WANDS KNIGHT", desc: "情熱的に突き進む時🏇迷っている暇はありません。直感で駆け抜けて🔥", img: "images/33.png" },
@@ -411,7 +411,13 @@ ve4
             { id: 78, group: "secret", name: "ULTIMATE MIRUKO", desc: "あなたの恋は今、最終段階の扉の前にいます💍もう疑わなくて大丈夫。これまでの想いと選択はすべて正解✨覚悟を決めて受け取ることで、運命の愛が完全に形になります🌈💖", img: "images/78.png" }
         ];
 
-        let coins = parseInt(localStorage.getItem('miruCoins')) || 2;
+        let coins = parseInt(localStorage.getItem('miruCoins'));
+        // 初回起動時の初期化
+        if (isNaN(coins)) {
+            coins = 1; // 初回ログインボーナス1枚
+            localStorage.setItem('miruCoins', coins);
+        }
+
         let lastAccess = localStorage.getItem('lastAccessDate');
         let unlockedCards = JSON.parse(localStorage.getItem('unlockedCards') || '[]');
         let isMuted = true;
@@ -420,20 +426,29 @@ ve4
         const bgm = document.getElementById('bgm');
         bgm.volume = 0.5;
 
-        // バックグラウンド制御
-        document.addEventListener("visibilitychange", () => {
-            if (document.hidden) { bgm.pause(); } 
-            else { if (!isMuted && (isCollectionOpen || !isGachaRunning)) bgm.play().catch(() => {}); }
-        });
-
-        function updateUI() {
+        // 起動時および日付変更チェック
+        function checkDailyBonus() {
             const today = new Date().toLocaleDateString();
             if (lastAccess !== today) {
-                coins = 2; 
+                // 日付が変わっていたら+1枚（ログインボーナス）
+                coins += 1;
                 lastAccess = today;
                 localStorage.setItem('lastAccessDate', today);
                 localStorage.setItem('miruCoins', coins);
             }
+        }
+
+        // バックグラウンド制御
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) { bgm.pause(); } 
+            else { 
+                checkDailyBonus();
+                updateUI();
+                if (!isMuted && (isCollectionOpen || !isGachaRunning)) bgm.play().catch(() => {}); 
+            }
+        });
+
+        function updateUI() {
             document.getElementById('coin-count').innerText = coins;
             const btn = document.getElementById('play-btn');
             const limitInfo = document.getElementById('limit-info');
@@ -443,7 +458,7 @@ ve4
             if (coins <= 0) {
                 btn.disabled = true;
                 limitInfo.style.display = "block";
-                document.getElementById('limit-text').innerText = "";
+                document.getElementById('limit-text').innerText = "コインがなくなったよ";
                 premiumInfo.style.display = "block";
                 timerCon.style.display = "block";
             } else {
@@ -459,121 +474,66 @@ ve4
             const doorBtn = document.getElementById('door-btn');
             if(unlockedCards.length >= 79) {
                 doorBtn.classList.add('active');
-                doorBtn.disabled = false;
-            } else {
-                doorBtn.classList.remove('active');
-                doorBtn.disabled = true;
+                doorBtn.style.cursor = "pointer";
             }
         }
 
-        // 秘密のコード入力機能
-        function enterSecretCode() {
-            const code = prompt("秘密のコードを入力してね🦄");
-            if (code === "miruko") { // コードの正解例
-                coins += 10;
-                localStorage.setItem('miruCoins', coins);
-                updateUI();
-                alert("✨魔法が成功したよ！ミルコインが10枚増えました✨");
-            } else if (code !== null) {
-                alert("コードが違うみたい...🤫");
-            }
-        }
-
-        function toggleMusic() {
-            isMuted = !isMuted;
-            const toggleBtn = document.getElementById('music-toggle');
-            if (isMuted) { bgm.pause(); toggleBtn.innerText = "🔇"; } 
-            else { bgm.play().catch(() => {}); toggleBtn.innerText = "🎵"; }
-        }
-
-        setInterval(() => {
-            const now = new Date();
-            const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-            const diff = tomorrow - now;
-            const h = Math.floor(diff / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            document.getElementById('countdown').innerText = `${h}時間${m}分${s}秒`;
-            
-            const today = new Date().toLocaleDateString();
-            if (lastAccess !== today) updateUI();
-        }, 1000);
-
-        async function playGacha() {
+        function playGacha() {
             if (coins <= 0 || isGachaRunning) return;
-            isGachaRunning = true;
+            
             coins--;
             localStorage.setItem('miruCoins', coins);
             updateUI();
-
-            const btn = document.getElementById('play-btn');
-            btn.disabled = true;
             
+            isGachaRunning = true;
+            document.getElementById('play-btn').disabled = true;
+            if(!isMuted) bgm.pause();
+
             const cap1 = document.getElementById('capsule1');
             const cap2 = document.getElementById('capsule2');
             
-            // ガチャアニメーション
-            document.getElementById('gacha-machine').style.animation = "shake 0.1s infinite";
-            await new Promise(r => setTimeout(r, 1200));
-            document.getElementById('gacha-machine').style.animation = "";
-
-            // カプセル排出
-            cap1.style.setProperty('--cap-color', ['#ff69b4','#ffd700','#87ceeb'][Math.floor(Math.random()*3)]);
-            cap2.style.setProperty('--cap-color', ['#ff69b4','#ffd700','#87ceeb'][Math.floor(Math.random()*3)]);
+            cap1.style.display = "block";
+            cap2.style.display = "block";
             cap1.className = "capsule pop-out1";
             cap2.className = "capsule pop-out2";
 
-            await new Promise(r => setTimeout(r, 1200));
-            
-            // 結果の決定
-            const res1 = tarotData[Math.floor(Math.random() * (tarotData.length - 1))];
-            let res2;
-            if (Math.random() < 0.05) {
-                res2 = tarotData[78]; // シークレット
-            } else {
-                res2 = tarotData[Math.floor(Math.random() * (tarotData.length - 1))];
-            }
-
-            // 保存
-            [res1, res2].forEach(r => {
-                if (!unlockedCards.includes(r.id)) unlockedCards.push(r.id);
-            });
-            localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
-
-            // 表示
-            showResult(res1, res2);
+            setTimeout(() => {
+                showResult();
+            }, 1500);
         }
 
-        function showResult(r1, r2) {
-            const overlay = document.getElementById('result-overlay');
-            overlay.style.display = "flex";
+        function showResult() {
+            const res1 = tarotData[Math.floor(Math.random() * (tarotData.length - 1))];
+            const res2 = tarotData[Math.floor(Math.random() * (tarotData.length - 1))];
             
-            const b1 = document.getElementById('card-box1');
-            const b2 = document.getElementById('card-box2');
-            b1.innerHTML = `<img src="${r1.img}">`;
-            b2.innerHTML = `<img src="${r2.img}">`;
+            saveUnlocked(res1.id);
+            saveUnlocked(res2.id);
 
-            setTimeout(() => b1.classList.add('active'), 100);
-            setTimeout(() => b2.classList.add('active'), 400);
+            const box1 = document.getElementById('card-box1');
+            const box2 = document.getElementById('card-box2');
+            box1.innerHTML = `<img src="${res1.img}">`;
+            box2.innerHTML = `<img src="${res2.img}">`;
+
+            document.getElementById('result-overlay').style.display = "flex";
+            
+            setTimeout(() => box1.classList.add('active'), 100);
+            setTimeout(() => box2.classList.add('active'), 600);
             
             setTimeout(() => {
                 const detail = document.getElementById('detail');
-                const msg = document.getElementById('miruko-msg');
                 detail.classList.add('active');
-                
-                let text = `【${r1.name}】\n${r1.desc}\n\n【${r2.name}】\n${r2.desc}\n\n🦄ミルコのアドバイス🦄\n${loveAdvices[Math.floor(Math.random()*loveAdvices.length)]}`;
-                
-                let i = 0;
-                msg.innerText = "";
-                const timer = setInterval(() => {
-                    msg.innerText += text[i++];
-                    if (i >= text.length) {
-                        clearInterval(timer);
-                        document.getElementById('close-res-btn').style.display = "block";
-                    }
-                    overlay.scrollTo(0, overlay.scrollHeight);
-                }, 30);
-            }, 1000);
+                const msg = document.getElementById('miruko-msg');
+                const advice = loveAdvices[Math.floor(Math.random() * loveAdvices.length)];
+                msg.innerText = `${res1.name}\n${res1.desc}\n\n${res2.name}\n${res2.desc}\n\n${advice}`;
+                document.getElementById('close-res-btn').style.display = "block";
+            }, 1200);
+        }
+
+        function saveUnlocked(id) {
+            if (!unlockedCards.includes(id)) {
+                unlockedCards.push(id);
+                localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
+            }
         }
 
         function closeResult() {
@@ -582,10 +542,27 @@ ve4
             document.getElementById('card-box2').classList.remove('active');
             document.getElementById('detail').classList.remove('active');
             document.getElementById('close-res-btn').style.display = "none";
-            document.getElementById('capsule1').className = "capsule";
-            document.getElementById('capsule2').className = "capsule";
+            
+            const cap1 = document.getElementById('capsule1');
+            const cap2 = document.getElementById('capsule2');
+            cap1.style.display = "none";
+            cap2.style.display = "none";
+            
             isGachaRunning = false;
+            if(!isMuted) bgm.play();
             updateUI();
+        }
+
+        function toggleMusic() {
+            isMuted = !isMuted;
+            const btn = document.getElementById('music-toggle');
+            if (isMuted) {
+                bgm.pause();
+                btn.innerText = "🔇";
+            } else {
+                bgm.play();
+                btn.innerText = "🔊";
+            }
         }
 
         function openCollection() {
@@ -600,89 +577,139 @@ ve4
         }
 
         function filterCollection(group, btn) {
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
             const grid = document.getElementById('collection-grid');
             grid.innerHTML = "";
             
-            tarotData.forEach(card => {
-                if (group !== 'all' && card.group !== group) return;
-                
-                const isUnlocked = unlockedCards.includes(card.id);
-                const div = document.createElement('div');
-                div.className = `collection-item ${isUnlocked ? 'unlocked' : ''}`;
-                div.innerHTML = `<img src="${isUnlocked ? card.img : 'images/back.png'}">`;
-                if (isUnlocked) div.onclick = () => open3D(card.img);
-                grid.appendChild(div);
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filtered = group === 'all' ? tarotData : tarotData.filter(d => d.group === group);
+            
+            filtered.forEach(card => {
+                const item = document.createElement('div');
+                item.className = `collection-item ${unlockedCards.includes(card.id) ? 'unlocked' : ''}`;
+                item.innerHTML = `<img src="${card.img}" onclick="show3D(${card.id})">`;
+                grid.appendChild(item);
             });
         }
 
-        // カード3D表示
-        let rotateX = 0, rotateY = 0;
-        function open3D(src) {
-            document.getElementById('card-3d-img').src = src;
+        function show3D(id) {
+            if (!unlockedCards.includes(id)) return;
+            const card = tarotData.find(d => d.id === id);
+            document.getElementById('card-3d-img').src = card.img;
             document.getElementById('card-3d-overlay').style.display = "flex";
-            rotateX = 0; rotateY = 0;
-            updateCardTransform();
+            
+            const container = document.getElementById('card-3d-container');
+            container.style.transform = "rotateY(0deg)";
+            
+            let startX = 0;
+            let currentRotation = 0;
+
+            const handleStart = (e) => {
+                startX = e.touches ? e.touches[0].pageX : e.pageX;
+            };
+            const handleMove = (e) => {
+                const x = e.touches ? e.touches[0].pageX : e.pageX;
+                const diff = x - startX;
+                container.style.transform = `rotateY(${currentRotation + diff}deg)`;
+            };
+            const handleEnd = (e) => {
+                const transform = container.style.transform;
+                const match = transform.match(/rotateY\(([^deg]+)deg\)/);
+                currentRotation = match ? parseFloat(match[1]) : 0;
+            };
+
+            document.getElementById('card-3d-overlay').onmousedown = handleStart;
+            window.onmousemove = handleMove;
+            window.onmouseup = handleEnd;
+            document.getElementById('card-3d-overlay').ontouchstart = handleStart;
+            document.getElementById('card-3d-overlay').ontouchmove = handleMove;
+            document.getElementById('card-3d-overlay').ontouchend = handleEnd;
         }
 
-        function close3D() { document.getElementById('card-3d-overlay').style.display = "none"; }
-
-        function updateCardTransform() {
-            document.getElementById('card-3d-container').style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        function close3D() {
+            document.getElementById('card-3d-overlay').style.display = "none";
+            window.onmousemove = null;
+            window.onmouseup = null;
         }
-
-        // タッチ操作での回転
-        let startX, startY;
-        document.getElementById('card-3d-overlay').addEventListener('touchstart', e => {
-            startX = e.touches[0].pageX;
-            startY = e.touches[0].pageY;
-        });
-        document.getElementById('card-3d-overlay').addEventListener('touchmove', e => {
-            const dx = e.touches[0].pageX - startX;
-            const dy = e.touches[0].pageY - startY;
-            rotateY += dx * 0.5;
-            rotateX -= dy * 0.5;
-            startX = e.touches[0].pageX;
-            startY = e.touches[0].pageY;
-            updateCardTransform();
-        });
 
         function openSecret() {
-            if(unlockedCards.length >= 79) {
+            if (unlockedCards.length >= 79) {
                 document.getElementById('secret-modal').style.display = "flex";
             }
         }
 
+        function enterSecretCode() {
+            const code = prompt("秘密のコードを入力してね：");
+            if (!code) return;
+            
+            // コード設定（例: "MIRUKO2024" で 5枚追加）
+            if (code === "MIRUKO777") {
+                coins += 10;
+                alert("✨コード確認！ミルコインを10枚プレゼントしたよ！✨");
+            } else if (code === "LOVE") {
+                coins += 3;
+                alert("💖愛のパワー！ミルコインを3枚プレゼント！💖");
+            } else {
+                alert("そのコードは使えないみたい...。");
+            }
+            localStorage.setItem('miruCoins', coins);
+            updateUI();
+        }
+
+        // タイマー更新
+        setInterval(() => {
+            if (coins <= 0) {
+                const now = new Date();
+                const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+                const diff = tomorrow - now;
+                const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+                const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+                const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                document.getElementById('countdown').innerText = `${h}時間${m}分${s}秒`;
+                
+                // 0時を跨いだ瞬間に自動更新
+                if (h === "00" && m === "00" && s === "00") {
+                    checkDailyBonus();
+                    updateUI();
+                }
+            }
+        }, 1000);
+
         function exportData() {
-            const data = btoa(JSON.stringify({
-                c: coins,
-                u: unlockedCards,
-                d: lastAccess
-            }));
-            prompt("あなたの【合言葉】だよ。これをコピーしてメモ帳などに保存してね✨", data);
+            const data = {
+                coins: coins,
+                cards: unlockedCards,
+                date: lastAccess
+            };
+            const code = btoa(encodeURIComponent(JSON.stringify(data)));
+            prompt("あなたの合言葉だよ！これをコピーして保存してね：", code);
         }
 
         function importData() {
-            const code = prompt("保存した【合言葉】を入力してね✨");
+            const code = prompt("保存した合言葉を入力してね：");
             if (!code) return;
             try {
-                const data = JSON.parse(atob(code));
-                coins = data.c;
-                unlockedCards = data.u;
-                lastAccess = data.d;
-                localStorage.setItem('miruCoins', coins);
-                localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
-                localStorage.setItem('lastAccessDate', lastAccess);
-                updateUI();
-                alert("データの引き継ぎが完了したよ！🦄✨");
-            } catch(e) {
-                alert("合言葉が正しくないみたい...😢");
+                const data = JSON.parse(decodeURIComponent(atob(code)));
+                if (confirm("データを上書きするよ。いいかな？")) {
+                    coins = data.coins;
+                    unlockedCards = data.cards;
+                    lastAccess = data.date;
+                    localStorage.setItem('miruCoins', coins);
+                    localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
+                    localStorage.setItem('lastAccessDate', lastAccess);
+                    updateUI();
+                    alert("引き継ぎ完了！");
+                }
+            } catch (e) {
+                alert("合言葉が間違っているみたい。もう一度確認してね。");
             }
         }
 
+        // 初期化実行
+        checkDailyBonus();
         updateUI();
+
     </script>
 </body>
 </html>
