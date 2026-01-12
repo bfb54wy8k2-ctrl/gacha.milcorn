@@ -179,6 +179,7 @@
             display: none; flex-direction: column; align-items: center; justify-content: center;
             padding: 20px;
         }
+
     </style>
 </head>
 <body>
@@ -251,6 +252,17 @@
             <div style="font-size:0.75rem;">全てコンプリートしたら魔法の扉が開くよ✨</div>
             <button id="door-btn" class="door-btn" onclick="openSecret()">扉を開く(中に入ったら長押しして宝物をゲットしてね)</button>
         </div>
+<div class="backup-section" style="margin-top: 30px; padding: 15px; border-top: 1px dashed #555; text-align: center;">
+    <p style="font-size: 0.8rem; color: #ffca28;">🦄【ミルコレクションを保存する(引き継ぎ設定)】</p>
+    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
+        <button onclick="exportData()" style="padding: 8px 12px; background: #5c4b8a; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.75rem;">
+            合言葉を発行
+        </button>
+        <button onclick="importData()" style="padding: 8px 12px; background: #4b8a5c; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.75rem;">
+            合言葉を入力
+        </button>
+    </div>
+</div>
 
         <div class="collection-nav">
             <button class="nav-btn active" onclick="filterCollection('all', this)">全部</button>
@@ -620,6 +632,57 @@
                 document.getElementById('secret-modal').style.display = 'flex';
             }
         }
+
+
+
+
+// --- 図鑑データの引き継ぎ機能（ちょっとだけ暗号化版） ---
+
+// 1. 合言葉を発行する（数字をめちゃくちゃにする）
+function exportData() {
+    if (unlockedCards.length === 0) {
+        alert("🦄「まだ図鑑に何も登録されていないよ！」");
+        return;
+    }
+
+    // 数字を文字に変換して、btoa(Base64)という方式で暗号っぽく見せる
+    const rawData = unlockedCards.join(',');
+    const encodedData = btoa(rawData); // これで "MSwyLDMs..." みたいな謎の文字列になります
+    
+    const finalCode = "MIRUKO-" + encodedData; // 頭にミルコの名前をつけて可愛く！
+
+    navigator.clipboard.writeText(finalCode).then(() => {
+        alert("🦄「魔法の合言葉をコピーしたよ！大切に保管してね✨」\n\n合言葉: " + finalCode);
+    }).catch(err => {
+        prompt("🦄「魔法の合言葉だよ！これを保存してね：", finalCode);
+    });
+}
+
+// 2. 合言葉を読み込む（暗号を解く）
+function importData() {
+    const code = prompt("🦄「保存しておいた魔法の合言葉を入力してね：");
+    
+    if (code && code.startsWith("MIRUKO-")) {
+        try {
+            // "MIRUKO-" を取り除いて、暗号を元に戻す
+            const encodedPart = code.replace("MIRUKO-", "");
+            const decodedData = atob(encodedPart); // 暗号解除！
+            const importedCards = decodedData.split(',').map(num => parseInt(num));
+
+            if (confirm("🦄「図鑑のデータを復元してもいい？今のデータは消えちゃうよ！」")) {
+                unlockedCards = [...new Set(importedCards)];
+                localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
+                alert("🦄「魔法の扉が繋がったよ！図鑑を復元したよ✨」");
+                location.reload();
+            }
+        } catch (e) {
+            alert("🦄「うーん、その合言葉は魔法が解けちゃってるみたい。もう一度確認してみてね。」");
+        }
+    } else if (code) {
+        alert("🦄「それは正しい合言葉じゃないみたい...」");
+    }
+}
+
 
         window.onload = updateUI;
     </script>
