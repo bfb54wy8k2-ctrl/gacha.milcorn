@@ -28,10 +28,21 @@
         .title img { width: 30px; vertical-align: middle; margin-right: 8px; border-radius: 50%; border: 1px solid var(--gold); }
         #coin-display { margin-top: 15px; background: rgba(212, 175, 55, 0.2); padding: 8px 25px; border-radius: 30px; border: 2px solid var(--gold); color: var(--gold); font-weight: bold; font-size: 1.1rem; }
 
-        /* バックアップガイド・ボタン */
-        .backup-guide { font-size: 0.7rem; color: #ccc; margin-top: 5px; text-align: center; }
-        .backup-btns { margin-top: 8px; display: flex; gap: 8px; }
-        .backup-btn { font-size: 0.7rem; padding: 4px 10px; border-radius: 10px; border: 1px solid #555; background: #333; color: #fff; cursor: pointer; }
+        /* ホーム画面追加ガイド */
+        .app-guide-box { 
+            margin-top: 12px; 
+            background: rgba(255, 255, 255, 0.05); 
+            padding: 10px; 
+            border-radius: 15px; 
+            width: 85%; 
+            max-width: 320px; 
+            text-align: center; 
+            border: 1px dashed #555;
+        }
+        .guide-title { font-size: 0.75rem; color: var(--gold); margin-bottom: 8px; font-weight: bold; }
+        .guide-row { display: flex; justify-content: space-around; gap: 10px; }
+        .guide-item { flex: 1; font-size: 0.65rem; color: #ccc; line-height: 1.3; }
+        .guide-icon { font-size: 1rem; display: block; margin-bottom: 3px; }
 
         /* ガチャ制限・プレミアム案内 */
         #limit-info { margin-top: 15px; text-align: center; color: var(--pink); font-size: 0.85rem; background: rgba(255,182,193,0.1); padding: 15px; border-radius: 15px; width: 85%; max-width: 320px; border: 1px solid rgba(255,182,193,0.2); }
@@ -132,10 +143,18 @@
 
     <div class="title"><img src="images/icon2.png">ミルコーンの恋占いガチャ</div>
     
-    <div class="backup-guide">💡消えちゃう前に！データの保存・復元</div>
-    <div class="backup-btns">
-        <button class="backup-btn" onclick="exportData()">💾 保存</button>
-        <button class="backup-btn" onclick="importData()">🔄 復元</button>
+    <div class="app-guide-box">
+        <div class="guide-title">📱 アプリのようにホーム画面に追加</div>
+        <div class="guide-row">
+            <div class="guide-item">
+                <span class="guide-icon">🍎 iPhone</span>
+                下の「<span style="font-size:0.8rem">⎋</span>」から<br>ホーム画面に追加
+            </div>
+            <div class="guide-item">
+                <span class="guide-icon">🤖 Android</span>
+                上の「<span style="font-size:0.8rem">⋮</span>」から<br>ホーム画面に追加
+            </div>
+        </div>
     </div>
 
     <div id="coin-display">ミルコイン: <span id="coin-count">0</span> 枚</div>
@@ -234,7 +253,7 @@
             { id: 27, group: "wands", name: "WANDS 6", desc: "恋の勝利はもうすぐ🎉周囲も認めるような嬉しい進展が期待できるときだよ🏆", img: "images/27.png" },
             { id: 28, group: "wands", name: "WANDS 7", desc: "自分の立場や恋を守り抜く時🛡️あなたの強い想いが運命を切り開きます💪", img: "images/28.png" },
             { id: 29, group: "wands", name: "WANDS 8", desc: "急展開のサイン📩トントン拍子に話が進む予感。流れを逃さず乗って💨", img: "images/29.png" },
-            { id: 30, group: "wands", name: "WANDS 9", desc: "踏ん張りどころ🚧少し疲れ気味かも。でもゴールは目の前だから諦めないで✨", img: "images/30.png" },
+            { id: 30, group: "wands", name: "WANDS 9", desc: "踏ん張りどころ🚧少し疲れ気気かも。でもゴールは目の前だから諦めないで✨", img: "images/30.png" },
             { id: 31, group: "wands", name: "WANDS 10", desc: "抱え込みすぎかも💦恋の責任を一人で負わないで。もっと相手を頼ってみて🤝", img: "images/31.png" },
             { id: 32, group: "wands", name: "WANDS PAGE", desc: "フレッシュな知らせ✨純粋な好奇心が恋の新しい扉を開けてくれるよワクワク🌟", img: "images/32.png" },
             { id: 33, group: "wands", name: "WANDS KNIGHT", desc: "情熱的に突き進む時🏇迷っている暇はありません。直感で駆け抜けて🔥", img: "images/33.png" },
@@ -459,96 +478,54 @@
                 const item = document.createElement('div');
                 item.className = `collection-item ${unlockedCards.includes(card.id) ? 'unlocked' : ''}`;
                 item.innerHTML = `<img src="${card.img}" alt="${card.name}">`;
-                if (unlockedCards.includes(card.id)) { item.onclick = () => open3D(card.img); }
+                if (unlockedCards.includes(card.id)) {
+                    item.onclick = () => show3D(card.img);
+                }
                 grid.appendChild(item);
             });
         }
 
-        // 3D表示機能（裏面・タッチ操作対応）
-        let currentRotation = { x: 0, y: 0 };
-        function open3D(imgSrc) {
-            const overlay = document.getElementById('card-3d-overlay');
-            const img = document.getElementById('card-3d-img');
-            const container = document.getElementById('card-3d-container');
-            img.src = imgSrc;
-            overlay.style.display = 'flex';
-            currentRotation = { x: 0, y: 0 };
-            container.style.transform = `rotateX(0deg) rotateY(0deg)`;
-            
-            let isDragging = false;
-            let prevX, prevY;
-
-            const startDrag = (e) => {
-                isDragging = true;
-                prevX = e.clientX || e.touches[0].clientX;
-                prevY = e.clientY || e.touches[0].clientY;
-            };
-
-            const moveDrag = (e) => {
-                if (!isDragging) return;
-                const x = e.clientX || e.touches[0].clientX;
-                const y = e.clientY || e.touches[0].clientY;
-                const deltaX = x - prevX;
-                const deltaY = y - prevY;
-
-                currentRotation.y += deltaX * 0.5;
-                currentRotation.x -= deltaY * 0.5;
-
-                container.style.transform = `rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`;
-                prevX = x;
-                prevY = y;
-            };
-
-            const endDrag = () => { isDragging = false; };
-
-            container.addEventListener('mousedown', startDrag);
-            window.addEventListener('mousemove', moveDrag);
-            window.addEventListener('mouseup', endDrag);
-            container.addEventListener('touchstart', startDrag);
-            window.addEventListener('touchmove', moveDrag);
-            window.addEventListener('touchend', endDrag);
+        function show3D(imgSrc) {
+            document.getElementById('card-3d-img').src = imgSrc;
+            document.getElementById('card-3d-overlay').style.display = 'flex';
         }
 
         function close3D() {
             document.getElementById('card-3d-overlay').style.display = 'none';
+            document.getElementById('card-3d-container').style.transform = 'rotateY(0deg) rotateX(0deg)';
         }
 
-        // バックアップ機能
-        function exportData() {
-            const data = {
-                coins: localStorage.getItem('miruCoins'),
-                cards: localStorage.getItem('unlockedCards'),
-                date: localStorage.getItem('lastAccessDate')
-            };
-            const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `miruko_backup_${new Date().toLocaleDateString()}.json`;
-            a.click();
-            alert("データをファイルに保存しました！");
+        // 3D回転
+        const container = document.getElementById('card-3d-container');
+        let isDragging = false;
+        let startX, startY;
+        let rotY = 0, rotX = 0;
+
+        function handleStart(e) {
+            isDragging = true;
+            startX = (e.touches ? e.touches[0].clientX : e.clientX);
+            startY = (e.touches ? e.touches[0].clientY : e.clientY);
         }
 
-        function importData() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = e => {
-                const reader = new FileReader();
-                reader.onload = event => {
-                    const content = JSON.parse(event.target.result);
-                    localStorage.setItem('miruCoins', content.coins);
-                    localStorage.setItem('unlockedCards', content.cards);
-                    localStorage.setItem('lastAccessDate', content.date);
-                    alert("復元完了！再読み込みします。");
-                    location.reload();
-                };
-                reader.readAsText(e.target.files[0]);
-            };
-            input.click();
+        function handleMove(e) {
+            if (!isDragging) return;
+            const x = (e.touches ? e.touches[0].clientX : e.clientX);
+            const y = (e.touches ? e.touches[0].clientY : e.clientY);
+            rotY += (x - startX) * 0.5;
+            rotX -= (y - startY) * 0.5;
+            container.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+            startX = x;
+            startY = y;
         }
 
-        window.onload = updateUI;
+        container.addEventListener('mousedown', handleStart);
+        container.addEventListener('touchstart', handleStart);
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('touchmove', handleMove);
+        window.addEventListener('mouseup', () => isDragging = false);
+        window.addEventListener('touchend', () => isDragging = false);
+
+        updateUI();
     </script>
 </body>
 </html>
