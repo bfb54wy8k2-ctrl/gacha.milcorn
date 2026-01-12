@@ -269,7 +269,7 @@
             { id: 78, group: "secret", name: "ULTIMATE MIRUKO", desc: "あなたの恋は今、最終段階の扉の前にいます💍もう疑わなくて大丈夫。これまでの想いと選択はすべて正解✨覚悟を決めて受け取ることで、運命の愛が完全に形になります🌈💖", img: "images/78.png" }
         ];
 
-        let coins = parseInt(localStorage.getItem('miruCoins') || '1');
+        let coins = 100; // 一旦これだけにする！
         let lastAccess = localStorage.getItem('lastAccessDate');
         let unlockedCards = JSON.parse(localStorage.getItem('unlockedCards') || '[]');
         let isMuted = true;
