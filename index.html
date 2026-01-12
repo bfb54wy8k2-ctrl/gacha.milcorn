@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -52,29 +50,74 @@
         #miruko-msg { font-size: 0.85rem; line-height: 1.6; min-height: 100px; white-space: pre-wrap; }
         .miruko-status { color: #d44d7c; font-weight: bold; margin-bottom: 10px; display: block; border-bottom: 1px dashed #ffb6c1; padding-bottom: 5px; }
 
+        /* 左上の音量ボタン */
         #music-toggle {
             position: fixed;
-            right: 20px;
-            bottom: 20px;
-            width: 50px;
-            height: 50px;
+            left: 20px;
+            top: 20px;
+            width: 45px;
+            height: 45px;
             background: rgba(212, 175, 55, 0.8);
             border: 2px solid white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             cursor: pointer;
             z-index: 500;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* 右下の図鑑ボタン */
+        #collection-btn {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold), #927821);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             animation: fuwafuwa 3s ease-in-out infinite;
         }
+        #collection-btn span { font-size: 0.6rem; font-weight: bold; color: white; margin-top: -2px; }
+
+        /* 図鑑画面 */
+        #collection-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
+        .collection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .collection-item { aspect-ratio: 2/3.5; background: #333; border-radius: 5px; border: 1px solid var(--gold); overflow: hidden; position: relative; }
+        .collection-item img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.2) grayscale(1); }
+        .collection-item.unlocked img { filter: brightness(1) grayscale(0); }
+        .collection-nav { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 10px; margin-top: 10px; }
+        .nav-btn { padding: 8px 15px; background: #333; color: var(--gold); border: 1px solid var(--gold); border-radius: 20px; white-space: nowrap; font-size: 0.8rem; }
+        .nav-btn.active { background: var(--gold); color: black; }
+
+        /* 3Dカード表示用 */
+        #card-3d-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; perspective: 1000px; }
+        #card-3d-container { width: 250px; aspect-ratio: 2/3.5; position: relative; transform-style: preserve-3d; cursor: grab; transition: transform 0.1s linear; }
+        #card-3d-container img { width: 100%; height: 100%; border: 4px solid var(--gold); border-radius: 15px; backface-visibility: hidden; }
+
         @keyframes fuwafuwa { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes shake { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-3deg); } }
     </style>
 </head>
 <body>
+
+    <div id="music-toggle" onclick="toggleMusic()">🔇</div>
+
+    <div id="collection-btn" onclick="openCollection()">
+        📖
+        <span>ずかん</span>
+    </div>
 
     <div class="title"><img src="images/icon2.png">ミルコーンの恋占いガチャ</div>
     <div id="coin-display">ミルコイン: <span id="coin-count">0</span> 枚</div>
@@ -88,8 +131,8 @@
 
     <div id="premium-info">
         <div style="font-size: 0.9rem; color: var(--gold);">✨ ミルコインを無限にする✨</div>
-        <p style="font-size: 0.8rem; line-height: 1.4; margin: 10px 0;">有料版を手に入れると、明日を待たずに何度でも引き放題🦄</p>
-        <a href="あなたの決済ページURL" class="premium-btn">有料版をゲットする💎</a>
+        <p style="font-size: 0.8rem; line-height: 1.4; margin: 10px 0;">有料版を手に入れると、明日を待たずに<b>何度でも引き放題</b>になります。</p>
+        <a href="あなたの決済ページURL" class="premium-btn">引き放題で占う 🦄💎</a>
     </div>
 
     <div id="gacha-container">
@@ -99,8 +142,6 @@
     </div>
 
     <button class="btn" id="play-btn" onclick="playGacha()">ガチャを回す</button>
-
-    <div id="music-toggle" onclick="toggleMusic()">🔇</div>
 
     <div id="result-overlay">
         <div class="cards-container">
@@ -114,99 +155,125 @@
         </div>
     </div>
 
+    <div id="collection-overlay">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="color:var(--gold); font-size:1.2rem;">ミルコの思い出図鑑</h2>
+            <button onclick="closeCollection()" style="background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 15px; border-radius:15px;">閉じる</button>
+        </div>
+        <div class="collection-nav">
+            <button class="nav-btn active" onclick="filterCollection('all', this)">全部</button>
+            <button class="nav-btn" onclick="filterCollection('major', this)">大アルカナ</button>
+            <button class="nav-btn" onclick="filterCollection('wands', this)">ワンド</button>
+            <button class="nav-btn" onclick="filterCollection('cups', this)">カップ</button>
+            <button class="nav-btn" onclick="filterCollection('swords', this)">ソード</button>
+            <button class="nav-btn" onclick="filterCollection('pentacles', this)">ペンタクル</button>
+            <button class="nav-btn" onclick="filterCollection('secret', this)">シークレット</button>
+        </div>
+        <div class="collection-grid" id="collection-grid"></div>
+    </div>
+
+    <div id="card-3d-overlay" onclick="close3D()">
+        <div id="card-3d-container" onclick="event.stopPropagation()">
+            <img id="card-3d-img" src="" alt="">
+        </div>
+        <p style="position:absolute; bottom:50px; color:white; font-size:0.8rem;">指でくるくる回せるよ！ポンと押すと戻るよ</p>
+    </div>
+
     <audio id="bgm" loop preload="auto">
         <source src="sounds/bgm.mp3" type="audio/mpeg">
     </audio>
 
     <script>
         const tarotData = [
-            { id: 0, name: "0. FOOL", desc: "今は完璧じゃなくていい恋✨先の不安より「好き」という純粋な気持ちを信じて。勇気ある一歩が、思いがけない幸せに繋がります🌈", img: "images/0.png" },
-            { id: 1, name: "1. MAGICIAN", desc: "あなたの想いには現実を動かす力があります💫駆け引きより素直な言葉を。伝えることで、恋ははっきりと形を持ち始めます💌", img: "images/1.png" },
-            { id: 2, name: "2. HIGH PRIESTESS", desc: "相手の本心は言葉より態度に表れています🌙焦らず静かに見守って。あなたの直感は今、とても冴えています🕊️", img: "images/2.png" },
-            { id: 3, name: "3. EMPRESS", desc: "愛されることを遠慮しないで💐受け取る覚悟ができた時、恋は自然と満たされていきます。自分を甘やかすのも大切な愛💖", img: "images/3.png" },
-            { id: 4, name: "4. EMPEROR", desc: "安心できる関係は自分軸から✨無理に合わせず、自分を大切にする姿勢が相手の信頼を育てます🏰", img: "images/4.png" },
-            { id: 5, name: "5. HIEROPHANT", desc: "誠実な想いは時間をかけて実を結びます🌿周囲の常識より、心が「正しい」と感じる選択を🤍", img: "images/5.png" },
-            { id: 6, name: "6. LOVERS", desc: "迷いは本気の証拠💞心が強く惹かれる方を選んで。選択した先で、あなたの恋は深まっていきます✨", img: "images/6.png" },
-            { id: 7, name: "7. CHARIOT", desc: "今は待つより動く時🚀小さな行動が大きな進展に。勇気を出したあなたに、恋は味方します🔥", img: "images/7.png" },
-            { id: 8, name: "8. STRENGTH", desc: "優しさは最大の強さ🦁無理に頑張らなくて大丈夫。あなたの思いやりが、相手の心を自然と開きます💗", img: "images/8.png" },
-            { id: 9, name: "9. HERMIT", desc: "一人の時間は恋を整えるため🌙静かに向き合うことで、本当に望む愛が見えてきます🕯️", img: "images/9.png" },
-            { id: 10, name: "10. WHEEL OF FORTUNE", desc: "流れが大きく動く時🎡偶然の出来事にこそ意味があります。チャンスはすでに巡ってきています✨", img: "images/10.png" },
-            { id: 11, name: "11. JUSTICE", desc: "本音と行動を一致させて⚖️誠実な選択は、後悔しない恋を引き寄せます🤍", img: "images/11.png" },
-            { id: 12, name: "12. HANGED MAN", desc: "今は動かなくても大丈夫🌱待つ時間が愛を育てています。見方を変えると答えが見えてくる✨", img: "images/12.png" },
-            { id: 13, name: "13. DEATH", desc: "終わりは新しい始まり🖤手放した先に、もっと幸せな恋が用意されています🌹", img: "images/13.png" },
-            { id: 14, name: "14. TEMPERANCE", desc: "無理のない関係が長続き💞歩幅を合わせることで、心地よい愛の形が整います🌸", img: "images/14.png" },
-            { id: 15, name: "15. DEVIL", desc: "それは愛？それとも執着？🕸️苦しくなる恋は見直して。自由な心が本当の幸せを呼びます✨", img: "images/15.png" },
-            { id: 16, name: "16. TOWER", desc: "衝撃は真実を知るため⚡壊れた幻想の先に、偽りのない愛が待っています🌈", img: "images/16.png" },
-            { id: 17, name: "17. STAR", desc: "希望を手放さないで🌟その恋はまだ可能性に満ちています。信じる心が未来を照らします💫", img: "images/17.png" },
-            { id: 18, name: "18. MOON", desc: "不安は思い込みかも🌙確かめる勇気を。真実を知ることで、心は静かに落ち着きます🤍", img: "images/18.png" },
-            { id: 19, name: "19. SUN", desc: "素直な笑顔が恋を輝かせます☀️喜びを分かち合える関係が、あなたを幸せにします💛", img: "images/19.png" },
-            { id: 20, name: "20. JUDGEMENT", desc: "過去の恋に答えが出る時📯許しと気づきが、新しい愛への扉を開きます✨", img: "images/20.png" },
-            { id: 21, name: "21. WORLD", desc: "心から満たされる恋が完成💍ありのままのあなたで、愛される幸せを受け取って🌈", img: "images/21.png" },
-            { id: 22, name: "WANDS ACE", desc: "恋の情熱が着火する時🔥一気に距離が縮まるチャンス。ワクワクに従って進んで✨", img: "images/22.png" },
-            { id: 23, name: "WANDS 2", desc: "次の一歩を考える時🌍未来への期待が高まっています。理想の恋を描き始めて✨", img: "images/23.png" },
-            { id: 24, name: "WANDS 3", desc: "恋の可能性が広がります⛵着実に進展している証拠。自信を持って見守って🌈", img: "images/24.png" },
-            { id: 25, name: "WANDS 4", desc: "心安らぐ平和な時間🏡二人の土台が固まり、安心できる関係へと成長します💞", img: "images/25.png" },
-            { id: 26, name: "WANDS 5", desc: "小さなぶつかり合いは成長のサイン⚡本音で向き合うことで愛が深まります✨", img: "images/26.png" },
-            { id: 27, name: "WANDS 6", desc: "恋の勝利はもうすぐ🎉周囲も認めるような嬉しい進展が期待できるときだよ🏆", img: "images/27.png" },
-            { id: 28, name: "WANDS 7", desc: "自分の立場や恋を守り抜く時🛡️あなたの強い想いが運命を切り開きます💪", img: "images/28.png" },
-            { id: 29, name: "WANDS 8", desc: "急展開のサイン📩トントン拍子に話が進む予感。流れを逃さず乗って💨", img: "images/29.png" },
-            { id: 30, name: "WANDS 9", desc: "踏ん張りどころ🚧少し疲れ気味かも。でもゴールは目の前だから諦めないで✨", img: "images/30.png" },
-            { id: 31, name: "WANDS 10", desc: "抱え込みすぎかも💦恋の責任を一人で負わないで。もっと相手を頼ってみて🤝", img: "images/31.png" },
-            { id: 32, name: "WANDS PAGE", desc: "フレッシュな知らせ✨純粋な好奇心が恋の新しい扉を開けてくれるよワクワク🌟", img: "images/32.png" },
-            { id: 33, name: "WANDS KNIGHT", desc: "情熱的に突き進む時🏇迷っている暇はありません。直感で駆け抜けて🔥", img: "images/33.png" },
-            { id: 34, name: "WANDS QUEEN", desc: "あなたの魅力が溢れています太陽のように明るい笑顔が素敵な人を惹きつけるよ🌻", img: "images/34.png" },
-            { id: 35, name: "WANDS KING", desc: "強いリーダーシップが鍵👑あなたが主導権を握ることで、理想の恋が実現します✨", img: "images/35.png" },
-            { id: 36, name: "CUPS ACE", desc: "愛の喜びが溢れ出す時💗新しいトキメキや、深い愛情を受け取る準備をして🌸", img: "images/36.png" },
-            { id: 37, name: "CUPS 2", desc: "心と心が通じ合う最高の調和💕対等な関係で、愛を誓い合える幸せが訪れます✨", img: "images/37.png" },
-            { id: 38, name: "CUPS 3", desc: "喜びを分かち合う祝福の時間🥂仲間のサポートや楽しい交流が恋を応援します🌷", img: "images/38.png" },
-            { id: 39, name: "CUPS 4", desc: "少しマンネリ気味？😌不満に目を向けるより、差し出された愛に気づくことが大切☁️", img: "images/39.png" },
-            { id: 40, name: "CUPS 5", desc: "失ったものに囚われないで🌧️後ろを向けば、まだ残っている温かい愛に気づくはず🌈", img: "images/40.png" },
-            { id: 41, name: "CUPS 6", desc: "懐かしい記憶が幸せを運びます🍀純粋だった頃の気持ちが、今の恋を癒してくれます💞", img: "images/41.png" },
-            { id: 42, name: "CUPS 7", desc: "理想が膨らみすぎているかも☁️夢を見るのもいいけど、今は現実的な愛を選んで現実✨", img: "images/42.png" },
-            { id: 43, name: "CUPS 8", desc: "次のステージへ進む時🌙今の関係に区切りをつけて、より高い愛を求めて旅立おう🚪", img: "images/43.png" },
-            { id: 44, name: "CUPS 9", desc: "願いが叶う満たされた時💖あなたの心が満たされれば、恋も自然とうまくいきます✨", img: "images/44.png" },
-            { id: 45, name: "CUPS 10", desc: "最高の幸福感家族や大切な人と、穏やかで深い愛に包まれる未来が待っています🌈", img: "images/45.png" },
-            { id: 46, name: "CUPS PAGE", desc: "感受性が豊かになっている時🐚素直な想いを表現することで、可愛がられる恋に💓", img: "images/46.png" },
-            { id: 47, name: "CUPS KNIGHT", desc: "ロマンチックな誘いの予感🌹王子様のような優しい愛が、あなたを迎えに来るよ✨", img: "images/47.png" },
-            { id: 48, name: "CUPS QUEEN", desc: "母性的な深い愛の力🌊慈しみの心で接することで、相手の心を完全に掴めます💗", img: "images/48.png" },
-            { id: 49, name: "CUPS KING", desc: "包容力のある安定した愛👑感情をコントロールし、優しさで関係を導けるときだよ✨", img: "images/49.png" },
-            { id: 50, name: "SWORDS ACE", desc: "真実を見極める強い意志⚡曖昧な関係を断ち切り、新しい道を決断する時です切り拓く✨", img: "images/50.png" },
-            { id: 51, name: "SWORDS 2", desc: "葛藤の中でバランスを探して⚖️無理に動かず、心が定まるのをじっと待って🤍", img: "images/51.png" },
-            { id: 52, name: "SWORDS 3", desc: "心が痛む経験は浄化のプロセス💔この痛みを知ることで、あなたはもっと優しくなれる🌱", img: "images/52.png" },
-            { id: 53, name: "SWORDS 4", desc: "一旦休息して、戦うのをやめよう🕊️静かな眠りが、あなたの恋に明快な答えをくれる🫧", img: "images/53.png" },
-            { id: 54, name: "SWORDS 5", desc: "勝ち負けに意味はありません⚔️意地を張るより、心の平和を守る選択をしよう🤍", img: "images/54.png" },
-            { id: 55, name: "SWORDS 6", desc: "困難から離れ、安らぎの地へ⛵誰かの助けを借りて、より良い環境へ移動する時です🌈", img: "images/55.png" },
-            { id: 56, name: "SWORDS 7", desc: "駆け引きには慎重になって🕶️小手先のテクニックより、誠実さで勝負する方が吉✨", img: "images/56.png" },
-            { id: 57, name: "SWORDS 8", desc: "自分で自分を閉じ込めていない？⛓️目隠しを外せば、逃げ道はいくらでもあるよ🌬️", img: "images/57.png" },
-            { id: 58, name: "SWORDS 9", desc: "考えすぎて眠れない夜🌙不安の正体は妄想かも。現実はもっと明るいよ大丈夫🫧", img: "images/58.png" },
-            { id: 59, name: "SWORDS 10", desc: "これ以上の不幸はない、最悪期の脱出🌑夜明けはすぐそこ。新しい自分に生まれ変わろう🌅🌅", img: "images/59.png" },
-            { id: 60, name: "SWORDS PAGE", desc: "警戒心と好奇性が入り混じる時👀慎重に様子を見ながら、有利なチャンスを伺って✨", img: "images/60.png" },
-            { id: 61, name: "SWORDS KNIGHT", desc: "猛スピードで事態が動きます⚡言葉が刃にならないよう、冷静さを忘れないで🤍", img: "images/61.png" },
-            { id: 62, name: "SWORDS QUEEN", desc: "知的な自立心で恋を切り盛り👑厳しいけれど正しい判断が、あなたを幸せにする✨", img: "images/62.png" },
-            { id: 63, name: "SWORDS KING", desc: "冷静で公正な愛の裁き🧠感情に流されず、真実に基づいて関係を築ける時です✨", img: "images/63.png" },
-            { id: 64, name: "PENTACLES ACE", desc: "現実的な幸せの種がまかれます🌱結婚や将来を見据えた、確かな愛の始まりです✨", img: "images/64.png" },
-            { id: 65, name: "PENTACLES 2", desc: "器用に恋をコントロール⚖️変化を楽しみながら、二人のバランスを調整して🤍", img: "images/65.png" },
-            { id: 66, name: "PENTACLES 3", desc: "着実な協力関係を築く時🔧共通の目標を持つことで、絆がより強固になります✨", img: "images/66.png" },
-            { id: 67, name: "PENTACLES 4", desc: "独占欲が強くなっているかも🔒握りしめすぎず、心を開いて相手を信じて💫", img: "images/67.png" },
-            { id: 68, name: "PENTACLES 5", desc: "厳しい状況に負けないで❄️孤独を感じても、救いの手は必ず近くにあります🤍", img: "images/68.png" },
-            { id: 69, name: "PENTACLES 6", desc: "慈悲深く、対等な愛のギブ＆テイク🎁優しさを循環させることで、愛が倍増します✨", img: "images/69.png" },
-            { id: 70, name: "PENTACLES 7", desc: "今の成果を見直す収穫待ち⏳焦らずこれまでの努力を信じれば、豊かな実りが訪れる🌿", img: "images/70.png" },
-            { id: 71, name: "PENTACLES 8", desc: "恋も自分磨きもコツコツと🔨日々の小さな積み重ねが、大きな信頼へと変わります✨", img: "images/71.png" },
-            { id: 72, name: "PENTACLES 9", desc: "洗練された魅力で人を惹きつけます🌹自立した大人の恋を楽しめる充実期✨", img: "images/72.png" },
-            { id: 73, name: "PENTACLES 10", desc: "盤石な繁栄と幸福🏡受け継がれるような、深く安定した愛の形が完成します💍", img: "images/73.png" },
-            { id: 74, name: "PENTACLES PAGE", desc: "真面目で誠実な学びの恋📘ゆっくりと時間をかけて、価値観を共有していこう✨", img: "images/74.png" },
-            { id: 75, name: "PENTACLES KNIGHT", desc: "慎重に、でも確実に愛を運びます🐢スピードよりも誠実さを大切にして🤍", img: "images/75.png" },
-            { id: 76, name: "PENTACLES QUEEN", desc: "豊かな包容力で愛を育む🌼心からの安心感を与える存在として、恋を守り抜こう💖", img: "images/76.png" },
-            { id: 77, name: "PENTACLES KING", desc: "揺るぎない安定と信頼👑経済的にも精神的にも、頼れるパートナーとの良縁✨", img: "images/77.png" },
-            { id: 78, name: "ULTIMATE", desc: "あなたの恋は今、最終段階の扉の前にいます💍もう疑わなくて大丈夫。これまでの想いと選択はすべて正解✨覚悟を決めて受け取ることで、運命の愛が完全に形になります🌈💖", img: "images/78.png" }
+            { id: 0, group: "major", name: "0. FOOL", desc: "今は完璧じゃなくていい恋✨先の不安より「好き」という純粋な気持ちを信じて。勇気ある一歩が、思いがけない幸せに繋がります🌈", img: "images/0.png" },
+            { id: 1, group: "major", name: "1. MAGICIAN", desc: "あなたの想いには現実を動かす力があります💫駆け引きより素直な言葉を。伝えることで、恋ははっきりと形を持ち始めます💌", img: "images/1.png" },
+            { id: 2, group: "major", name: "2. HIGH PRIESTESS", desc: "相手の本心は言葉より態度に表れています🌙焦らず静かに見守って。あなたの直感は今、とても冴えています🕊️", img: "images/2.png" },
+            { id: 3, group: "major", name: "3. EMPRESS", desc: "愛されることを遠慮しないで💐受け取る覚悟ができた時、恋は自然と満たされていきます。自分を甘やかすのも大切な愛💖", img: "images/3.png" },
+            { id: 4, group: "major", name: "4. EMPEROR", desc: "安心できる関係は自分軸から✨無理に合わせず、自分を大切にする姿勢が相手の信頼を育てます🏰", img: "images/4.png" },
+            { id: 5, group: "major", name: "5. HIEROPHANT", desc: "誠実な想いは時間をかけて実を結びます🌿周囲の常識より、心が「正しい」と感じる選択を🤍", img: "images/5.png" },
+            { id: 6, group: "major", name: "6. LOVERS", desc: "迷いは本気の証拠💞心が強く惹かれる方を選んで。選択した先で、あなたの恋は深まっていきます✨", img: "images/6.png" },
+            { id: 7, group: "major", name: "7. CHARIOT", desc: "今は待つより動く時🚀小さな行動が大きな進展に。勇気を出したあなたに、恋は味方します🔥", img: "images/7.png" },
+            { id: 8, group: "major", name: "8. STRENGTH", desc: "優しさは最大の強さ🦁無理に頑張らなくて大丈夫。あなたの思いやりが、相手の心を自然と開きます💗", img: "images/8.png" },
+            { id: 9, group: "major", name: "9. HERMIT", desc: "一人の時間は恋を整えるため🌙静かに向き合うことで、本当に望む愛が見えてきます🕯️", img: "images/9.png" },
+            { id: 10, group: "major", name: "10. WHEEL OF FORTUNE", desc: "流れが大きく動く時🎡偶然の出来事にこそ意味があります。チャンスはすでに巡ってきています✨", img: "images/10.png" },
+            { id: 11, group: "major", name: "11. JUSTICE", desc: "本音と行動を一致させて⚖️誠実な選択は、後悔しない恋を引き寄せます🤍", img: "images/11.png" },
+            { id: 12, group: "major", name: "12. HANGED MAN", desc: "今は動かなくても大丈夫🌱待つ時間が愛を育てています。見方を変えると答えが見えてくる✨", img: "images/12.png" },
+            { id: 13, group: "major", name: "13. DEATH", desc: "終わりは新しい始まり🖤手放した先に、もっと幸せな恋が用意されています🌹", img: "images/13.png" },
+            { id: 14, group: "major", name: "14. TEMPERANCE", desc: "無理のない関係が長続き💞歩幅を合わせることで、心地よい愛の形が整います🌸", img: "images/14.png" },
+            { id: 15, group: "major", name: "15. DEVIL", desc: "それは愛？それとも執着？🕸️苦しくなる恋は見直して。自由な心が本当の幸せを呼びます✨", img: "images/15.png" },
+            { id: 16, group: "major", name: "16. TOWER", desc: "衝撃は真実を知るため⚡壊れた幻想の先に、偽りのない愛が待っています🌈", img: "images/16.png" },
+            { id: 17, group: "major", name: "17. STAR", desc: "希望を手放さないで🌟その恋はまだ可能性に満ちています。信じる心が未来を照らします💫", img: "images/17.png" },
+            { id: 18, group: "major", name: "18. MOON", desc: "不安は思い込みかも🌙確かめる勇気を。真実を知ることで、心は静かに落ち着きます🤍", img: "images/18.png" },
+            { id: 19, group: "major", name: "19. SUN", desc: "素直な笑顔が恋を輝かせます☀️喜びを分かち合える関係が、あなたを幸せにします💛", img: "images/19.png" },
+            { id: 20, group: "major", name: "20. JUDGEMENT", desc: "過去の恋に答えが出る時📯許しと気づきが、新しい愛への扉を開きます✨", img: "images/20.png" },
+            { id: 21, group: "major", name: "21. WORLD", desc: "心から満たされる恋が完成💍ありのままのあなたで、愛される幸せを受け取って🌈", img: "images/21.png" },
+            { id: 22, group: "wands", name: "WANDS ACE", desc: "恋の情熱が着火する時🔥一気に距離が縮まるチャンス。ワクワクに従って進んで✨", img: "images/22.png" },
+            { id: 23, group: "wands", name: "WANDS 2", desc: "次の一歩を考える時🌍未来への期待が高まっています。理想の恋を描き始めて✨", img: "images/23.png" },
+            { id: 24, group: "wands", name: "WANDS 3", desc: "恋の可能性が広がります⛵着実に進展している証拠。自信を持って見守って🌈", img: "images/24.png" },
+            { id: 25, group: "wands", name: "WANDS 4", desc: "心安らぐ平和な時間🏡二人の土台が固まり、安心できる関係へと成長します💞", img: "images/25.png" },
+            { id: 26, group: "wands", name: "WANDS 5", desc: "小さなぶつかり合いは成長のサイン⚡本音で向き合うことで愛が深まります✨", img: "images/26.png" },
+            { id: 27, group: "wands", name: "WANDS 6", desc: "恋の勝利はもうすぐ🎉周囲も認めるような嬉しい進展が期待できるときだよ🏆", img: "images/27.png" },
+            { id: 28, group: "wands", name: "WANDS 7", desc: "自分の立場や恋を守り抜く時🛡️あなたの強い想いが運命を切り開きます💪", img: "images/28.png" },
+            { id: 29, group: "wands", name: "WANDS 8", desc: "急展開のサイン📩トントン拍子に話が進む予感。流れを逃さず乗って💨", img: "images/29.png" },
+            { id: 30, group: "wands", name: "WANDS 9", desc: "踏ん張りどころ🚧少し疲れ気味かも。でもゴールは目の前だから諦めないで✨", img: "images/30.png" },
+            { id: 31, group: "wands", name: "WANDS 10", desc: "抱え込みすぎかも💦恋の責任を一人で負わないで。もっと相手を頼ってみて🤝", img: "images/31.png" },
+            { id: 32, group: "wands", name: "WANDS PAGE", desc: "フレッシュな知らせ✨純粋な好奇心が恋の新しい扉を開けてくれるよワクワク🌟", img: "images/32.png" },
+            { id: 33, group: "wands", name: "WANDS KNIGHT", desc: "情熱的に突き進む時🏇迷っている暇はありません。直感で駆け抜けて🔥", img: "images/33.png" },
+            { id: 34, group: "wands", name: "WANDS QUEEN", desc: "あなたの魅力が溢れています太陽のように明るい笑顔が素敵な人を惹きつけるよ🌻", img: "images/34.png" },
+            { id: 35, group: "wands", name: "WANDS KING", desc: "強いリーダーシップが鍵👑あなたが主導権を握ることで、理想の恋が実現します✨", img: "images/35.png" },
+            { id: 36, group: "cups", name: "CUPS ACE", desc: "愛の喜びが溢れ出す時💗新しいトキメキや、深い愛情を受け取る準備をして🌸", img: "images/36.png" },
+            { id: 37, group: "cups", name: "CUPS 2", desc: "心と心が通じ合う最高の調和💕対等な関係で、愛を誓い合える幸せが訪れます✨", img: "images/37.png" },
+            { id: 38, group: "cups", name: "CUPS 3", desc: "喜びを分かち合う祝福の時間🥂仲間のサポートや楽しい交流が恋を応援します🌷", img: "images/38.png" },
+            { id: 39, group: "cups", name: "CUPS 4", desc: "少しマンネリ気味？😌不満に目を向けるより、差し出された愛に気づくことが大切☁️", img: "images/39.png" },
+            { id: 40, group: "cups", name: "CUPS 5", desc: "失ったものに囚われないで🌧️後ろを向けば、まだ残っている温かい愛に気づくはず🌈", img: "images/40.png" },
+            { id: 41, group: "cups", name: "CUPS 6", desc: "懐かしい記憶が幸せを運びます🍀純粋だった頃の気持ちが、今の恋を癒してくれます💞", img: "images/41.png" },
+            { id: 42, group: "cups", name: "CUPS 7", desc: "理想が膨らみすぎているかも☁️夢を見るのもいいけど、今は現実的な愛を選んで現実✨", img: "images/42.png" },
+            { id: 43, group: "cups", name: "CUPS 8", desc: "次のステージへ進む時🌙今の関係に区切りをつけて、より高い愛を求めて旅立おう🚪", img: "images/43.png" },
+            { id: 44, group: "cups", name: "CUPS 9", desc: "願いが叶う満たされた時💖あなたの心が満たされれば、恋も自然とうまくいきます✨", img: "images/44.png" },
+            { id: 45, group: "cups", name: "CUPS 10", desc: "最高の幸福感家族や大切な人と、穏やかで深い愛に包まれる未来が待っています🌈", img: "images/45.png" },
+            { id: 46, group: "cups", name: "CUPS PAGE", desc: "感受性が豊かになっている時🐚素直な想いを表現することで、可愛がられる恋に💓", img: "images/46.png" },
+            { id: 47, group: "cups", name: "CUPS KNIGHT", desc: "ロマンチックな誘いの予感🌹王子様のような優しい愛が、あなたを迎えに来るよ✨", img: "images/47.png" },
+            { id: 48, group: "cups", name: "CUPS QUEEN", desc: "母性的な深い愛の力🌊慈しみの心で接することで、相手の心を完全に掴めます💗", img: "images/48.png" },
+            { id: 49, group: "cups", name: "CUPS KING", desc: "包容力のある安定した愛👑感情をコントロールし、優しさで関係を導けるときだよ✨", img: "images/49.png" },
+            { id: 50, group: "swords", name: "SWORDS ACE", desc: "真実を見極める強い意志⚡曖昧な関係を断ち切り、新しい道を決断する時です切り拓く✨", img: "images/50.png" },
+            { id: 51, group: "swords", name: "SWORDS 2", desc: "葛藤の中でバランスを探して⚖️無理に動かず、心が定まるのをじっと待って🤍", img: "images/51.png" },
+            { id: 52, group: "swords", name: "SWORDS 3", desc: "心が痛む経験は浄化のプロセス💔この痛みを知ることで、あなたはもっと優しくなれる🌱", img: "images/52.png" },
+            { id: 53, group: "swords", name: "SWORDS 4", desc: "一旦休息して、戦うのをやめよう🕊️静かな眠りが、あなたの恋に明快な答えをくれる🫧", img: "images/53.png" },
+            { id: 54, group: "swords", name: "SWORDS 5", desc: "勝ち負けに意味はありません⚔️意地を張るより、心の平和を守る選択をしよう🤍", img: "images/54.png" },
+            { id: 55, group: "swords", name: "SWORDS 6", desc: "困難から離れ、安らぎの地へ⛵誰かの助けを借りて、より良い環境へ移動する時です🌈", img: "images/55.png" },
+            { id: 56, group: "swords", name: "SWORDS 7", desc: "駆け引きには慎重になって🕶️小手先のテクニックより、誠実さで勝負する方が吉✨", img: "images/56.png" },
+            { id: 57, group: "swords", name: "SWORDS 8", desc: "自分で自分を閉じ込めていない？⛓️目隠しを外せば、逃げ道はいくらでもあるよ🌬️", img: "images/57.png" },
+            { id: 58, group: "swords", name: "SWORDS 9", desc: "考えすぎて眠れない夜🌙不安の正体は妄望かも。現実はもっと明るいよ大丈夫🫧", img: "images/58.png" },
+            { id: 59, group: "swords", name: "SWORDS 10", desc: "これ以上の不幸はない、最悪期の脱出🌑夜明けはすぐそこ。新しい自分に生まれ変わろう🌅🌅", img: "images/59.png" },
+            { id: 60, group: "swords", name: "SWORDS PAGE", desc: "警戒心と好奇性が入り混じる時👀慎重に様子を見ながら、有利なチャンスを伺って✨", img: "images/60.png" },
+            { id: 61, group: "swords", name: "SWORDS KNIGHT", desc: "猛スピードで事態が動きます⚡言葉が刃にならないよう、冷静さを忘れないで🤍", img: "images/61.png" },
+            { id: 62, group: "swords", name: "SWORDS QUEEN", desc: "知的な自立心で恋を切り盛り👑厳しいけれど正しい判断が、あなたを幸せにする✨", img: "images/62.png" },
+            { id: 63, group: "swords", name: "SWORDS KING", desc: "冷静で公正な愛の裁き🧠感情に流されず、真実に基づいて関係を築ける時です✨", img: "images/63.png" },
+            { id: 64, group: "pentacles", name: "PENTACLES ACE", desc: "現実的な幸せの種がまかれます🌱結婚や将来を見据えた、確かな愛の始まりです✨", img: "images/64.png" },
+            { id: 65, group: "pentacles", name: "PENTACLES 2", desc: "器用に恋をコントロール⚖️変化を楽しみながら、二人のバランスを調整して🤍", img: "images/65.png" },
+            { id: 66, group: "pentacles", name: "PENTACLES 3", desc: "着実な協力関係を築く時🔧共通の目標を持つことで、絆がより強固になります✨", img: "images/66.png" },
+            { id: 67, group: "pentacles", name: "PENTACLES 4", desc: "独占欲が強くなっているかも🔒握りしめすぎず、心を開いて相手を信じて💫", img: "images/67.png" },
+            { id: 68, group: "pentacles", name: "PENTACLES 5", desc: "厳しい状況に負けないで❄️孤独を感じても、救いの手は必ず近くにあります🤍", img: "images/68.png" },
+            { id: 69, group: "pentacles", name: "PENTACLES 6", desc: "慈悲深く、対等な愛のギブ＆テイク🎁優しさを循環させることで、愛が倍増します✨", img: "images/69.png" },
+            { id: 70, group: "pentacles", name: "PENTACLES 7", desc: "今の成果を見直す収穫待ち⏳焦らずこれまでの努力を信じれば、豊かな実りが訪れる🌿", img: "images/70.png" },
+            { id: 71, group: "pentacles", name: "PENTACLES 8", desc: "恋も自分磨きもコツコツと🔨日々の小さな積み重ねが、大きな信頼へと変わります✨", img: "images/71.png" },
+            { id: 72, group: "pentacles", name: "PENTACLES 9", desc: "洗練された魅力で人を惹きつけます🌹自立した大人の恋を楽しめる充実期✨", img: "images/72.png" },
+            { id: 73, group: "pentacles", name: "PENTACLES 10", desc: "盤石な繁栄と幸福🏡受け継がれるような、深く安定した愛の形が完成します💍", img: "images/73.png" },
+            { id: 74, group: "pentacles", name: "PENTACLES PAGE", desc: "真面目で誠実な学びの恋📘ゆっくりと時間をかけて、価値観を共有していこう✨", img: "images/74.png" },
+            { id: 75, group: "pentacles", name: "PENTACLES KNIGHT", desc: "慎重に、でも確実に愛を運びます🐢スピードよりも誠実さを大切にして🤍", img: "images/75.png" },
+            { id: 76, group: "pentacles", name: "PENTACLES QUEEN", desc: "豊かな包容力で愛を育む🌼心からの安心感を与える存在として、恋を守り抜こう💖", img: "images/76.png" },
+            { id: 77, group: "pentacles", name: "PENTACLES KING", desc: "揺るぎない安定と信頼👑経済的にも精神的にも、頼れるパートナーとの良縁✨", img: "images/77.png" },
+            { id: 78, group: "secret", name: "ULTIMATE MIRUKO", desc: "あなたの恋は今、最終段階の扉の前にいます💍もう疑わなくて大丈夫。これまでの想いと選択はすべて正解✨覚悟を決めて受け取ることで、運命の愛が完全に形になります🌈💖", img: "images/78.png" }
         ];
 
         let coins = parseInt(localStorage.getItem('miruCoins') || '1');
         let lastAccess = localStorage.getItem('lastAccessDate');
+        let unlockedCards = JSON.parse(localStorage.getItem('unlockedCards') || '[]');
         let isMuted = true;
         const bgm = document.getElementById('bgm');
         bgm.volume = 0.5;
 
+        // --- 基本UIの更新 ---
         function updateUI() {
             const today = new Date().toLocaleDateString();
             if (lastAccess !== today) {
@@ -219,14 +286,14 @@
             const btn = document.getElementById('play-btn');
             const limitInfo = document.getElementById('limit-info');
             const premiumInfo = document.getElementById('premium-info');
-            const timerCon = document.getElementById('timer-container'); // ここで定義
+            const timerCon = document.getElementById('timer-container');
 
             if (coins <= 0) {
                 btn.disabled = true;
-                limitInfo.style.display = "block"; // タイマーの親要素なのでblock
-                document.getElementById('limit-text').innerText = ""; // テキストは消す
+                limitInfo.style.display = "block";
+                document.getElementById('limit-text').innerText = "";
                 premiumInfo.style.display = "block";
-                timerCon.style.display = "block"; // タイマーを表示
+                timerCon.style.display = "block";
             } else {
                 btn.disabled = false;
                 limitInfo.style.display = "block";
@@ -248,11 +315,6 @@
             }
         }
 
-        document.addEventListener("visibilitychange", () => {
-            if (document.hidden) { bgm.pause(); } else { if (!isMuted) bgm.play(); }
-        });
-
-        // 0時までのカウントダウン
         setInterval(() => {
             const now = new Date();
             const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
@@ -280,12 +342,14 @@
             });
         }
 
+        // --- ガチャ実行 ---
         async function playGacha() {
             if (coins <= 0) return;
             if (!isMuted) bgm.play();
             coins--; 
             localStorage.setItem('miruCoins', coins);
             updateUI();
+
             const machine = document.getElementById('gacha-machine');
             const cap1 = document.getElementById('capsule1');
             const cap2 = document.getElementById('capsule2');
@@ -293,49 +357,49 @@
                 c.classList.remove('pop-out1', 'pop-out2', 'capsule-split');
                 c.style.setProperty('--cap-color', ['#ff8aae', '#a2d2ff', '#ffd700', '#b19cd9'][Math.floor(Math.random() * 4)]);
             });
+
             machine.style.animation = "shake 0.1s infinite";
             setTimeout(() => {
                 machine.style.animation = "none";
                 cap1.classList.add('pop-out1');
                 setTimeout(() => cap2.classList.add('pop-out2'), 300);
             }, 600);
+
             setTimeout(async () => {
                 cap1.classList.add('capsule-split');
                 cap2.classList.add('capsule-split');
-                const card1 = tarotData[Math.floor(Math.random() * tarotData.length)];
-                let card2 = tarotData[Math.floor(Math.random() * tarotData.length)];
-                while(card1.id === card2.id) card2 = tarotData[Math.floor(Math.random() * tarotData.length)];
+
+                // 抽選（シークレット以外から抽選。シークレットは低確率）
+                const pool = tarotData.filter(d => d.group !== "secret");
+                const card1 = pool[Math.floor(Math.random() * pool.length)];
+                
+                // 2枚目は低確率でシークレット
+                let card2;
+                if (Math.random() < 0.05) { // 5%の確率でシークレット
+                    card2 = tarotData.find(d => d.group === "secret");
+                } else {
+                    card2 = pool[Math.floor(Math.random() * pool.length)];
+                    while(card1.id === card2.id) card2 = pool[Math.floor(Math.random() * pool.length)];
+                }
+
+                // 図鑑に登録
+                saveToCollection(card1.id);
+                saveToCollection(card2.id);
+
                 document.getElementById('card-box1').innerHTML = `<img src="${card1.img}">`;
                 document.getElementById('card-box2').innerHTML = `<img src="${card2.img}">`;
                 document.getElementById('miruko-msg').innerHTML = "";
                 document.getElementById('miruko-status').innerText = "ミルコが占い中…🦄✨";
                 document.getElementById('close-res-btn').style.display = "none";
                 document.getElementById('result-overlay').style.display = "flex";
+                
                 setTimeout(() => {
                     document.getElementById('card-box1').classList.add('active');
                     document.getElementById('card-box2').classList.add('active');
                     document.getElementById('detail').classList.add('active');
                 }, 100);
 
-                let adviceSnippet = "";
-                const ids = [card1.id, card2.id];
-                if (ids.includes(78) || ids.includes(19) || ids.includes(6)) {
-                    adviceSnippet = "ミラクルが起きそうな予感！今は「楽しい！」という直感を信じて動くのが正解。最高の結果が待っているよ✨";
-                } else if (ids.some(id => [13, 15, 16, 18, 52, 58, 59, 68].includes(id))) {
-                    adviceSnippet = "今は少しデトックスの時期。焦って答えを出そうとせず、まずは自分をたっぷり癒してあげて。夜更かしは禁物だよ🌙";
-                } else if (ids.some(id => [1, 7, 22, 29, 33, 61].includes(id))) {
-                    adviceSnippet = "追い風が吹いているよ！「待つ」より「自分から動く」ことで運命の歯車が回りだすはず。勇気を出して一歩踏み出して！🔥";
-                } else if (ids.some(id => [2, 5, 9, 12, 51, 53, 70, 75].includes(id))) {
-                    adviceSnippet = "今は「静寂」が味方してくれる時。無理に答えを出そうとしなくて大丈夫。自分の心とゆっくり対話する時間を大切にしてね🌿";
-                } else if (ids.some(id => [3, 14, 36, 37, 38, 41, 44, 45, 69].includes(id))) {
-                    adviceSnippet = "愛のエネルギーが満ちているよ。周りの人への感謝を言葉にしてみて。優しい波動が、素敵な縁を引き寄せてくれるからね💖";
-                } else if (ids.some(id => [4, 11, 20, 50, 62, 63, 71, 77].includes(id))) {
-                    adviceSnippet = "誠実さが鍵になるよ。自分の本音に嘘をつかないで、凛とした態度でいること。その姿が相手の信頼をグッと引き寄せるよ✨";
-                } else {
-                    adviceSnippet = "二つの運命が重なり合って、新しい道が見えてくるよ。ありのままの君でいることが、最高の魔法になるからね🦄💖";
-                }
-
-                const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n【ミルコからの恋愛アドバイス】\n${adviceSnippet}`;
+                const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n※ずかんに登録されたよ！右下の本からチェックしてね✨`;
                 await new Promise(r => setTimeout(r, 1500)); 
                 document.getElementById('miruko-status').innerText = "ミルコの占い結果🦄💎";
                 await typeWriter(finalMsg, 'miruko-msg', 35);
@@ -346,6 +410,91 @@
         function closeResult() { 
             document.getElementById('result-overlay').style.display = "none"; 
             document.querySelectorAll('.card-reveal, #detail').forEach(el => el.classList.remove('active')); 
+        }
+
+        // --- 図鑑システム ---
+        function saveToCollection(id) {
+            if (!unlockedCards.includes(id)) {
+                unlockedCards.push(id);
+                localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
+            }
+        }
+
+        function openCollection() {
+            document.getElementById('collection-overlay').style.display = 'flex';
+            filterCollection('all', document.querySelector('.nav-btn'));
+        }
+
+        function closeCollection() {
+            document.getElementById('collection-overlay').style.display = 'none';
+        }
+
+        function filterCollection(group, btn) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const grid = document.getElementById('collection-grid');
+            grid.innerHTML = "";
+            
+            const cards = group === 'all' ? tarotData : tarotData.filter(d => d.group === group);
+            
+            cards.forEach(card => {
+                const item = document.createElement('div');
+                item.className = `collection-item ${unlockedCards.includes(card.id) ? 'unlocked' : ''}`;
+                item.innerHTML = `<img src="${card.img}" alt="${card.name}">`;
+                if (unlockedCards.includes(card.id)) {
+                    item.onclick = () => open3D(card.img);
+                }
+                grid.appendChild(item);
+            });
+        }
+
+        // --- 3Dカード表示システム ---
+        let currentRotation = { x: 0, y: 0 };
+        function open3D(imgSrc) {
+            const overlay = document.getElementById('card-3d-overlay');
+            const img = document.getElementById('card-3d-img');
+            const container = document.getElementById('card-3d-container');
+            
+            img.src = imgSrc;
+            overlay.style.display = 'flex';
+            currentRotation = { x: 0, y: 0 };
+            container.style.transform = `rotateX(0deg) rotateY(0deg)`;
+
+            // タッチ/マウスイベント登録
+            container.onmousedown = startDrag;
+            container.ontouchstart = startDrag;
+        }
+
+        function close3D() {
+            document.getElementById('card-3d-overlay').style.display = 'none';
+        }
+
+        function startDrag(e) {
+            e.preventDefault();
+            const startX = e.pageX || e.touches[0].pageX;
+            const startY = e.pageY || e.touches[0].pageY;
+            const initialRotX = currentRotation.x;
+            const initialRotY = currentRotation.y;
+
+            function onMove(me) {
+                const moveX = (me.pageX || me.touches[0].pageX) - startX;
+                const moveY = (me.pageY || me.touches[0].pageY) - startY;
+                currentRotation.y = initialRotY + moveX * 0.5;
+                currentRotation.x = initialRotX - moveY * 0.5;
+                document.getElementById('card-3d-container').style.transform = 
+                    `rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`;
+            }
+
+            function onEnd() {
+                window.onmousemove = null;
+                window.ontouchmove = null;
+            }
+
+            window.onmousemove = onMove;
+            window.ontouchmove = onMove;
+            window.onmouseup = onEnd;
+            window.ontouchend = onEnd;
         }
 
         window.onload = updateUI;
