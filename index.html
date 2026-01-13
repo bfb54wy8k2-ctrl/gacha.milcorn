@@ -2,7 +2,7 @@
 
 
 
-ve13test⭕️
+ve14test
 
 
 
@@ -216,12 +216,28 @@ ve13test⭕️
 
     <div id="premium-info">
     <div style="font-size: 0.9rem; color: var(--gold);">✨ ミルコインを増やす✨</div>
-    <p style="font-size: 0.8rem; line-height: 1.4; margin: 10px 0;">ミルコインを手に入れると、明日を待たずに<b>すぐにガチャ</b>できるよ</p>
+    <p style="font-size: 0.8rem; line-height: 1.4; margin: 10px 0;">ミルコインを手に入れると、明日を待たずに<b>すぐにガチャ</b>できるよ🦄</p>
     
-    <div style="display: flex; gap: 10px; justify-content: center;">
-        <a href="https://mirucorn.stores.jp/items/6961b5431886ebdd3baee58d" class="premium-btn">ミルコインを買う🦄💎</a>
-        <button onclick="showSecretCodeInput()" class="premium-btn" style="background: #5c4b8a; border: none; cursor: pointer;">秘密のコード🔑</button>
-    </div>
+    <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+    <a href="https://mirucorn.stores.jp/items/6961b5431886ebdd3baee58d" 
+       class="premium-btn" 
+       style="background: linear-gradient(45deg, #B8860B, #FFD700, #DBAC34, #FFD700, #B8860B); 
+              color: #5c4b8a; 
+              text-decoration: none; 
+              font-weight: bold; 
+              border: 2px solid #DAA520; 
+              box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+              cursor: pointer;
+              display: inline-block;">
+       ミルコインを買う🦄💎
+    </a>
+    
+    <button onclick="showSecretCodeInput()" 
+            class="premium-btn" 
+            style="background: #5c4b8a; color: white; border: none; cursor: pointer;">
+            秘密のコード🔑
+    </button>
+</div>
 
     <div id="secret-code-area" style="display: none; margin-top: 15px;">
         <input type="text" id="secret-code-input" placeholder="コードを入力してね" style="padding: 8px; border-radius: 5px; border: 1px solid var(--gold); width: 140px;">
@@ -257,7 +273,7 @@ ve13test⭕️
         </div>
 
         <div class="comp-area">
-            <div style="font-size:0.75rem;">全てコンプリートしたら魔法の扉が開くよ✨</div>
+            <div style="font-size:0.75rem;">79種コンプリートしたら魔法の扉が開くよ✨</div>
             <button id="door-btn" class="door-btn" onclick="openSecret()">扉を開く(中に入ったら長押しして宝物をゲットしてね)</button>
         </div>
 <div class="backup-section" style="margin-top: 30px; padding: 15px; border-top: 1px dashed #555; text-align: center;">
@@ -592,7 +608,7 @@ function useSecretCode() {
                 const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n【ミルコからの恋愛アドバイス】\n${randomAdvice}`;
                 
                 await new Promise(r => setTimeout(r, 1500)); 
-                document.getElementById('miruko-status').innerText = "ミルコの占い結果🦄💎";
+                document.getElementById('miruko-status').innerText = "ミルコの占い結果🦄🔮";
                 await typeWriter(finalMsg, 'miruko-msg', 35);
                 document.getElementById('close-res-btn').style.display = "block";
             }, 2000);
