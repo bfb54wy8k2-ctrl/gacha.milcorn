@@ -1,4 +1,4 @@
-ve12
+ve12test
 
 
 
@@ -211,10 +211,19 @@ ve12
     </div>
 
     <div id="premium-info">
-        <div style="font-size: 0.9rem; color: var(--gold);">✨ ミルコインを増やす✨</div>
-        <p style="font-size: 0.8rem; line-height: 1.4; margin: 10px 0;">ミルコインを手に入れると、明日を待たずに<b>すぐにガチャ</b>できるよ</p>
-        <a href="あなたの決済ページURL" class="premium-btn">ミルコインを増やす🦄💎</a>
+    <div style="font-size: 0.9rem; color: var(--gold);">✨ ミルコインを増やす✨</div>
+    <p style="font-size: 0.8rem; line-height: 1.4; margin: 10px 0;">ミルコインを手に入れると、明日を待たずに<b>すぐにガチャ</b>できるよ</p>
+    
+    <div style="display: flex; gap: 10px; justify-content: center;">
+        <a href="あなたの決済ページURL" class="premium-btn">ミルコインを買う🦄💎</a>
+        <button onclick="showSecretCodeInput()" class="premium-btn" style="background: #5c4b8a; border: none; cursor: pointer;">秘密のコード🔑</button>
     </div>
+
+    <div id="secret-code-area" style="display: none; margin-top: 15px;">
+        <input type="text" id="secret-code-input" placeholder="コードを入力してね" style="padding: 8px; border-radius: 5px; border: 1px solid var(--gold); width: 140px;">
+        <button onclick="useSecretCode()" style="padding: 8px 15px; background: var(--gold); border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">送信</button>
+    </div>
+</div>
 
     <div id="gacha-container">
         <img src="images/gacha.png" id="gacha-machine">
@@ -396,7 +405,8 @@ ve12
             { id: 78, group: "secret", name: "ULTIMATE", desc: "あなたの恋は今、最終段階の扉の前にいます💍もう疑わなくて大丈夫。これまでの想いと選択はすべて正解✨覚悟を決めて受け取ることで、運命の愛が完全に形になります🌈💖", img: "images/78.png" }
         ];
 
-        let coins = 100;
+        let coins = parseInt(localStorage.getItem('miruCoins') || '2');
+let usedSecretCode = localStorage.getItem('usedSecretCode') === 'true'; // 追加：使用済みか確認
         let lastAccess = localStorage.getItem('lastAccessDate');
         let unlockedCards = JSON.parse(localStorage.getItem('unlockedCards') || '[]');
         let isMuted = true;
@@ -457,6 +467,37 @@ ve12
             if (isMuted) { bgm.pause(); toggleBtn.innerText = "🔇"; } 
             else { bgm.play().catch(() => {}); toggleBtn.innerText = "🎵"; }
         }
+// 入力エリアを表示する
+function showSecretCodeInput() {
+    document.getElementById('secret-code-area').style.display = 'block';
+}
+
+// コードを検証してコインを増やす
+function useSecretCode() {
+    // すでに使っている場合
+    if (usedSecretCode) {
+        alert("この端末では、秘密のコードはすでに1回使用されています🦄");
+        return;
+    }
+
+    const inputCode = document.getElementById('secret-code-input').value;
+    const correctCode = "MIRUKO2026"; // ここに好きな秘密のコードを設定してください
+
+    if (inputCode === correctCode) {
+        coins += 999999; // 増やす枚数はここで調整してください
+        usedSecretCode = true;
+        
+        // 保存
+        localStorage.setItem('miruCoins', coins);
+        localStorage.setItem('usedSecretCode', 'true');
+        
+        updateUI();
+        alert("おめでとう！秘密のコードが確認できたよ✨コインが999999枚増えました🦄💎");
+        document.getElementById('secret-code-area').style.display = 'none';
+    } else {
+        alert("コードが違うみたい…。もう一度確認してみてね！");
+    }
+}
 
         setInterval(() => {
             const now = new Date();
