@@ -1,4 +1,4 @@
-ve12test
+13test
 
 
 
@@ -677,46 +677,54 @@ function useSecretCode() {
 
 // 1. 合言葉を発行する（数字をめちゃくちゃにする）
 function exportData() {
-    if (unlockedCards.length === 0) {
-        alert("🦄「まだ図鑑に何も登録されていないよ！」");
+    if (unlockedCards.length === 0 && coins === 2) {
+        alert("まだ図鑑も登録されていないし、コインも初期状態だよ！");
         return;
     }
-
-    // 数字を文字に変換して、btoa(Base64)という方式で暗号っぽく見せる
-    const rawData = unlockedCards.join(',');
-    const encodedData = btoa(rawData); // これで "MSwyLDMs..." みたいな謎の文字列になります
-    
-    const finalCode = "MIRUKO-" + encodedData; // 頭にミルコの名前をつけて可愛く！
-
-    navigator.clipboard.writeText(finalCode).then(() => {
-        alert("🦄「魔法の合言葉をコピーしたよ！メモ帳などにペーストして大切に保管してね✨」\n\n合言葉: " + finalCode);
-    }).catch(err => {
-        prompt("🦄「魔法の合言葉だよ！これを保存してね：", finalCode);
-    });
+    // 保存したいデータを一つの「かたまり」にする
+    const saveData = {
+        cards: unlockedCards,
+        coinCount: coins,
+        date: lastAccess
+    };
+    // 暗号化のような処理（Base64）をして合言葉にする
+    const finalCode = "MIRUKO-" + btoa(JSON.stringify(saveData));
+    prompt("🦄 魔法の合言葉だよ！これを保存してね：", finalCode);
+});
 }
 
 // 2. 合言葉を読み込む（暗号を解く）
 function importData() {
-    const code = prompt("🦄「保存しておいた魔法の合言葉を入力してね：");
-    
-    if (code && code.startsWith("MIRUKO-")) {
-        try {
-            // "MIRUKO-" を取り除いて、暗号を元に戻す
-            const encodedPart = code.replace("MIRUKO-", "");
-            const decodedData = atob(encodedPart); // 暗号解除！
-            const importedCards = decodedData.split(',').map(num => parseInt(num));
+    const code = prompt("🦄 保存しておいた合言葉を入力してね：");
+    if (!code || !code.startsWith("MIRUKO-")) {
+        if(code) alert("🦄 合言葉が正しくないみたい…。");
+        return;
+    }
 
-            if (confirm("🦄「図鑑のデータを復元してもいい？今のデータは消えちゃうよ！」")) {
-                unlockedCards = [...new Set(importedCards)];
-                localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
-                alert("🦄「魔法の扉が繋がったよ！図鑑を復元したよ✨」");
-                location.reload();
-            }
-        } catch (e) {
-            alert("🦄「うーん、その合言葉は魔法が解けちゃってるみたい。もう一度確認してみてね。」");
+    try {
+        // "MIRUKO-" を取り除いて中身を取り出す
+        const base64Part = code.replace("MIRUKO-", "");
+        const decodedData = JSON.parse(atob(base64Part));
+
+        if (confirm("🦄 図鑑とコインのデータを復元してもいい？")) {
+            // 1. 図鑑の復元
+            unlockedCards = decodedData.cards || [];
+            localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
+
+            // 2. コインの復元
+            coins = decodedData.coinCount || 0;
+            localStorage.setItem('miruCoins', coins);
+
+            // 3. 日付の復元
+            lastAccess = decodedData.date || "";
+            localStorage.setItem('lastAccessDate', lastAccess);
+
+            alert("🦄 引き継ぎが完了したよ！図鑑とコインが復活しました✨");
+            location.reload(); // 画面を更新して反映
         }
-    } else if (code) {
-        alert("🦄「それは正しい合言葉じゃないみたい...」");
+    } catch (e) {
+        alert("🦄 合言葉が正しくないみたい…。コピーミスがないか確認してね。");
+        console.error(e);
     }
 }
 
