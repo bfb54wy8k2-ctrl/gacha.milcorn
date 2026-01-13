@@ -1,6 +1,6 @@
 
 
-ve14test
+ve14testログインボーナステスト
 
 
 
@@ -425,14 +425,24 @@ let usedSecretCode = localStorage.getItem('usedSecretCode') === 'true'; // 追�
 
         function updateUI() {
             const today = new Date().toLocaleDateString();
+            
+            // ログインボーナスの判定
             if (lastAccess !== today) {
-    // 修正前: coins = +2;  (これだと2枚にリセットされる)
-    coins += 2; // 修正後: これで今の枚数に2枚プラスされます✨
-    
-    lastAccess = today;
-    localStorage.setItem('lastAccessDate', today);
-    localStorage.setItem('miruCoins', coins);
-}
+                // 初めての訪問ではない（＝日付が変わってからの訪問）場合にメッセージを出す
+                if (lastAccess) {
+                    alert("おめでとう！今日のミルコインをゲットしたよ🦄💎");
+                }
+                
+                // コインを2枚加算
+                coins += 2;
+                lastAccess = today;
+                
+                // データを保存
+                localStorage.setItem('lastAccessDate', today);
+                localStorage.setItem('miruCoins', coins);
+            }
+
+            // --- ここから下は表示の更新 ---
             document.getElementById('coin-count').innerText = coins;
             const btn = document.getElementById('play-btn');
             const limitInfo = document.getElementById('limit-info');
@@ -442,7 +452,7 @@ let usedSecretCode = localStorage.getItem('usedSecretCode') === 'true'; // 追�
             if (coins <= 0) {
                 btn.disabled = true;
                 limitInfo.style.display = "block";
-                document.getElementById('limit-text').innerText = "";
+                document.getElementById('limit-text').innerText = "今日の分はもうおしまい。また明日来てね🦄";
                 premiumInfo.style.display = "block";
                 timerCon.style.display = "block";
             } else {
@@ -453,6 +463,9 @@ let usedSecretCode = localStorage.getItem('usedSecretCode') === 'true'; // 追�
                 timerCon.style.display = "none";
             }
 
+            // 図鑑の進捗
+            document.getElementById('collection-count').innerText = `${unlockedCards.length}/79 登録済み`;
+        }
             // 図鑑のカウントとボタン更新
             document.getElementById('collection-count').innerText = `${unlockedCards.length}/79 登録済み`;
             const doorBtn = document.getElementById('door-btn');
@@ -723,7 +736,20 @@ function importData() {
         alert("🦄「それは正しい合言葉じゃないみたい...」");
     }
 }
+// 0時ちょうどにページを再読み込みする魔法
+function scheduleMidnightReload() {
+    const now = new Date();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const diff = tomorrow - now; // 次の0時までの時間（ミリ秒）
 
+    // 0時になったらリロードを実行
+    setTimeout(() => {
+        location.reload();
+    }, diff);
+}
+
+// ページ読み込み時に実行
+scheduleMidnightReload();
 
         window.onload = updateUI;
     </script>
