@@ -1,4 +1,4 @@
-ve11
+ve12
 
 
 
@@ -486,6 +486,7 @@ ve11
         }
 
         async function playGacha() {
+
             if (coins <= 0) return;
             isGachaRunning = true;
             if (!isMuted) bgm.play();
@@ -541,7 +542,7 @@ ve11
                 // ランダムなアドバイスを選択
                 const randomAdvice = loveAdvices[Math.floor(Math.random() * loveAdvices.length)];
 
-                const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n【ミルコからの恋愛アドバイス】\n${randomAdvice}\n\n※ずかんに登録されたよ！右下の本からチェックしてね✨`;
+                const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n【ミルコからの恋愛アドバイス】\n${randomAdvice}`;
                 
                 await new Promise(r => setTimeout(r, 1500)); 
                 document.getElementById('miruko-status').innerText = "ミルコの占い結果🦄💎";
