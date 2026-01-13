@@ -1,8 +1,6 @@
 
 
-
-
-ve13test
+ve14test
 
 
 
@@ -216,12 +214,12 @@ ve13test
 
     <div id="premium-info">
     <div style="font-size: 0.9rem; color: var(--gold);">✨ ミルコインを増やす✨</div>
-    <p style="font-size: 0.8rem; line-height: 1.4; margin: 10px 0;">ミルコインを手に入れると、明日を待たずに<b>すぐにガチャ</b>できるよ</p>
+    <p style="font-size: 0.8rem; line-height: 1.4; margin: 10px 0;">ミルコインを手に入れると、明日を待たずに<b>すぐにガチャ</b>できるよ🦄</p>
     
-    <div style="display: flex; gap: 10px; justify-content: center;">
-        <a href="https://mirucorn.stores.jp/items/6961b5431886ebdd3baee58d" class="premium-btn">ミルコインを買う🦄💎</a>
-        <button onclick="showSecretCodeInput()" class="premium-btn" style="background: #5c4b8a; border: none; cursor: pointer;">秘密のコード🔑</button>
-    </div>
+   <div style="display: flex; gap: 10px; justify-content: center;">
+    <a href="https://mirucorn.stores.jp/items/6961b5431886ebdd3baee58d" class="premium-btn">ミルコインを買う💎</a>
+    <button onclick="showSecretCodeInput()" class="premium-btn" style="background: #5c4b8a; color: white; border: none; cursor: pointer;">秘密のコード🔑</button>
+</div>
 
     <div id="secret-code-area" style="display: none; margin-top: 15px;">
         <input type="text" id="secret-code-input" placeholder="コードを入力してね" style="padding: 8px; border-radius: 5px; border: 1px solid var(--gold); width: 140px;">
@@ -257,7 +255,7 @@ ve13test
         </div>
 
         <div class="comp-area">
-            <div style="font-size:0.75rem;">全てコンプリートしたら魔法の扉が開くよ✨</div>
+            <div style="font-size:0.75rem;">79種コンプリートしたら魔法の扉が開くよ✨</div>
             <button id="door-btn" class="door-btn" onclick="openSecret()">扉を開く(中に入ったら長押しして宝物をゲットしてね)</button>
         </div>
 <div class="backup-section" style="margin-top: 30px; padding: 15px; border-top: 1px dashed #555; text-align: center;">
@@ -703,7 +701,7 @@ function exportData() {
 
 // 2. 合言葉を読み込む（暗号を解く）
 function importData() {
-    const code = prompt("🦄「保存しておいた魔法の合言葉を入力してね：");
+    const code = prompt("🦄「保存しておいた合言葉を入力してね：");
     
     if (code && code.startsWith("MIRUKO-")) {
         try {
@@ -715,11 +713,11 @@ function importData() {
             if (confirm("🦄「図鑑のデータを復元してもいい？今のデータは消えちゃうよ！」")) {
                 unlockedCards = [...new Set(importedCards)];
                 localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
-                alert("🦄「魔法の扉が繋がったよ！図鑑を復元したよ✨」");
+                alert("🦄「図鑑を復元したよ✨」");
                 location.reload();
             }
         } catch (e) {
-            alert("🦄「うーん、その合言葉は魔法が解けちゃってるみたい。もう一度確認してみてね。」");
+            alert("🦄「うーん、その合言葉は違うみたい。もう一度確認してみてね。」");
         }
     } else if (code) {
         alert("🦄「それは正しい合言葉じゃないみたい...」");
