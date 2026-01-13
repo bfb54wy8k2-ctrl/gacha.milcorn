@@ -1,6 +1,8 @@
 
 
-ve12test
+
+
+ve13test
 
 
 
@@ -426,11 +428,13 @@ let usedSecretCode = localStorage.getItem('usedSecretCode') === 'true'; // 追�
         function updateUI() {
             const today = new Date().toLocaleDateString();
             if (lastAccess !== today) {
-                coins = 1; 
-                lastAccess = today;
-                localStorage.setItem('lastAccessDate', today);
-                localStorage.setItem('miruCoins', coins);
-            }
+    // 修正前: coins = +2;  (これだと2枚にリセットされる)
+    coins += 2; // 修正後: これで今の枚数に2枚プラスされます✨
+    
+    lastAccess = today;
+    localStorage.setItem('lastAccessDate', today);
+    localStorage.setItem('miruCoins', coins);
+}
             document.getElementById('coin-count').innerText = coins;
             const btn = document.getElementById('play-btn');
             const limitInfo = document.getElementById('limit-info');
