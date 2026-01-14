@@ -2,7 +2,7 @@
 
 
 
-ver25himitsu
+ver２６
 
 
 
@@ -692,7 +692,7 @@ body {
             { id: 78, group: "secret", name: "ULTIMATE", desc: "あなたの恋は今、最終段階の扉の前にいます💍もう疑わなくて大丈夫。これまでの想いと選択はすべて正解✨覚悟を決めて受け取ることで、運命の愛が完全に形になります🌈💖", img: "images/78.png" }
         ];
 
-        let coins = parseInt(localStorage.getItem('miruCoins') || '2');
+        let coins = parseInt(localStorage.getItem('miruCoins') || '1');
 let usedSecretCode = localStorage.getItem('usedSecretCode') === 'true'; // 追加：使用済みか確認
         let lastAccess = localStorage.getItem('lastAccessDate');
         let unlockedCards = JSON.parse(localStorage.getItem('unlockedCards') || '[]');
@@ -712,7 +712,7 @@ let usedSecretCode = localStorage.getItem('usedSecretCode') === 'true'; // 追�
             const today = new Date().toLocaleDateString();
             if (lastAccess !== today) {
     // 修正前: coins = +2;  (これだと2枚にリセットされる)
-    coins += 2; // 修正後: これで今の枚数に2枚プラスされます✨
+    coins += 1; // 修正後: これで今の枚数に2枚プラスされます✨
     
     lastAccess = today;
     localStorage.setItem('lastAccessDate', today);
@@ -803,7 +803,7 @@ function useSecretCode() {
     let success = false;
 
     // 3. 各コードの判定（合言葉＝秘密のコードのことです！）
-    if (inputCode === "MIRUKO2026") {
+    if (inputCode === "アルティメットミルコ") {
         coins = 999999;
         alert("🦄「秘密のコードを確認！ミルコインが♾️になったよ💎」");
         success = true;
@@ -813,19 +813,19 @@ function useSecretCode() {
         alert("🦄「魔法でコインを空っぽにしたよ！テスト頑張ってね✨」");
         success = true;
     }
-    else if (inputCode === "キャンディ") {
+    else if (inputCode === "ペロペロキャンディ") {
         coins += 3;
-        alert("🦄「アメ玉どうぞ！コインが3枚増えたよ🍬」");
+        alert("🦄「コインが3枚増えたよ🍬」");
         success = true;
     } 
-    else if (inputCode === "おやつ") {
-        coins += 10;
-        alert("🦄「おやつ代だよ！コインを10枚追加したよ🍪」");
-        success = true;
-    } 
-    else if (inputCode === "星の砂") {
+    else if (inputCode === "てくてくミルコ") {
         coins += 30;
-        alert("🦄「キラキラの星の砂！コインが30枚増えたよ✨」");
+        alert("🦄「秘密のコードを確認！コインが30枚増えたよ✨」");
+        success = true;
+    } 
+    else if (inputCode === "ふわふわミルコ") {
+        coins += 100;
+        alert("🦄「秘密のコードを確認！コインが100枚増えたよ✨」");
         success = true;
     }
     else if (inputCode === "夜明け") {
