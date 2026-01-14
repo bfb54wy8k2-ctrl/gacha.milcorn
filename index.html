@@ -1,5 +1,11 @@
 
-ver16rainbow
+
+
+
+ver16rainbow扉ボタン
+
+
+
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -223,31 +229,45 @@ body {
             text-align: center;
             border: 1px solid rgba(212, 175, 55, 0.3);
         }
-        .door-btn {
-            width: 100%;
-            padding: 15px;
-            border-radius: 30px;
-            font-weight: bold;
-            border: none;
-            margin-top: 10px;
-            font-family: var(--font);
-            cursor: not-allowed;
-            background: #555;
-            color: #888;
-        }
-        .door-btn.active {
-            cursor: pointer;
-            color: white;
-            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
-            background-size: 400% 400%;
-            animation: rainbow 5s ease infinite;
-            box-shadow: 0 0 15px rgba(255,255,255,0.5);
-        }
-        @keyframes rainbow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        
+/* 扉を開くボタン：ゆめかわレインボー版 */
+#door-btn {
+    width: 280px;
+    height: 60px;
+    margin: 20px auto;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s;
+    /* 背景をパステルレインボーの長い帯にする */
+    background: linear-gradient(120deg, #ffb7c5, #ffdab9, #e0ffff, #b19cd9, #ffb7c5);
+    background-size: 400% 400%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* コンプリートした時だけ動き出す設定 */
+#door-btn.active {
+    opacity: 1;
+    cursor: pointer;
+    /* 10秒かけてゆっくり色が流れるようにする（目に優しい速度） */
+    animation: gentleRainbow 10s ease infinite;
+    box-shadow: 0 0 20px rgba(255, 183, 197, 0.5);
+}
+
+/* ゆっくり流れるアニメーションの魔法 */
+@keyframes gentleRainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
         #secret-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000;
             display: none; flex-direction: column; align-items: center; justify-content: center;
