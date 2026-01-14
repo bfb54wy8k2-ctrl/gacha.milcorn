@@ -2,7 +2,7 @@
 
 
 
-ve14testトップ背景
+ve14testトップ図鑑背景
 
 
 
@@ -117,7 +117,16 @@ body {
         #collection-btn span { font-size: 0.6rem; font-weight: bold; color: white; margin-top: -2px; }
 
         /* 図鑑画面 */
-        #collection-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
+        #collection-overlay { 
+    position: fixed; 
+    inset: 0; 
+    background: linear-gradient(180deg, #1a1a2e 0%, #302b63 50%, #4b4b7c 100%); /* ここを変更 */
+    z-index: 1000; 
+    display: none; 
+    flex-direction: column; 
+    padding: 20px; 
+    overflow-y: auto; 
+}
         .collection-nav { 
             display: grid;
             grid-template-columns: repeat(2, 1fr); 
