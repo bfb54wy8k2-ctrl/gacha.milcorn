@@ -2,7 +2,7 @@
 
 
 
-ve15タイトル２
+ver16rainbow
 
 
 
@@ -259,7 +259,16 @@ body {
             display: none; flex-direction: column; align-items: center; justify-content: center;
             padding: 20px;
         }
-
+/* レインボー文字の魔法 */
+.rainbow-text {
+    background: linear-gradient(to right, #ff7eb3, #ff758c, #ff7eb3, #eec1ff, #a2d2ff, #b19cd9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 1.5rem; /* サイズを少し大きく */
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
+}
     </style>
 </head>
 <body>
@@ -372,6 +381,7 @@ body {
     <audio id="bgm" loop preload="auto">
         <source src="sounds/bgm.mp3" type="audio/mpeg">
     </audio>
+
 
     <script>
         const loveAdvices = [
@@ -532,13 +542,14 @@ if (coins <= 0) {
     timerCon.style.display = "none";
 
     // 10万枚以上なら「無限に占える」という表示に変える
-    if (coins >= 100000) {
-        document.getElementById('coin-count').innerText = "♾️"; // コイン枚数表示
-        document.getElementById('limit-text').innerText = "好きなだけ占えるよ！♾️✨"; // テキスト表示
-    } else {
-        document.getElementById('coin-count').innerText = coins;
-        document.getElementById('limit-text').innerText = `あと ${coins} 回占えるよ✨`;
-    }
+if (coins >= 100000) {
+    // innerText ではなく innerHTML を使ってクラスを適用する
+    document.getElementById('coin-count').innerHTML = '<span class="rainbow-text">∞</span>'; 
+    document.getElementById('limit-text').innerHTML = '好きなだけ占えるよ！<span class="rainbow-text">∞</span>✨';
+} else {
+    document.getElementById('coin-count').innerText = coins;
+    document.getElementById('limit-text').innerText = `あと ${coins} 回占えるよ✨`;
+}
 }
 
             // 図鑑のカウントとボタン更新
@@ -811,6 +822,7 @@ function importData() {
         alert("🦄「それは正しい合言葉じゃないみたい...」");
     }
 }
+
 
 
         window.onload = updateUI;
