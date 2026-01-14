@@ -2,7 +2,7 @@
 
 
 
-ver24himitsu
+ver25himitsu
 
 
 
@@ -776,6 +776,14 @@ if (coins >= 100000) {
 // 入力エリアを表示する
 // 秘密のコード処理
 // 秘密のコード処理（150個＋50個のメッセージリストの後に配置してください）
+function showSecretCodeInput() {
+    const area = document.getElementById('secret-code-area');
+    if (area) {
+        // 表示・非表示を切り替える
+        area.style.display = (area.style.display === 'none') ? 'block' : 'none';
+    }
+}
+
 function useSecretCode() {
     // 1. 入力欄を取得
     const inputElement = document.getElementById('secret-code-input');
