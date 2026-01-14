@@ -1,8 +1,6 @@
 
 
-
-
-ve15test
+ve14testログインボーナステスト
 
 
 
@@ -40,17 +38,7 @@ ve15test
             min-height: 100vh; 
             overflow-x: hidden; 
         }
-body {
-    /* 真っ黒を卒業して、目に優しい深いラベンダーのグラデーションに */
-    background: linear-gradient(180deg, #1a1a2e 0%, #302b63 50%, #4b4b7c 100%);
-    background-attachment: fixed;
-    color: #f0f0f0; /* 文字も真っ白ではなく、少しグレーを混ぜて眩しさを抑える */
-}
 
-/* ガチャマシーンに「柔らかい光」を纏わせる（目がチカチカしない程度に） */
-#gacha-machine {
-    filter: drop-shadow(0 0 15px rgba(255, 192, 203, 0.4));
-}
         /* タイトル・コイン表示 */
         .title { margin-top: 20px; font-size: 1.1rem; color: var(--gold); text-align: center; font-weight: 700; }
         .title img { width: 30px; vertical-align: middle; margin-right: 8px; border-radius: 50%; border: 1px solid var(--gold); }
@@ -117,7 +105,6 @@ body {
 
         /* 図鑑画面 */
         #collection-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
-
         .collection-nav { 
             display: grid;
             grid-template-columns: repeat(2, 1fr); 
@@ -229,25 +216,9 @@ body {
     <div style="font-size: 0.9rem; color: var(--gold);">✨ ミルコインを増やす✨</div>
     <p style="font-size: 0.8rem; line-height: 1.4; margin: 10px 0;">ミルコインを手に入れると、明日を待たずに<b>すぐにガチャ</b>できるよ🦄</p>
     
-    <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
-    <a href="https://mirucorn.stores.jp/items/6961b5431886ebdd3baee58d" 
-       class="premium-btn" 
-       style="background: linear-gradient(45deg, #B8860B, #FFD700, #DBAC34, #FFD700, #B8860B); 
-              color: #5c4b8a; 
-              text-decoration: none; 
-              font-weight: bold; 
-              border: 2px solid #DAA520; 
-              box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
-              cursor: pointer;
-              display: inline-block;">
-       ミルコインを買う🦄💎
-    </a>
-    
-    <button onclick="showSecretCodeInput()" 
-            class="premium-btn" 
-            style="background: #5c4b8a; color: white; border: none; cursor: pointer;">
-            秘密のコード🔑
-    </button>
+   <div style="display: flex; gap: 10px; justify-content: center;">
+    <a href="https://mirucorn.stores.jp/items/6961b5431886ebdd3baee58d" class="premium-btn">ミルコインを買う💎</a>
+    <button onclick="showSecretCodeInput()" class="premium-btn" style="background: #5c4b8a; color: white; border: none; cursor: pointer;">秘密のコード🔑</button>
 </div>
 
     <div id="secret-code-area" style="display: none; margin-top: 15px;">
@@ -454,14 +425,24 @@ let usedSecretCode = localStorage.getItem('usedSecretCode') === 'true'; // 追�
 
         function updateUI() {
             const today = new Date().toLocaleDateString();
+            
+            // ログインボーナスの判定
             if (lastAccess !== today) {
-    // 修正前: coins = +2;  (これだと2枚にリセットされる)
-    coins += 2; // 修正後: これで今の枚数に2枚プラスされます✨
-    
-    lastAccess = today;
-    localStorage.setItem('lastAccessDate', today);
-    localStorage.setItem('miruCoins', coins);
-}
+                // 初めての訪問ではない（＝日付が変わってからの訪問）場合にメッセージを出す
+                if (lastAccess) {
+                    alert("おめでとう！今日のミルコインをゲットしたよ🦄💎");
+                }
+                
+                // コインを2枚加算
+                coins += 2;
+                lastAccess = today;
+                
+                // データを保存
+                localStorage.setItem('lastAccessDate', today);
+                localStorage.setItem('miruCoins', coins);
+            }
+
+            // --- ここから下は表示の更新 ---
             document.getElementById('coin-count').innerText = coins;
             const btn = document.getElementById('play-btn');
             const limitInfo = document.getElementById('limit-info');
@@ -471,7 +452,7 @@ let usedSecretCode = localStorage.getItem('usedSecretCode') === 'true'; // 追�
             if (coins <= 0) {
                 btn.disabled = true;
                 limitInfo.style.display = "block";
-                document.getElementById('limit-text').innerText = "";
+                document.getElementById('limit-text').innerText = "今日の分はもうおしまい。また明日来てね🦄";
                 premiumInfo.style.display = "block";
                 timerCon.style.display = "block";
             } else {
@@ -482,6 +463,9 @@ let usedSecretCode = localStorage.getItem('usedSecretCode') === 'true'; // 追�
                 timerCon.style.display = "none";
             }
 
+            // 図鑑の進捗
+            document.getElementById('collection-count').innerText = `${unlockedCards.length}/79 登録済み`;
+        }
             // 図鑑のカウントとボタン更新
             document.getElementById('collection-count').innerText = `${unlockedCards.length}/79 登録済み`;
             const doorBtn = document.getElementById('door-btn');
@@ -619,7 +603,7 @@ function useSecretCode() {
                 const finalMsg = `引いたカードは「${card1.name}」と「${card2.name}」だよ！\n\n【今のあなたへ】\n${card1.desc}\n\n【未来へのヒント】\n${card2.desc}\n\n【ミルコからの恋愛アドバイス】\n${randomAdvice}`;
                 
                 await new Promise(r => setTimeout(r, 1500)); 
-                document.getElementById('miruko-status').innerText = "ミルコの占い結果🦄🔮";
+                document.getElementById('miruko-status').innerText = "ミルコの占い結果🦄💎";
                 await typeWriter(finalMsg, 'miruko-msg', 35);
                 document.getElementById('close-res-btn').style.display = "block";
             }, 2000);
@@ -730,7 +714,7 @@ function exportData() {
 
 // 2. 合言葉を読み込む（暗号を解く）
 function importData() {
-    const code = prompt("🦄「保存しておいた魔法の合言葉を入力してね：");
+    const code = prompt("🦄「保存しておいた合言葉を入力してね：");
     
     if (code && code.startsWith("MIRUKO-")) {
         try {
@@ -742,17 +726,30 @@ function importData() {
             if (confirm("🦄「図鑑のデータを復元してもいい？今のデータは消えちゃうよ！」")) {
                 unlockedCards = [...new Set(importedCards)];
                 localStorage.setItem('unlockedCards', JSON.stringify(unlockedCards));
-                alert("🦄「魔法の扉が繋がったよ！図鑑を復元したよ✨」");
+                alert("🦄「図鑑を復元したよ✨」");
                 location.reload();
             }
         } catch (e) {
-            alert("🦄「うーん、その合言葉は魔法が解けちゃってるみたい。もう一度確認してみてね。」");
+            alert("🦄「うーん、その合言葉は違うみたい。もう一度確認してみてね。」");
         }
     } else if (code) {
         alert("🦄「それは正しい合言葉じゃないみたい...」");
     }
 }
+// 0時ちょうどにページを再読み込みする魔法
+function scheduleMidnightReload() {
+    const now = new Date();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const diff = tomorrow - now; // 次の0時までの時間（ミリ秒）
 
+    // 0時になったらリロードを実行
+    setTimeout(() => {
+        location.reload();
+    }, diff);
+}
+
+// ページ読み込み時に実行
+scheduleMidnightReload();
 
         window.onload = updateUI;
     </script>
