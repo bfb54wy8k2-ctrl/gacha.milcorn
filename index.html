@@ -1,5 +1,10 @@
 
-ver２１
+
+
+
+ver22himitsu
+
+
 
 
 <!DOCTYPE html>
@@ -769,34 +774,66 @@ if (coins >= 100000) {
             else { bgm.play().catch(() => {}); toggleBtn.innerText = "🎵"; }
         }
 // 入力エリアを表示する
-function showSecretCodeInput() {
-    document.getElementById('secret-code-area').style.display = 'block';
-}
-
-// コードを検証してコインを増やす
 function useSecretCode() {
-    // すでに使っている場合
-    if (usedSecretCode) {
-        alert("この端末では、秘密のコードはすでに1回使用されています🦄💦");
+    // すでに使用したコードのリストを読み込む（なければ空のリスト）
+    let usedCodes = JSON.parse(localStorage.getItem('usedCodesList')) || [];
+    
+    const inputCode = document.getElementById('secret-code-input').value;
+
+    // すでにそのコードを使っているかチェック
+    if (usedCodes.includes(inputCode)) {
+        alert("その合言葉の魔法は、もう一度使われているよ🦄💦");
         return;
     }
 
-    const inputCode = document.getElementById('secret-code-input').value;
-    const correctCode = "MIRUKO2026"; // ここに好きな秘密のコードを設定してください
+    let success = false;
 
-    if (inputCode === correctCode) {
-        coins += 999999; // 増やす枚数はここで調整してください
-        usedSecretCode = true;
-        
-        // 保存
+    // 各コードの判定
+    if (inputCode === "MIRUKO2026") {
+        coins = 999999;
+        alert("秘密のコードを確認！ミルコインが♾️になったよ🦄💎");
+        success = true;
+    } 
+    else if (inputCode === "キャンディ") {
+        coins += 3;
+        alert("秘密のコードを確認！コインが3枚増えたよ🍬");
+        success = true;
+    } 
+    else if (inputCode === "おやつ") {
+        coins += 5;
+        alert("秘密のコードを確認！コインを5枚追加したよ🍪");
+        success = true;
+    } 
+    else if (inputCode === "星の砂") {
+        coins += 10;
+        alert("秘密のコードを確認！コインが10枚増えたよ✨");
+        success = true;
+    }
+    else if (inputCode === "夜明け") {
+        for(let i=1; i<=79; i++) {
+            if(!unlockedCards.includes(i)) unlockedCards.push(i);
+        }
+        alert("全てのカードが集まったよ！扉を見てみて✨");
+        success = true;
+    }
+    else {
+        alert("コードが違うみたい…。もう一度確認してみてね！");
+        return;
+    }
+
+    // 成功した時の保存処理
+    if (success) {
+        usedCodes.push(inputCode); // 使用済みリストに追加
+        localStorage.setItem('usedCodesList', JSON.stringify(usedCodes));
         localStorage.setItem('miruCoins', coins);
-        localStorage.setItem('usedSecretCode', 'true');
         
         updateUI();
-        alert("おめでとう！秘密のコードが確認できたよ✨ミルコインが♾️になったよ🦄💎");
-        document.getElementById('secret-code-area').style.display = 'none';
-    } else {
-        alert("コードが違うみたい…。もう一度確認してみてね！");
+        document.getElementById('secret-code-input').value = '';
+        
+        // 無限か全解放ならエリアを閉じる
+        if (coins >= 100000 || inputCode === "夜明け") {
+            document.getElementById('secret-code-area').style.display = 'none';
+        }
     }
 }
 
