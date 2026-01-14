@@ -2,7 +2,7 @@
 
 
 
-ver２６
+ver２７
 
 
 
@@ -321,7 +321,11 @@ body {
     
     <div style="display: flex; gap: 10px; justify-content: center;">
         <a href="https://mirucorn.stores.jp/items/6961b5431886ebdd3baee58d" class="premium-btn">ミルコインを買う💎</a>
-        <button onclick="showSecretCodeInput()" class="premium-btn" style="background: #5c4b8a; border: none; cursor: pointer;">秘密のコード🔑</button>
+
+        <button onclick="showSecretCodeInput()" class="premium-btn" 
+        style="background: #6a5acd; color: #ffffff; border: none; font-weight: bold; cursor: pointer; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+    秘密のコード🔑
+</button>
     </div>
 
     <div id="secret-code-area" style="display: none; margin-top: 15px;">
@@ -815,20 +819,20 @@ function useSecretCode() {
     }
     else if (inputCode === "ペロペロキャンディ") {
         coins += 3;
-        alert("🦄「コインが3枚増えたよ🍬」");
+        alert("🦄「密のコードを確認！ミルコインが3枚増えたよ✨」");
         success = true;
     } 
     else if (inputCode === "てくてくミルコ") {
         coins += 30;
-        alert("🦄「秘密のコードを確認！コインが30枚増えたよ✨」");
+        alert("🦄「秘密のコードを確認！ミルコインが30枚増えたよ✨」");
         success = true;
     } 
-    else if (inputCode === "ふわふわミルコ") {
+    else if (inputCode === "ふわふわミルオ") {
         coins += 100;
-        alert("🦄「秘密のコードを確認！コインが100枚増えたよ✨」");
+        alert("🦄「秘密のコードを確認！ミルコインが100枚増えたよ✨」");
         success = true;
     }
-    else if (inputCode === "夜明け") {
+    else if (inputCode === "裏コード夜明け") {
         for(let i=1; i<=79; i++) {
             if(!unlockedCards.includes(i)) unlockedCards.push(i);
         }
