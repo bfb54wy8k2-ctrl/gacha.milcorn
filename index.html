@@ -2,7 +2,7 @@
 
 
 
-ve13test
+ve14testトップ背景
 
 
 
@@ -40,6 +40,17 @@ ve13test
             min-height: 100vh; 
             overflow-x: hidden; 
         }
+body {
+    /* 真っ黒を卒業して、目に優しい深いラベンダーのグラデーションに */
+    background: linear-gradient(180deg, #1a1a2e 0%, #302b63 50%, #4b4b7c 100%);
+    background-attachment: fixed;
+    color: #f0f0f0; /* 文字も真っ白ではなく、少しグレーを混ぜて眩しさを抑える */
+}
+
+/* ガチャマシーンに「柔らかい光」を纏わせる（目がチカチカしない程度に） */
+#gacha-machine {
+    filter: drop-shadow(0 0 15px rgba(255, 192, 203, 0.4));
+}
 
         /* タイトル・コイン表示 */
         .title { margin-top: 20px; font-size: 1.1rem; color: var(--gold); text-align: center; font-weight: 700; }
