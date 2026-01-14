@@ -2,7 +2,7 @@
 
 
 
-ve15タイトル
+ve15タイトル２
 
 
 
@@ -289,7 +289,7 @@ body {
     <p style="font-size: 0.8rem; line-height: 1.4; margin: 10px 0;">ミルコインを手に入れると、明日を待たずに<b>すぐにガチャ</b>できるよ</p>
     
     <div style="display: flex; gap: 10px; justify-content: center;">
-        <a href="https://mirucorn.stores.jp/items/6961b5431886ebdd3baee58d" class="premium-btn">ミルコインを買う🦄💎</a>
+        <a href="https://mirucorn.stores.jp/items/6961b5431886ebdd3baee58d" class="premium-btn">ミルコインを買う💎</a>
         <button onclick="showSecretCodeInput()" class="premium-btn" style="background: #5c4b8a; border: none; cursor: pointer;">秘密のコード🔑</button>
     </div>
 
@@ -568,7 +568,7 @@ function showSecretCodeInput() {
 function useSecretCode() {
     // すでに使っている場合
     if (usedSecretCode) {
-        alert("この端末では、秘密のコードはすでに1回使用されています🦄");
+        alert("この端末では、秘密のコードはすでに1回使用されています🦄💦");
         return;
     }
 
@@ -584,7 +584,7 @@ function useSecretCode() {
         localStorage.setItem('usedSecretCode', 'true');
         
         updateUI();
-        alert("おめでとう！秘密のコードが確認できたよ✨コインが999999枚増えました🦄💎");
+        alert("おめでとう！秘密のコードが確認できたよ✨ミルコインが♾️になったよ🦄💎");
         document.getElementById('secret-code-area').style.display = 'none';
     } else {
         alert("コードが違うみたい…。もう一度確認してみてね！");
