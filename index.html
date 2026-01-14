@@ -2,7 +2,7 @@
 
 
 
-ver１７扉ボタン
+ver１８扉ボタン
 
 
 
@@ -237,14 +237,22 @@ body {
         
 /* 扉を開くボタン：ゆめかわレインボー版 */
 #door-btn {
-    width: 280px;
-    height: 60px;
+    /* 横幅 */
+    width: 200px; 
+    
+    /* 高さ*/
+    height: 45px; 
+    
+    /* 文字の大きさ */
+    font-size: 0.9rem; 
+
     margin: 20px auto;
     border: none;
-    border-radius: 30px;
-    font-size: 1.1rem;
+    border-radius: 25px; /* 角丸も少し調整 */
     font-weight: bold;
     color: white;
+    /* ...残りの設定はそのままでOK... */
+}
     cursor: not-allowed;
     opacity: 0.3;
     display: flex;
