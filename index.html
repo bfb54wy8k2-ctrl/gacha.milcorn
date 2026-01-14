@@ -2,7 +2,7 @@
 
 
 
-ve14testトップ図鑑背景２
+ve15test♾️
 
 
 
@@ -491,25 +491,41 @@ let usedSecretCode = localStorage.getItem('usedSecretCode') === 'true'; // 追�
     localStorage.setItem('lastAccessDate', today);
     localStorage.setItem('miruCoins', coins);
 }
-            document.getElementById('coin-count').innerText = coins;
+            // 100,000枚以上になったら「♾️」と表示する
+if (coins >= 100000) {
+    document.getElementById('coin-count').innerText = "♾️";
+} else {
+    document.getElementById('coin-count').innerText = coins;
+}
+
             const btn = document.getElementById('play-btn');
             const limitInfo = document.getElementById('limit-info');
             const premiumInfo = document.getElementById('premium-info');
             const timerCon = document.getElementById('timer-container');
 
-            if (coins <= 0) {
-                btn.disabled = true;
-                limitInfo.style.display = "block";
-                document.getElementById('limit-text').innerText = "";
-                premiumInfo.style.display = "block";
-                timerCon.style.display = "block";
-            } else {
-                btn.disabled = false;
-                limitInfo.style.display = "block";
-                premiumInfo.style.display = "none";
-                document.getElementById('limit-text').innerText = `あと ${coins} 回占えるよ✨`;
-                timerCon.style.display = "none";
-            }
+           // --- 修正後の updateUI 関数の一部 ---
+
+if (coins <= 0) {
+    btn.disabled = true;
+    limitInfo.style.display = "block";
+    document.getElementById('limit-text').innerText = "";
+    premiumInfo.style.display = "block";
+    timerCon.style.display = "block";
+} else {
+    btn.disabled = false;
+    limitInfo.style.display = "block";
+    premiumInfo.style.display = "none";
+    timerCon.style.display = "none";
+
+    // 10万枚以上なら「無限に占える」という表示に変える
+    if (coins >= 100000) {
+        document.getElementById('coin-count').innerText = "♾️"; // コイン枚数表示
+        document.getElementById('limit-text').innerText = "好きなだけ占えるよ！♾️✨"; // テキスト表示
+    } else {
+        document.getElementById('coin-count').innerText = coins;
+        document.getElementById('limit-text').innerText = `あと ${coins} 回占えるよ✨`;
+    }
+}
 
             // 図鑑のカウントとボタン更新
             document.getElementById('collection-count').innerText = `${unlockedCards.length}/79 登録済み`;
