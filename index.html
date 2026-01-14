@@ -2,7 +2,7 @@
 
 
 
-ver１８扉ボタン
+ver１９扉ボタン
 
 
 
@@ -237,42 +237,37 @@ body {
         
 /* 扉を開くボタン：ゆめかわレインボー版 */
 #door-btn {
-    /* 横幅 */
+    /* サイズ設定 */
     width: 200px; 
-    
-    /* 高さ*/
     height: 45px; 
-    
-    /* 文字の大きさ */
     font-size: 0.9rem; 
 
     margin: 20px auto;
     border: none;
-    border-radius: 25px; /* 角丸も少し調整 */
+    border-radius: 25px;
     font-weight: bold;
     color: white;
-    /* ...残りの設定はそのままでOK... */
-}
     cursor: not-allowed;
     opacity: 0.3;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.5s;
-    /* 背景をパステルレインボーの長い帯にする */
+
+    /* 背景をパステルレインボーにする（未達成時も薄く色がつく設定） */
     background: linear-gradient(120deg, #ffb7c5, #ffdab9, #e0ffff, #b19cd9, #ffb7c5);
     background-size: 400% 400%;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     text-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
+} /* ←ここのカッコがズレていたのを直しました */
 
 /* コンプリートした時だけ動き出す設定 */
 #door-btn.active {
-    opacity: 1;
-    cursor: pointer;
-    /* 10秒かけてゆっくり色が流れるようにする（目に優しい速度） */
-    animation: gentleRainbow 10s ease infinite;
-    box-shadow: 0 0 20px rgba(255, 183, 197, 0.5);
+    opacity: 1 !important;
+    cursor: pointer !important;
+    /* 10秒かけてゆっくり色が流れる */
+    animation: gentleRainbow 10s ease infinite !important;
+    box-shadow: 0 0 20px rgba(255, 183, 197, 0.5) !important;
 }
 
 /* ゆっくり流れるアニメーションの魔法 */
